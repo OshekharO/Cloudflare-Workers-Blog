@@ -97,6 +97,8 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .article-card:hover {
@@ -108,6 +110,7 @@
             height: 220px;
             object-fit: cover;
             transition: transform 0.3s ease;
+            width: 100%;
         }
 
         .article-card:hover .article-card-img {
@@ -118,7 +121,7 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            height: 100%;
+            flex-grow: 1;
         }
 
         .article-card-title {
@@ -137,12 +140,14 @@
             margin-bottom: 1rem;
             font-size: 0.9rem;
             color: var(--secondary);
+            flex-wrap: wrap;
         }
 
         .article-card-excerpt {
             color: var(--secondary);
             flex-grow: 1;
             margin-bottom: 1.5rem;
+            line-height: 1.6;
         }
 
         .tag-badge {
@@ -152,6 +157,7 @@
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .btn-primary-custom {
@@ -166,6 +172,8 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            width: fit-content;
+            margin-top: auto;
         }
 
         .btn-primary-custom:hover {
@@ -218,6 +226,16 @@
             opacity: 0.5;
         }
 
+        .img-placeholder {
+            height: 220px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 2.5rem;
@@ -236,12 +254,28 @@
                 align-items: flex-start;
                 gap: 0.5rem;
             }
+            
+            .article-card-title {
+                font-size: 1.2rem;
+            }
         }
 
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .article-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }
+
+        .article-link:hover {
+            text-decoration: none;
+            color: inherit;
         }
     </style>
     {{codeBeforHead}}
@@ -299,6 +333,8 @@
                 const articles = await response.json();
                 const container = document.getElementById('articles-container');
                 
+                console.log('Articles loaded:', articles); // Debug log
+                
                 if (articles.length === 0) {
                     container.innerHTML = `
                         <div class="col-12">
@@ -306,6 +342,9 @@
                                 <i class="fas fa-newspaper"></i>
                                 <h3 class="h4 text-dark mb-2">No Articles Yet</h3>
                                 <p class="text-muted">Check back later for new content!</p>
+                                <a href="/admin/" class="btn btn-primary-custom mt-2">
+                                    <i class="fas fa-plus me-1"></i>Create First Article
+                                </a>
                             </div>
                         </div>
                     `;
@@ -313,24 +352,37 @@
                 }
 
                 container.innerHTML = articles.map(article => {
+                    console.log('Processing article:', article); // Debug log
+                    
                     const imgHtml = article.img ? 
-                        `<img src="${article.img}" class="article-card-img w-100" alt="${article.title}">` : 
-                        `<div class="article-card-img bg-gradient d-flex align-items-center justify-content-center">
-                            <i class="fas fa-file-alt fa-3x text-white"></i>
+                        `<img src="${article.img}" class="article-card-img" alt="${article.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"> 
+                         <div class="img-placeholder" style="display:none;">
+                            <i class="fas fa-file-alt"></i>
+                         </div>` : 
+                        `<div class="img-placeholder">
+                            <i class="fas fa-file-alt"></i>
                          </div>`;
+                    
+                    const excerpt = article.excerpt ? 
+                        `<p class="article-card-excerpt">${article.excerpt}</p>` : 
+                        `<p class="article-card-excerpt text-muted">No excerpt available. Click to read more.</p>`;
                     
                     return `
                     <div class="col-md-6 col-lg-4">
                         <div class="article-card h-100">
-                            ${imgHtml}
-                            <div class="article-card-body">
-                                <h3 class="article-card-title">${article.title}</h3>
-                                <div class="article-card-meta">
-                                    <span><i class="fas fa-calendar me-1"></i> ${new Date(article.createDate).toLocaleDateString()}</span>
-                                    <span class="tag-badge">${article.label}</span>
+                            <a href="/article/${article.permalink}" class="article-link">
+                                ${imgHtml}
+                                <div class="article-card-body">
+                                    <h3 class="article-card-title">${article.title || 'Untitled'}</h3>
+                                    <div class="article-card-meta">
+                                        <span><i class="fas fa-calendar me-1"></i> ${article.createDate ? new Date(article.createDate).toLocaleDateString() : 'No date'}</span>
+                                        <span class="tag-badge">${article.label || 'Uncategorized'}</span>
+                                    </div>
+                                    ${excerpt}
                                 </div>
-                                <p class="article-card-excerpt">${article.excerpt || ''}</p>
-                                <a href="/article/${article.permalink}" class="btn-primary-custom mt-auto">
+                            </a>
+                            <div class="article-card-body pt-0">
+                                <a href="/article/${article.permalink}" class="btn-primary-custom">
                                     Read More <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
@@ -356,7 +408,24 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadArticles);
+        // Add some debug styling to make links more visible
+        document.addEventListener('DOMContentLoaded', function() {
+            loadArticles();
+            
+            // Add debug border to help identify links
+            setTimeout(() => {
+                const links = document.querySelectorAll('a');
+                links.forEach(link => {
+                    link.style.border = '1px solid transparent';
+                    link.addEventListener('mouseenter', function() {
+                        this.style.border = '1px solid red';
+                    });
+                    link.addEventListener('mouseleave', function() {
+                        this.style.border = '1px solid transparent';
+                    });
+                });
+            }, 1000);
+        });
     </script>
     {{codeBeforBody}}
 </body>
