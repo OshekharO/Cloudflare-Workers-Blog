@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}} Article - Admin</title>
+    
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- EasyMDE -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    
+    <style>
+        :root {
+            --primary: #2196f3;
+            --primary-dark: #1976d2;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #fafafa;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        
+        main {
+            flex: 1 0 auto;
+        }
+        
+        .form-container {
+            margin: 20px auto;
+            max-width: 1000px;
+        }
+        
+        .form-card {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .input-field label {
+            font-weight: 500;
+        }
+        
+        .input-field input:focus + label,
+        .input-field textarea:focus + label,
+        .input-field select:focus + label {
+            color: var(--primary) !important;
+        }
+        
+        .input-field input:focus,
+        .input-field textarea:focus,
+        .input-field select:focus {
+            border-bottom: 2px solid var(--primary) !important;
+            box-shadow: 0 1px 0 0 var(--primary) !important;
+        }
+        
+        .editor-wrapper {
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .EasyMDEContainer .CodeMirror {
+            border: none;
+            border-radius: 0;
+        }
+        
+        .EasyMDEContainer .editor-toolbar {
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .btn-custom {
+            border-radius: 24px;
+            padding: 0 24px;
+            height: 44px;
+            line-height: 44px;
+            text-transform: none;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-actions {
+            padding: 20px 0;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 30px;
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav class="blue darken-2">
+            <div class="nav-wrapper container">
+                <a href="/admin/edit" class="brand-logo">
+                    <i class="material-icons left">edit</i>
+                    {{action}} Article
+                </a>
+                <ul class="right">
+                    <li><a href="/admin/" class="waves-effect waves-light">
+                        <i class="material-icons left">arrow_back</i>
+                        Back to Articles
+                    </a></li>
+                    <li><a href="/" class="waves-effect waves-light">
+                        <i class="material-icons left">home</i>
+                        View Blog
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container form-container">
+            <div class="row">
+                <div class="col s12">
+                    <div class="card form-card">
+                        <div class="card-content">
+                            <div class="card-title">
+                                <i class="material-icons left">article</i>
+                                {{action}} Article
+                            </div>
+                            
+                            <form id="article-form">
+                                <div class="row">
+                                    <div class="input-field col s12 m6">
+                                        <input id="permalink" type="text" required pattern="[a-z0-9-]+">
+                                        <label for="permalink">Permalink *</label>
+                                        <span class="helper-text" data-error="Only lowercase letters, numbers, and hyphens allowed">URL-friendly identifier (e.g., "my-article-title")</span>
+                                    </div>
+                                    
+                                    <div class="input-field col s12 m6">
+                                        <select id="label" required>
+                                            <option value="" disabled selected>Choose a label</option>
+                                            <option value="Technology">Technology</option>
+                                            <option value="Lifestyle">Lifestyle</option>
+                                            <option value="Travel">Travel</option>
+                                            <option value="Food">Food</option>
+                                            <option value="Business">Business</option>
+                                            <option value="Science">Science</option>
+                                            <option value="Health">Health</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                        <label>Label *</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <input id="title" type="text" required>
+                                        <label for="title">Title *</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <input id="img" type="url">
+                                        <label for="img">Featured Image URL</label>
+                                        <span class="helper-text">Optional featured image URL</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <input id="createDate" type="datetime-local" required>
+                                        <label for="createDate">Publish Date *</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <label for="content" style="font-size: 1rem; transform: translateY(-14px) scale(0.8);">Content *</label>
+                                        <div class="editor-wrapper">
+                                            <textarea id="content"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <button type="button" class="btn grey waves-effect waves-light btn-custom" onclick="window.history.back()">
+                                                <i class="material-icons left">cancel</i>
+                                                Cancel
+                                            </button>
+                                            <button type="submit" class="btn blue waves-effect waves-light btn-custom right">
+                                                <i class="material-icons left">check</i>
+                                                Save Article
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer blue darken-2">
+        <div class="container">
+            <div class="row">
+                <div class="col s12 center-align">
+                    <p class="white-text">{{copyRight}}</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    
+    <script>
+        let easyMDE;
+        let isEditing = false;
+        let currentPermalink = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            M.AutoInit();
+            
+            easyMDE = new EasyMDE({ 
+                element: document.getElementById('content'),
+                spellChecker: false,
+                status: false,
+                autosave: {
+                    enabled: false
+                },
+                toolbar: [
+                    'bold', 'italic', 'heading', '|',
+                    'quote', 'unordered-list', 'ordered-list', '|',
+                    'link', 'image', '|',
+                    'preview', 'side-by-side', 'fullscreen', '|',
+                    'guide'
+                ]
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const permalink = urlParams.get('permalink');
+            
+            if (permalink) {
+                isEditing = true;
+                currentPermalink = permalink;
+                loadArticle(permalink);
+            }
+
+            document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+        });
+
+        async function loadArticle(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) throw new Error('Article not found');
+                
+                const article = await response.json();
+                
+                document.getElementById('permalink').value = article.permalink;
+                document.getElementById('permalink').readOnly = true;
+                document.getElementById('title').value = article.title;
+                document.getElementById('img').value = article.img || '';
+                document.getElementById('label').value = article.label;
+                M.FormSelect.init(document.querySelector('#label'));
+                document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+                
+                easyMDE.value(article.content);
+                
+                M.updateTextFields();
+            } catch (error) {
+                console.error('Error loading article:', error);
+                M.toast({html: 'Error loading article', classes: 'red'});
+                window.location.href = '/admin/';
+            }
+        }
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="material-icons left">hourglass_empty</i>Saving...';
+
+            const formData = {
+                permalink: document.getElementById('permalink').value,
+                title: document.getElementById('title').value,
+                img: document.getElementById('img').value,
+                label: document.getElementById('label').value,
+                createDate: document.getElementById('createDate').value,
+                content: easyMDE.value()
+            };
+
+            try {
+                const url = isEditing ? '/api/articles/' + currentPermalink : '/api/articles';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    M.toast({html: isEditing ? 'Article updated successfully!' : 'Article created successfully!', classes: 'green'});
+                    setTimeout(() => {
+                        window.location.href = '/admin/';
+                    }, 1000);
+                } else {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                M.toast({html: 'Error saving article: ' + error.message, classes: 'red'});
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
