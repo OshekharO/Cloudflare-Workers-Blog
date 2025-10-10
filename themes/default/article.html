@@ -180,6 +180,10 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
+        #raw-content {
+            display: none;
+        }
     </style>
     
     {{codeBeforHead}}
@@ -210,8 +214,16 @@
                         {{#img}}<img src="{{img}}" class="img-fluid rounded-3 shadow-lg mb-4" alt="{{title}}">{{/img}}
                     </header>
                     
+                    <!-- Hidden element to store raw markdown content -->
+                    <div id="raw-content">{{content}}</div>
+                    
                     <div class="article-content" id="article-content">
-                        <!-- Content will be rendered by JavaScript -->
+                        <!-- Content will be rendered here by JavaScript -->
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading content...</span>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="mt-5 pt-4 border-top text-center">
@@ -238,7 +250,13 @@
         // Parse and render markdown content
         function renderMarkdown() {
             const contentElement = document.getElementById('article-content');
-            const rawContent = `{{{content}}}`;
+            const rawContentElement = document.getElementById('raw-content');
+            const rawContent = rawContentElement.textContent;
+            
+            if (!rawContent || rawContent.trim() === '') {
+                contentElement.innerHTML = '<div class="alert alert-warning">No content available.</div>';
+                return;
+            }
             
             if (window.marked) {
                 // Use Marked.js if available
@@ -257,10 +275,14 @@
                     contentElement.innerHTML = htmlContent;
                 } catch (error) {
                     console.error('Error parsing markdown:', error);
-                    contentElement.innerHTML = `<div class="alert alert-warning">Error rendering content: ${error.message}</div>`;
+                    // Fallback: display raw content with basic formatting
+                    contentElement.innerHTML = `<div class="alert alert-warning">
+                        <h5>Error rendering content</h5>
+                        <pre>${rawContent}</pre>
+                    </div>`;
                 }
             } else {
-                // Fallback: display raw content with basic formatting
+                // Fallback: display raw content
                 contentElement.innerHTML = `<pre>${rawContent}</pre>`;
             }
         }
