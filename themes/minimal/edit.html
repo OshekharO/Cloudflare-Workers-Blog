@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}} Article - Admin</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- EasyMDE -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .EasyMDEContainer .CodeMirror {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        
+        .EasyMDEContainer .editor-toolbar {
+            border: 1px solid #e5e7eb;
+            border-bottom: none;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="ri-edit-line text-2xl text-blue-600 mr-3"></i>
+                    <h1 class="text-xl font-bold text-gray-900">{{action}} Article</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="/admin/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                        <i class="ri-arrow-left-line mr-1"></i>Back
+                    </a>
+                    <a href="/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                        <i class="ri-eye-line mr-1"></i>View
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="border-b border-gray-200 px-6 py-4">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    <i class="ri-article-line mr-2"></i>{{action}} Article
+                </h2>
+            </div>
+            
+            <form id="article-form" class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="permalink" class="block text-sm font-medium text-gray-700 mb-2">Permalink *</label>
+                        <input type="text" id="permalink" required pattern="[a-z0-9-]+" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <p class="mt-1 text-sm text-gray-500">URL-friendly identifier (e.g., "my-article-title")</p>
+                    </div>
+                    
+                    <div>
+                        <label for="label" class="block text-sm font-medium text-gray-700 mb-2">Label *</label>
+                        <select id="label" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Choose a label...</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Lifestyle">Lifestyle</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Food">Food</option>
+                            <option value="Business">Business</option>
+                            <option value="Science">Science</option>
+                            <option value="Health">Health</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                    <input type="text" id="title" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div class="mb-6">
+                    <label for="img" class="block text-sm font-medium text-gray-700 mb-2">Featured Image URL</label>
+                    <input type="url" id="img" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="https://example.com/image.jpg">
+                </div>
+                
+                <div class="mb-6">
+                    <label for="createDate" class="block text-sm font-medium text-gray-700 mb-2">Publish Date *</label>
+                    <input type="datetime-local" id="createDate" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div class="mb-6">
+                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content *</label>
+                    <textarea id="content"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="window.history.back()" 
+                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i class="ri-close-line mr-1"></i>Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="ri-check-line mr-1"></i>Save Article
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        let easyMDE;
+        let isEditing = false;
+        let currentPermalink = '';
+
+        // Initialize EasyMDE
+        easyMDE = new EasyMDE({ 
+            element: document.getElementById('content'),
+            spellChecker: false,
+            status: false,
+            autosave: {
+                enabled: false
+            },
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ]
+        });
+
+        // Check if editing existing article
+        const urlParams = new URLSearchParams(window.location.search);
+        const permalink = urlParams.get('permalink');
+        
+        if (permalink) {
+            isEditing = true;
+            currentPermalink = permalink;
+            loadArticle(permalink);
+        }
+
+        // Set default date to now
+        document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+
+        async function loadArticle(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) throw new Error('Article not found');
+                
+                const article = await response.json();
+                
+                document.getElementById('permalink').value = article.permalink;
+                document.getElementById('permalink').readOnly = true;
+                document.getElementById('title').value = article.title;
+                document.getElementById('img').value = article.img || '';
+                document.getElementById('label').value = article.label;
+                document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+                
+                easyMDE.value(article.content);
+            } catch (error) {
+                console.error('Error loading article:', error);
+                alert('Error loading article');
+                window.location.href = '/admin/';
+            }
+        }
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-1"></i>Saving...';
+
+            const formData = {
+                permalink: document.getElementById('permalink').value,
+                title: document.getElementById('title').value,
+                img: document.getElementById('img').value,
+                label: document.getElementById('label').value,
+                createDate: document.getElementById('createDate').value,
+                content: easyMDE.value()
+            };
+
+            try {
+                const url = isEditing ? '/api/articles/' + currentPermalink : '/api/articles';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert(isEditing ? 'Article updated successfully!' : 'Article created successfully!');
+                    window.location.href = '/admin/';
+                } else {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving article: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
