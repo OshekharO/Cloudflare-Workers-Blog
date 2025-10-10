@@ -67,14 +67,13 @@ class Blog {
             await this.put('SYSTEM_INDEX_NUM', (currentNum + 1).toString());
         }
 
-        // Convert markdown to HTML for display
-        article.contentHtml = await this.markdownToHtml(article.content);
+        // Store the original markdown content
+        article.contentMarkdown = article.content;
         
         // Create excerpt from plain text
         const plainText = article.content.replace(/[#*`\[\]]/g, '').replace(/\n/g, ' ').trim();
         article.excerpt = plainText.substring(0, OPT.readMoreLength) + (plainText.length > OPT.readMoreLength ? '...' : '');
 
-        // Save both markdown and HTML versions
         await this.put(article.id, article);
 
         const index = await this.listArticles();
@@ -135,31 +134,15 @@ class Blog {
         return template;
     }
 
-    async markdownToHtml(markdown) {
-        // Use Marked.js to convert markdown to HTML
-        // We'll use a simple regex-based parser as fallback, but in practice
-        // the frontend will use the actual Marked.js library
-        if (!markdown) return '';
-        
-        // Basic markdown parsing (fallback)
-        let html = markdown
-            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-            .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-            .replace(/`(.*?)`/gim, '<code>$1</code>')
-            .replace(/!\[(.*?)\]\((.*?)\)/gim, '<img alt="$1" src="$2" class="img-fluid">')
-            .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>')
-            .replace(/\n\n/gim, '</p><p>')
-            .replace(/\n/gim, '<br>');
-        
-        // Wrap in paragraph if not already wrapped
-        if (!html.startsWith('<')) {
-            html = '<p>' + html + '</p>';
-        }
-        
-        return html;
+    escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        // Don't escape newlines - let the frontend handle them
     }
 
     renderTemplate(template, data) {
@@ -168,7 +151,9 @@ class Blog {
         // Replace all template variables
         for (const [key, value] of Object.entries(data)) {
             const regex = new RegExp(`{{${key}}}`, 'g');
-            html = html.replace(regex, value || '');
+            // Don't escape content - let the frontend handle it properly
+            const replacement = key === 'content' ? value : this.escapeHtml(value.toString());
+            html = html.replace(regex, replacement || '');
         }
         
         // Handle conditional image display
@@ -424,7 +409,7 @@ export default {
                     createDate: new Date(fullArticle.createDate).toLocaleDateString(),
                     label: fullArticle.label,
                     img: fullArticle.img || '',
-                    content: fullArticle.contentHtml || fullArticle.content, // Use HTML version if available
+                    content: fullArticle.contentMarkdown || fullArticle.content, // Use markdown content
                     copyRight: OPT.copyRight,
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
