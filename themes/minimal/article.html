@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .article-content {
+            line-height: 1.7;
+        }
+        
+        .article-content h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            line-height: 1.2;
+        }
+        
+        .article-content h2 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin: 1.8rem 0 1rem;
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+        }
+        
+        .article-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.8rem;
+        }
+        
+        .article-content p {
+            margin-bottom: 1.2rem;
+        }
+        
+        .article-content blockquote {
+            border-left: 4px solid #3b82f6;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            background: #f8fafc;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .article-content code {
+            background: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+        
+        .article-content pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 1.2rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.2rem 0;
+        }
+        
+        .article-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .article-content ul, .article-content ol {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .article-content li {
+            margin: 0.5rem 0;
+        }
+        
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        .article-content table th,
+        .article-content table td {
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        
+        .article-content table th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="text-xl font-bold gradient-text">{{siteName}}</a>
+                <div class="flex items-center space-x-4">
+                    <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200">
+                        <i class="ri-admin-line mr-1"></i>Admin
+                    </a>
+                    <a href="/" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="ri-home-line mr-1"></i>Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Content -->
+    <main class="flex-1 py-8">
+        <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <!-- Article Header -->
+                <div class="border-b border-gray-100 px-6 py-8">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{{title}}</h1>
+                    <div class="flex flex-wrap items-center gap-4 text-gray-600">
+                        <div class="flex items-center">
+                            <i class="ri-calendar-line mr-2"></i>
+                            <span>{{createDate}}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">{{label}}</span>
+                        </div>
+                    </div>
+                    {{#img}}
+                    <img src="{{img}}" alt="{{title}}" class="w-full h-64 md:h-80 object-cover rounded-lg mt-6">
+                    {{/img}}
+                </div>
+
+                <!-- Article Content -->
+                <div class="px-6 py-8">
+                    <div id="raw-content" class="hidden">{{content}}</div>
+                    <div id="article-content" class="article-content prose prose-lg max-w-none">
+                        <!-- Loading State -->
+                        <div class="flex justify-center items-center py-12">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Footer -->
+                <div class="border-t border-gray-100 px-6 py-6">
+                    <a href="/" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                        <i class="ri-arrow-left-line mr-2"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-600">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <script>
+        function renderMarkdown() {
+            const contentElement = document.getElementById('article-content');
+            const rawContentElement = document.getElementById('raw-content');
+            
+            let rawContent = rawContentElement.textContent;
+            rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+            
+            if (!rawContent || rawContent.trim() === '') {
+                contentElement.innerHTML = '<div class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">No content available.</div>';
+                return;
+            }
+            
+            if (window.marked && window.hljs) {
+                try {
+                    marked.setOptions({
+                        highlight: function(code, lang) {
+                            if (lang && hljs.getLanguage(lang)) {
+                                try {
+                                    return hljs.highlight(code, { language: lang }).value;
+                                } catch (err) {
+                                    console.warn('Error highlighting code:', err);
+                                }
+                            }
+                            return hljs.highlightAuto(code).value;
+                        },
+                        breaks: true,
+                        gfm: true
+                    });
+                    
+                    const htmlContent = marked.parse(rawContent);
+                    contentElement.innerHTML = htmlContent;
+                    
+                    // Apply syntax highlighting
+                    const codeBlocks = document.querySelectorAll('pre code');
+                    codeBlocks.forEach(block => {
+                        if (!block.classList.contains('hljs')) {
+                            block.classList.add('hljs');
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error parsing markdown:', error);
+                    contentElement.innerHTML = `
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700 mb-4">
+                            Error rendering content. Showing raw text.
+                        </div>
+                        <pre class="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg">${rawContent}</pre>
+                    `;
+                }
+            } else {
+                contentElement.innerHTML = `<pre class="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg">${rawContent}</pre>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderMarkdown);
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
