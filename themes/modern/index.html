@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{siteName}}</title>
+    <meta name="description" content="{{siteDescription}}">
+    <meta name="keywords" content="{{keyWords}}">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --primary-dark: #1e3d72;
+            --secondary: #6c757d;
+            --accent: #e74c3c;
+            --success: #28a745;
+            --warning: #ffc107;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-section {
+            background: var(--gradient);
+            color: white;
+            padding: 100px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><polygon points="1000,100 1000,0 0,100"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            padding: 80px 0;
+        }
+
+        .article-card {
+            background: white;
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .article-card-img {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .article-card:hover .article-card-img {
+            transform: scale(1.05);
+        }
+
+        .article-card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .article-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .article-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .article-card-excerpt {
+            color: var(--secondary);
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag-badge {
+            background: var(--gradient);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .article-card-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+    {{codeBeforHead}}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top glass-effect">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-blog me-2"></i>{{siteName}}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a href="/admin/" class="btn btn-primary-custom btn-sm">
+                        <i class="fas fa-cog me-1"></i>Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container text-center position-relative">
+            <h1 class="hero-title">{{siteName}}</h1>
+            <p class="hero-subtitle">{{siteDescription}}</p>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title">Latest Articles</h2>
+            <div class="row g-4" id="articles-container">
+                <div class="col-12 text-center">
+                    <div class="loading-spinner"></div>
+                    <p class="text-white mt-2">Loading articles...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function loadArticles() {
+            try {
+                const response = await fetch('/api/articles');
+                if (!response.ok) throw new Error('Failed to load articles');
+                const articles = await response.json();
+                const container = document.getElementById('articles-container');
+                
+                if (articles.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="empty-state glass-effect rounded-3">
+                                <i class="fas fa-newspaper"></i>
+                                <h3 class="h4 text-dark mb-2">No Articles Yet</h3>
+                                <p class="text-muted">Check back later for new content!</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = articles.map(article => {
+                    const imgHtml = article.img ? 
+                        `<img src="${article.img}" class="article-card-img w-100" alt="${article.title}">` : 
+                        `<div class="article-card-img bg-gradient d-flex align-items-center justify-content-center">
+                            <i class="fas fa-file-alt fa-3x text-white"></i>
+                         </div>`;
+                    
+                    return `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="article-card h-100">
+                            ${imgHtml}
+                            <div class="article-card-body">
+                                <h3 class="article-card-title">${article.title}</h3>
+                                <div class="article-card-meta">
+                                    <span><i class="fas fa-calendar me-1"></i> ${new Date(article.createDate).toLocaleDateString()}</span>
+                                    <span class="tag-badge">${article.label}</span>
+                                </div>
+                                <p class="article-card-excerpt">${article.excerpt || ''}</p>
+                                <a href="/article/${article.permalink}" class="btn-primary-custom mt-auto">
+                                    Read More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                const container = document.getElementById('articles-container');
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state glass-effect rounded-3">
+                            <i class="fas fa-exclamation-triangle text-danger"></i>
+                            <h3 class="h4 text-dark mb-2">Error Loading Articles</h3>
+                            <p class="text-muted">Please try again later.</p>
+                            <button onclick="loadArticles()" class="btn-primary-custom mt-2">
+                                <i class="fas fa-redo me-1"></i>Retry
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadArticles);
+    </script>
+    {{codeBeforBody}}
+</body>
+</html>
