@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{siteName}}</title>
+    <meta name="description" content="{{siteDescription}}">
+    <meta name="keywords" content="{{keyWords}}">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06b6d4;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-glass {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .article-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .featured-img {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .article-card:hover .featured-img {
+            transform: scale(1.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 12px 30px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            color: white;
+        }
+        
+        .tag-badge {
+            background: linear-gradient(135deg, var(--accent-color), #3b82f6);
+            color: white;
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        
+        .hero-section {
+            padding: 100px 0 60px;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content-section {
+            padding: 60px 0;
+        }
+        
+        .footer {
+            background: rgba(30, 41, 59, 0.95);
+            color: white;
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold gradient-text" href="/">{{siteName}}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a href="/admin/" class="btn btn-gradient btn-sm">Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">{{siteName}}</h1>
+            <p class="hero-subtitle">{{siteDescription}}</p>
+        </div>
+    </section>
+
+    <!-- Articles Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="row g-4" id="articles-container">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="text-muted">{{copyRight}}</div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        async function loadArticles() {
+            try {
+                const response = await fetch('/api/articles');
+                if (!response.ok) throw new Error('Failed to load articles');
+                const articles = await response.json();
+                const container = document.getElementById('articles-container');
+                
+                if (articles.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center">
+                            <div class="glass-card p-5">
+                                <i class="bi bi-newspaper display-1 text-muted mb-3"></i>
+                                <h3 class="text-muted">No Articles Yet</h3>
+                                <p class="text-muted">Check back later for new content!</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = articles.map(article => {
+                    const imgHtml = article.img ? 
+                        `<img src="${article.img}" class="featured-img w-100" alt="${article.title}">` : 
+                        `<div class="featured-img bg-gradient d-flex align-items-center justify-content-center">
+                            <i class="bi bi-file-text display-4 text-white"></i>
+                         </div>`;
+                    
+                    return `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="article-card glass-card h-100">
+                            ${imgHtml}
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h5 class="card-title fw-bold text-dark">${article.title}</h5>
+                                <p class="card-text text-muted small mb-3">
+                                    <i class="bi bi-calendar me-1"></i> ${new Date(article.createDate).toLocaleDateString()} 
+                                    <span class="tag-badge ms-2">${article.label}</span>
+                                </p>
+                                <p class="card-text text-muted flex-grow-1">${article.excerpt || ''}</p>
+                                <a href="/article/${article.permalink}" class="btn btn-gradient mt-auto">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                const container = document.getElementById('articles-container');
+                container.innerHTML = `
+                    <div class="col-12 text-center">
+                        <div class="glass-card p-5">
+                            <i class="bi bi-exclamation-triangle display-1 text-danger mb-3"></i>
+                            <h3 class="text-danger">Error Loading Articles</h3>
+                            <p class="text-muted">Please try again later.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        loadArticles();
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
