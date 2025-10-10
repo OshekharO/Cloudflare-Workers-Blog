@@ -17,7 +17,7 @@ const OPT = {
     "codeBeforBody": ``,
     "commentCode": ``,
     "widgetOther": ``,
-    "copyRight": `Powered by <a href="https://www.cloudflare.com">CF Workers</a>`,
+    "copyRight": `Powered by CF Workers`,
     "robots": `User-agent: *\nDisallow: /admin`
 };
 
