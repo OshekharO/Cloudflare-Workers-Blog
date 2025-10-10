@@ -67,15 +67,10 @@ class Blog {
             await this.put('SYSTEM_INDEX_NUM', (currentNum + 1).toString());
         }
 
-        // Store the original markdown content
         article.contentMarkdown = article.content;
-        
-        // Create excerpt from plain text
-        const plainText = article.content.replace(/[#*`\[\]]/g, '').replace(/\n/g, ' ').trim();
+        const plainText = this.stripMarkdown(article.content);
         article.excerpt = plainText.substring(0, OPT.readMoreLength) + (plainText.length > OPT.readMoreLength ? '...' : '');
-
         await this.put(article.id, article);
-
         const index = await this.listArticles();
         const existingIndex = index.findIndex(item => item.id === article.id);
         
@@ -111,14 +106,13 @@ class Blog {
     async fetchThemeTemplate(templateName) {
         const cacheKey = `${OPT.themeURL}${templateName}`;
         
-        // Check cache first
         if (this.themeCache.has(cacheKey)) {
             return this.themeCache.get(cacheKey);
         }
 
         const response = await fetch(`${OPT.themeURL}${templateName}.html`, {
             cf: {
-                cacheTtl: 300 // Cache for 5 minutes
+                cacheTtl: 300
             }
         });
         
@@ -127,11 +121,33 @@ class Blog {
         }
         
         const template = await response.text();
-        
-        // Cache the template
         this.themeCache.set(cacheKey, template);
-        
         return template;
+    }
+
+    stripMarkdown(markdown) {
+        if (!markdown) return '';
+        let plainText = markdown;
+        plainText = plainText.replace(/```[\s\S]*?```/g, '');
+        plainText = plainText.replace(/`([^`]+)`/g, '$1');
+        plainText = plainText.replace(/^#{1,6}\s+/gm, '');
+        plainText = plainText.replace(/^[-*_]{3,}\s*$/gm, '');
+        plainText = plainText.replace(/^\s*>+/gm, '');
+        plainText = plainText.replace(/(\*\*|__)(.*?)\1/g, '$2');
+        plainText = plainText.replace(/(\*|_)(.*?)\1/g, '$2');
+        plainText = plainText.replace(/~~(.*?)~~/g, '$1');
+        plainText = plainText.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        plainText = plainText.replace(/!\[([^\]]+)\]\([^)]+\)/g, '$1');
+        plainText = plainText.replace(/\[([^\]]+)\]\[.*?\]/g, '$1');
+        plainText = plainText.replace(/^\s*[-*+]\s+/gm, '');
+        plainText = plainText.replace(/^\s*\d+\.\s+/gm, '');
+        plainText = plainText.replace(/\|.*?\|/g, '');
+        plainText = plainText.replace(/[-:|]+/g, '');
+        plainText = plainText.replace(/\n+/g, ' ');
+        plainText = plainText.replace(/\s+/g, ' ');
+        plainText = plainText.trim();
+        plainText = plainText.replace(/^[\s#>*\-+]*/, '');
+        return plainText;
     }
 
     escapeHtml(unsafe) {
@@ -142,7 +158,6 @@ class Blog {
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
-        // Don't escape newlines - let the frontend handle them
     }
 
     renderTemplate(template, data) {
