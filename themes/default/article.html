@@ -13,6 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Marked.js for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     
     <style>
         :root {
@@ -44,8 +47,8 @@
         }
         
         .article-content {
-            line-height: 1.8;
-            font-size: 1.1rem;
+            line-height: 1.7;
+            font-size: 1.05rem;
             color: #374151;
         }
         
@@ -54,32 +57,44 @@
             height: auto;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin: 2rem 0;
+            margin: 1.5rem 0;
         }
         
-        .article-content h1, .article-content h2, .article-content h3 {
-            color: var(--dark-color);
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-        
+        /* Proper heading sizes */
         .article-content h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            border-bottom: 3px solid var(--primary-color);
+            color: var(--dark-color);
+            margin: 2rem 0 1rem 0;
+            border-bottom: 2px solid var(--primary-color);
             padding-bottom: 0.5rem;
         }
         
         .article-content h2 {
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: 600;
+            color: var(--dark-color);
+            margin: 1.8rem 0 1rem 0;
             border-left: 4px solid var(--primary-color);
             padding-left: 1rem;
         }
         
         .article-content h3 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 500;
+            color: var(--dark-color);
+            margin: 1.5rem 0 0.8rem 0;
+        }
+        
+        .article-content h4 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            margin: 1.2rem 0 0.6rem 0;
+        }
+        
+        .article-content p {
+            margin-bottom: 1.2rem;
         }
         
         .article-content blockquote {
@@ -104,31 +119,34 @@
         .article-content pre {
             background: #1f2937;
             color: #f9fafb;
-            padding: 1.5rem;
+            padding: 1.2rem;
             border-radius: 8px;
             overflow-x: auto;
-            margin: 1.5rem 0;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
         }
         
         .article-content pre code {
             background: none;
             color: inherit;
             padding: 0;
+            font-size: 0.9rem;
         }
         
         .article-content ul, .article-content ol {
-            padding-left: 1.5rem;
+            padding-left: 1.8rem;
             margin: 1rem 0;
         }
         
         .article-content li {
-            margin: 0.5rem 0;
+            margin: 0.4rem 0;
         }
         
         .article-content table {
             width: 100%;
             border-collapse: collapse;
             margin: 1.5rem 0;
+            font-size: 0.95rem;
         }
         
         .article-content table th,
@@ -141,6 +159,15 @@
         .article-content table th {
             background: #f9fafb;
             font-weight: 600;
+        }
+        
+        .article-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .article-content a:hover {
+            text-decoration: underline;
         }
         
         .btn-gradient {
@@ -251,21 +278,30 @@
         function renderMarkdown() {
             const contentElement = document.getElementById('article-content');
             const rawContentElement = document.getElementById('raw-content');
-            const rawContent = rawContentElement.textContent;
+            
+            // Get the raw content and unescape newlines
+            let rawContent = rawContentElement.textContent;
+            rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
             
             if (!rawContent || rawContent.trim() === '') {
                 contentElement.innerHTML = '<div class="alert alert-warning">No content available.</div>';
                 return;
             }
             
-            if (window.marked) {
-                // Use Marked.js if available
+            if (window.marked && window.hljs) {
+                // Use Marked.js with syntax highlighting
                 try {
                     // Configure marked options
                     marked.setOptions({
                         highlight: function(code, lang) {
-                            // Simple syntax highlighting fallback
-                            return `<pre><code class="language-${lang}">${code}</code></pre>`;
+                            if (lang && hljs.getLanguage(lang)) {
+                                try {
+                                    return hljs.highlight(code, { language: lang }).value;
+                                } catch (err) {
+                                    console.warn('Error highlighting code:', err);
+                                }
+                            }
+                            return hljs.highlightAuto(code).value;
                         },
                         breaks: true,
                         gfm: true
@@ -273,18 +309,40 @@
                     
                     const htmlContent = marked.parse(rawContent);
                     contentElement.innerHTML = htmlContent;
+                    
+                    // Apply additional styling after rendering
+                    applyPostRenderStyles();
                 } catch (error) {
                     console.error('Error parsing markdown:', error);
                     // Fallback: display raw content with basic formatting
                     contentElement.innerHTML = `<div class="alert alert-warning">
                         <h5>Error rendering content</h5>
-                        <pre>${rawContent}</pre>
+                        <pre style="white-space: pre-wrap;">${rawContent}</pre>
                     </div>`;
                 }
             } else {
-                // Fallback: display raw content
-                contentElement.innerHTML = `<pre>${rawContent}</pre>`;
+                // Fallback: display raw content with preserved formatting
+                contentElement.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${rawContent}</pre>`;
             }
+        }
+        
+        // Apply additional styles after markdown is rendered
+        function applyPostRenderStyles() {
+            // Ensure code blocks have proper styling
+            const codeBlocks = document.querySelectorAll('pre code');
+            codeBlocks.forEach(block => {
+                if (!block.classList.contains('hljs')) {
+                    block.classList.add('hljs');
+                }
+            });
+            
+            // Ensure proper spacing for lists
+            const lists = document.querySelectorAll('ul, ol');
+            lists.forEach(list => {
+                if (!list.style.marginBottom) {
+                    list.style.marginBottom = '1.2rem';
+                }
+            });
         }
         
         // Render content when page loads
