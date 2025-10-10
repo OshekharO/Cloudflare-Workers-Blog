@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}} Article - Admin</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- EasyMDE -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06b6d4;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .sidebar .list-group-item {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            margin: 4px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .list-group-item:hover,
+        .sidebar .list-group-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .editor-wrapper {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .EasyMDEContainer .CodeMirror {
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .EasyMDEContainer .editor-toolbar {
+            border: 1px solid #e5e7eb;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand"><i class="bi bi-pencil me-2"></i> {{action}} Article</span>
+            <div>
+                <a href="/admin/" class="btn btn-outline-light btn-sm me-2">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Articles
+                </a>
+                <a href="/" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-eye me-1"></i> View Blog
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-0">
+                <div class="p-4">
+                    <h5 class="mb-4">Admin Panel</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="/admin/" class="list-group-item list-group-item-action">
+                            <i class="bi bi-list-ul me-2"></i> Articles
+                        </a>
+                        <a href="/admin/edit" class="list-group-item list-group-item-action active">
+                            <i class="bi bi-plus-circle me-2"></i> {{action}} Article
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 mt-3">
+                <div class="card">
+                    <div class="card-header bg-white border-bottom-0 py-4">
+                        <h4 class="mb-0"><i class="bi bi-file-text me-2"></i> {{action}} Article</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="article-form" class="needs-validation" novalidate>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="permalink" class="form-label fw-semibold">Permalink *</label>
+                                    <input type="text" class="form-control" id="permalink" required 
+                                           pattern="[a-z0-9-]+" title="Only lowercase letters, numbers, and hyphens allowed">
+                                    <div class="form-text">URL-friendly identifier (e.g., "my-article-title")</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="label" class="form-label fw-semibold">Label *</label>
+                                    <select class="form-select" id="label" required>
+                                        <option value="">Choose a label...</option>
+                                        <option value="Technology">Technology</option>
+                                        <option value="Lifestyle">Lifestyle</option>
+                                        <option value="Travel">Travel</option>
+                                        <option value="Food">Food</option>
+                                        <option value="Business">Business</option>
+                                        <option value="Science">Science</option>
+                                        <option value="Health">Health</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="title" class="form-label fw-semibold">Title *</label>
+                                <input type="text" class="form-control" id="title" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="img" class="form-label fw-semibold">Featured Image URL</label>
+                                <input type="url" class="form-control" id="img" 
+                                       placeholder="https://example.com/image.jpg">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="createDate" class="form-label fw-semibold">Publish Date *</label>
+                                <input type="datetime-local" class="form-control" id="createDate" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="content" class="form-label fw-semibold">Content *</label>
+                                <div class="editor-wrapper">
+                                    <textarea id="content"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2 justify-content-end pt-3 border-top">
+                                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle me-1"></i> Save Article
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        let easyMDE;
+        let isEditing = false;
+        let currentPermalink = '';
+
+        // Initialize EasyMDE
+        easyMDE = new EasyMDE({ 
+            element: document.getElementById('content'),
+            spellChecker: false,
+            status: false,
+            autosave: {
+                enabled: false
+            },
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ]
+        });
+
+        // Check if editing existing article
+        const urlParams = new URLSearchParams(window.location.search);
+        const permalink = urlParams.get('permalink');
+        
+        if (permalink) {
+            isEditing = true;
+            currentPermalink = permalink;
+            document.title = 'Edit Article - Admin';
+            document.querySelector('nav .navbar-brand').innerHTML = '<i class="bi bi-pencil me-2"></i> Edit Article';
+            document.querySelector('.card-header h4').textContent = 'Edit Article';
+            loadArticle(permalink);
+        }
+
+        async function loadArticle(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) throw new Error('Article not found');
+                
+                const article = await response.json();
+                
+                document.getElementById('permalink').value = article.permalink;
+                document.getElementById('permalink').readOnly = true;
+                document.getElementById('title').value = article.title;
+                document.getElementById('img').value = article.img || '';
+                document.getElementById('label').value = article.label;
+                document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+                
+                easyMDE.value(article.content);
+            } catch (error) {
+                console.error('Error loading article:', error);
+                alert('Error loading article');
+                window.location.href = '/admin/';
+            }
+        }
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (!e.target.checkValidity()) {
+                e.target.classList.add('was-validated');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Saving...';
+
+            const formData = {
+                permalink: document.getElementById('permalink').value,
+                title: document.getElementById('title').value,
+                img: document.getElementById('img').value,
+                label: document.getElementById('label').value,
+                createDate: document.getElementById('createDate').value,
+                content: easyMDE.value()
+            };
+
+            try {
+                const url = isEditing ? '/api/articles/' + currentPermalink : '/api/articles';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert(isEditing ? 'Article updated successfully!' : 'Article created successfully!');
+                    window.location.href = '/admin/';
+                } else {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving article: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Save Article';
+            }
+        });
+
+        // Set default date to now
+        document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
