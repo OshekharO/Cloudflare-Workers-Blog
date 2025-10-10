@@ -12,7 +12,7 @@ const OPT = {
     "readMoreLength": 150,
     "cacheTime": 60 * 60 * 24 * 0.5,
     "themeURL": "https://raw.githubusercontent.com/OshekharO/CF-BLOG/main/themes/default/",
-    "html404": `<div class="container text-center mt-5"><h1>404</h1><p>Page not found</p></div>`,
+    "html404": ``,
     "codeBeforHead": ``,
     "codeBeforBody": ``,
     "commentCode": ``,
@@ -68,9 +68,12 @@ class Blog {
         }
 
         article.contentMarkdown = article.content;
+        
         const plainText = this.stripMarkdown(article.content);
         article.excerpt = plainText.substring(0, OPT.readMoreLength) + (plainText.length > OPT.readMoreLength ? '...' : '');
+
         await this.put(article.id, article);
+
         const index = await this.listArticles();
         const existingIndex = index.findIndex(item => item.id === article.id);
         
@@ -121,13 +124,17 @@ class Blog {
         }
         
         const template = await response.text();
+        
         this.themeCache.set(cacheKey, template);
+        
         return template;
     }
 
     stripMarkdown(markdown) {
         if (!markdown) return '';
+        
         let plainText = markdown;
+        
         plainText = plainText.replace(/```[\s\S]*?```/g, '');
         plainText = plainText.replace(/`([^`]+)`/g, '$1');
         plainText = plainText.replace(/^#{1,6}\s+/gm, '');
@@ -147,6 +154,7 @@ class Blog {
         plainText = plainText.replace(/\s+/g, ' ');
         plainText = plainText.trim();
         plainText = plainText.replace(/^[\s#>*\-+]*/, '');
+        
         return plainText;
     }
 
@@ -163,22 +171,18 @@ class Blog {
     renderTemplate(template, data) {
         let html = template;
         
-        // Replace all template variables
         for (const [key, value] of Object.entries(data)) {
             const regex = new RegExp(`{{${key}}}`, 'g');
-            // Don't escape content - let the frontend handle it properly
             const replacement = key === 'content' ? value : this.escapeHtml(value.toString());
             html = html.replace(regex, replacement || '');
         }
         
-        // Handle conditional image display
         if (data.img) {
             html = html.replace(/{{#img}}([\s\S]*?){{\/img}}/g, '$1');
         } else {
             html = html.replace(/{{#img}}[\s\S]*?{{\/img}}/g, '');
         }
         
-        // Clean up any remaining template tags
         html = html.replace(/{{[^}]*}}/g, '');
         
         return html;
@@ -187,7 +191,6 @@ class Blog {
 
 const blog = new Blog();
 
-// Authentication helper
 function authenticate(request) {
     const url = new URL(request.url);
     
@@ -206,7 +209,6 @@ function authenticate(request) {
     return true;
 }
 
-// Main worker
 export default {
     async fetch(request, env, ctx) {
         blog.setKV(env.BLOG_STORE);
@@ -214,13 +216,11 @@ export default {
         const url = new URL(request.url);
         const path = url.pathname;
 
-        // Handle theme switching via query parameter
         const themeParam = url.searchParams.get('theme');
         if (themeParam) {
             OPT.themeURL = `https://raw.githubusercontent.com/OshekharO/CF-BLOG/main/themes/${themeParam}/`;
         }
 
-        // Handle authentication for admin routes ONLY
         if (path.startsWith('/admin')) {
             if (!authenticate(request)) {
                 return new Response('Authentication required', {
@@ -232,12 +232,10 @@ export default {
             }
         }
 
-        // API Routes - PUBLIC ACCESS
         if (path.startsWith('/api/')) {
             return handleAPI(request, path);
         }
 
-        // Static Routes
         switch (path) {
             case '/':
                 return renderIndex();
@@ -257,10 +255,7 @@ export default {
                 if (path.startsWith('/article/')) {
                     return renderArticle(path);
                 }
-                return new Response(OPT.html404, {
-                    status: 404,
-                    headers: { 'Content-Type': 'text/html' }
-                });
+                return render404();
         }
 
         async function handleAPI(request, path) {
@@ -410,10 +405,7 @@ export default {
                 const article = articles.find(a => a.permalink === permalink);
                 
                 if (!article) {
-                    return new Response(OPT.html404, {
-                        status: 404,
-                        headers: { 'Content-Type': 'text/html' }
-                    });
+                    return render404();
                 }
                 
                 const fullArticle = await blog.getArticle(article.id);
@@ -424,7 +416,7 @@ export default {
                     createDate: new Date(fullArticle.createDate).toLocaleDateString(),
                     label: fullArticle.label,
                     img: fullArticle.img || '',
-                    content: fullArticle.contentMarkdown || fullArticle.content, // Use markdown content
+                    content: fullArticle.contentMarkdown || fullArticle.content,
                     copyRight: OPT.copyRight,
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
@@ -436,6 +428,29 @@ export default {
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
+            }
+        }
+
+        async function render404() {
+            try {
+                const template = await blog.fetchThemeTemplate('404');
+                const data = {
+                    siteName: OPT.siteName,
+                    copyRight: OPT.copyRight,
+                    codeBeforHead: OPT.codeBeforHead || '',
+                    codeBeforBody: OPT.codeBeforBody || ''
+                };
+                
+                const html = blog.renderTemplate(template, data);
+                return new Response(html, {
+                    status: 404,
+                    headers: { 'Content-Type': 'text/html' }
+                });
+            } catch (error) {
+                return new Response('404 - Page Not Found', {
+                    status: 404,
+                    headers: { 'Content-Type': 'text/plain' }
+                });
             }
         }
 
