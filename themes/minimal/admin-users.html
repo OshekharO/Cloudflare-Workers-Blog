@@ -195,264 +195,295 @@
             </div>
         </div>
     </div>
+<script>
+    let currentAdmins = [];
 
-    <script>
-        let currentAdmins = [];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            loadAdmins();
-            
-            // Search functionality
-            document.getElementById('search-admins').addEventListener('input', function(e) {
-                filterAdmins(e.target.value);
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAdmins();
+        
+        // Search functionality
+        document.getElementById('search-admins').addEventListener('input', function(e) {
+            filterAdmins(e.target.value);
         });
+    });
 
-        async function loadAdmins() {
-            try {
-                const response = await fetch('/api/admins');
-                if (!response.ok) throw new Error('Failed to load admins');
-                currentAdmins = await response.json();
-                displayAdmins(currentAdmins);
-                updateStats();
-            } catch (error) {
-                console.error('Error loading admins:', error);
-                showNotification('Error loading admins', 'error');
+    async function loadAdmins() {
+        try {
+            const response = await fetch('/api/admins');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    showNotification('Authentication required. Please log in again.', 'error');
+                    return;
+                }
+                if (response.status === 403) {
+                    showNotification('Access denied. Only superadmins can manage users.', 'error');
+                    return;
+                }
+                throw new Error('Failed to load admins');
             }
+            currentAdmins = await response.json();
+            displayAdmins(currentAdmins);
+            updateStats();
+        } catch (error) {
+            console.error('Error loading admins:', error);
+            showNotification('Error loading admins: ' + error.message, 'error');
+        }
+    }
+
+    function displayAdmins(admins) {
+        const container = document.getElementById('admins-list');
+        
+        if (admins.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <i class="ri-user-search-line text-4xl text-gray-300 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-600 mb-2">No Admin Users</h3>
+                    <p class="text-gray-500 mb-4">Get started by adding your first admin user</p>
+                    <button onclick="openAddAdminModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="ri-user-add-line mr-1"></i>Add Admin
+                    </button>
+                </div>
+            `;
+            return;
         }
 
-        function displayAdmins(admins) {
-            const container = document.getElementById('admins-list');
-            
-            if (admins.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12">
-                        <i class="ri-user-search-line text-4xl text-gray-300 mb-3"></i>
-                        <h3 class="text-lg font-semibold text-gray-600 mb-2">No Admin Users</h3>
-                        <p class="text-gray-500 mb-4">Get started by adding your first admin user</p>
-                        <button onclick="openAddAdminModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            <i class="ri-user-add-line mr-1"></i>Add Admin
+        container.innerHTML = admins.map(admin => `
+            <div class="border-b border-gray-100 last:border-0 py-4 admin-item">
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                    ${admin.username.charAt(0).toUpperCase()}
+                                </div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h3 class="font-medium text-gray-900 truncate">${admin.username}</h3>
+                                <p class="text-gray-500 text-sm truncate">${admin.email}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2 flex-wrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                admin.role === 'superadmin' 
+                                    ? 'bg-orange-100 text-orange-800' 
+                                    : 'bg-blue-100 text-blue-800'
+                            }">
+                                <i class="ri-${admin.role === 'superadmin' ? 'shield-keyhole-line' : 'user-line'} mr-1"></i>
+                                ${admin.role}
+                            </span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                admin.status === 'active'
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-gray-100 text-gray-800'
+                            }">
+                                <i class="ri-${admin.status === 'active' ? 'check-line' : 'close-line'} mr-1"></i>
+                                ${admin.status}
+                            </span>
+                            <span class="text-gray-500 text-sm">
+                                <i class="ri-calendar-line mr-1"></i>
+                                Joined ${new Date(admin.createdAt).toLocaleDateString()}
+                            </span>
+                            ${admin.lastLogin ? `
+                                <span class="text-gray-500 text-sm">
+                                    <i class="ri-login-box-line mr-1"></i>
+                                    Last login ${new Date(admin.lastLogin).toLocaleDateString()}
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 sm:ml-4">
+                        <button onclick="editAdmin('${admin.id}')" class="text-blue-600 hover:text-blue-700 p-2" title="Edit">
+                            <i class="ri-edit-line"></i>
+                        </button>
+                        <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
+                                class="text-red-600 hover:text-red-700 p-2" 
+                                title="Delete"
+                                ${admin.role === 'superadmin' ? 'disabled' : ''}>
+                            <i class="ri-delete-bin-line"></i>
                         </button>
                     </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = admins.map(admin => `
-                <div class="border-b border-gray-100 last:border-0 py-4 admin-item">
-                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <div class="flex-shrink-0">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                        ${admin.username.charAt(0).toUpperCase()}
-                                    </div>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h3 class="font-medium text-gray-900 truncate">${admin.username}</h3>
-                                    <p class="text-gray-500 text-sm truncate">${admin.email}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2 flex-wrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                    admin.role === 'superadmin' 
-                                        ? 'bg-orange-100 text-orange-800' 
-                                        : 'bg-blue-100 text-blue-800'
-                                }">
-                                    <i class="ri-${admin.role === 'superadmin' ? 'shield-keyhole-line' : 'user-line'} mr-1"></i>
-                                    ${admin.role}
-                                </span>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                    admin.status === 'active'
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-gray-100 text-gray-800'
-                                }">
-                                    <i class="ri-${admin.status === 'active' ? 'check-line' : 'close-line'} mr-1"></i>
-                                    ${admin.status}
-                                </span>
-                                <span class="text-gray-500 text-sm">
-                                    <i class="ri-calendar-line mr-1"></i>
-                                    Joined ${new Date(admin.createdAt).toLocaleDateString()}
-                                </span>
-                                ${admin.lastLogin ? `
-                                    <span class="text-gray-500 text-sm">
-                                        <i class="ri-login-box-line mr-1"></i>
-                                        Last login ${new Date(admin.lastLogin).toLocaleDateString()}
-                                    </span>
-                                ` : ''}
-                            </div>
-                        </div>
-                        <div class="flex space-x-2 sm:ml-4">
-                            <button onclick="editAdmin('${admin.id}')" class="text-blue-600 hover:text-blue-700 p-2" title="Edit">
-                                <i class="ri-edit-line"></i>
-                            </button>
-                            <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
-                                    class="text-red-600 hover:text-red-700 p-2" 
-                                    title="Delete"
-                                    ${admin.role === 'superadmin' ? 'disabled' : ''}>
-                                <i class="ri-delete-bin-line"></i>
-                            </button>
-                        </div>
-                    </div>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
+    }
 
-        function filterAdmins(searchTerm) {
-            const filteredAdmins = currentAdmins.filter(admin => 
-                admin.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                admin.role.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            displayAdmins(filteredAdmins);
-        }
+    function filterAdmins(searchTerm) {
+        const filteredAdmins = currentAdmins.filter(admin => 
+            admin.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            admin.role.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        displayAdmins(filteredAdmins);
+    }
 
-        function updateStats() {
-            const totalAdmins = currentAdmins.length;
-            const superadminCount = currentAdmins.filter(admin => admin.role === 'superadmin').length;
-            
-            document.getElementById('total-admins').textContent = totalAdmins;
-            document.getElementById('superadmin-count').textContent = superadminCount;
-        }
+    function updateStats() {
+        const totalAdmins = currentAdmins.length;
+        const superadminCount = currentAdmins.filter(admin => admin.role === 'superadmin').length;
+        
+        document.getElementById('total-admins').textContent = totalAdmins;
+        document.getElementById('superadmin-count').textContent = superadminCount;
+    }
 
-        // Modal functions
-        function openAddAdminModal() {
-            document.getElementById('add-admin-modal').classList.remove('hidden');
-            document.getElementById('add-admin-form').reset();
-        }
+    // Modal functions
+    function openAddAdminModal() {
+        document.getElementById('add-admin-modal').classList.remove('hidden');
+        document.getElementById('add-admin-form').reset();
+    }
 
-        function closeAddAdminModal() {
-            document.getElementById('add-admin-modal').classList.add('hidden');
-        }
+    function closeAddAdminModal() {
+        document.getElementById('add-admin-modal').classList.add('hidden');
+    }
 
-        function openEditAdminModal() {
-            document.getElementById('edit-admin-modal').classList.remove('hidden');
-        }
+    function openEditAdminModal() {
+        document.getElementById('edit-admin-modal').classList.remove('hidden');
+    }
 
-        function closeEditAdminModal() {
-            document.getElementById('edit-admin-modal').classList.add('hidden');
-        }
+    function closeEditAdminModal() {
+        document.getElementById('edit-admin-modal').classList.add('hidden');
+    }
 
-        // Admin management functions
-        async function addAdmin() {
-            const formData = {
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value,
-                email: document.getElementById('email').value,
-                role: document.getElementById('role').value
-            };
+    // Admin management functions
+    async function addAdmin() {
+        const formData = {
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            email: document.getElementById('email').value,
+            role: document.getElementById('role').value
+        };
 
-            try {
-                const response = await fetch('/api/admins', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + btoa('admin:admin')
-                    },
-                    body: JSON.stringify(formData)
-                });
+        try {
+            const response = await fetch('/api/admins', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
 
-                if (response.ok) {
-                    showNotification('Admin created successfully');
-                    closeAddAdminModal();
-                    loadAdmins();
-                } else {
-                    const error = await response.json();
-                    throw new Error(error.error);
+            if (response.ok) {
+                showNotification('Admin created successfully');
+                closeAddAdminModal();
+                loadAdmins();
+            } else {
+                if (response.status === 401) {
+                    showNotification('Authentication required. Please log in again.', 'error');
+                    return;
                 }
-            } catch (error) {
-                showNotification('Error creating admin: ' + error.message, 'error');
-            }
-        }
-
-        async function editAdmin(adminId) {
-            const admin = currentAdmins.find(a => a.id === adminId);
-            if (!admin) return;
-
-            document.getElementById('edit-admin-id').value = admin.id;
-            document.getElementById('edit-username').value = admin.username;
-            document.getElementById('edit-email').value = admin.email;
-            document.getElementById('edit-role').value = admin.role;
-            document.getElementById('edit-status').value = admin.status;
-
-            openEditAdminModal();
-        }
-
-        async function updateAdmin() {
-            const adminId = document.getElementById('edit-admin-id').value;
-            const updateData = {
-                email: document.getElementById('edit-email').value,
-                role: document.getElementById('edit-role').value,
-                status: document.getElementById('edit-status').value
-            };
-
-            try {
-                const response = await fetch('/api/admins/' + adminId, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Basic ' + btoa('admin:admin')
-                    },
-                    body: JSON.stringify(updateData)
-                });
-
-                if (response.ok) {
-                    showNotification('Admin updated successfully');
-                    closeEditAdminModal();
-                    loadAdmins();
-                } else {
-                    const error = await response.json();
-                    throw new Error(error.error);
+                if (response.status === 403) {
+                    showNotification('Access denied. Only superadmins can manage users.', 'error');
+                    return;
                 }
-            } catch (error) {
-                showNotification('Error updating admin: ' + error.message, 'error');
+                const error = await response.text();
+                throw new Error(error);
             }
+        } catch (error) {
+            console.error('Error creating admin:', error);
+            showNotification('Error creating admin: ' + error.message, 'error');
         }
+    }
 
-        async function deleteAdmin(adminId, username) {
-            if (!confirm(`Are you sure you want to delete admin "${username}"? This action cannot be undone.`)) return;
-            
-            try {
-                const response = await fetch('/api/admins/' + adminId, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': 'Basic ' + btoa('admin:admin')
-                    }
-                });
-                
-                if (response.ok) {
-                    showNotification('Admin deleted successfully');
-                    loadAdmins();
-                } else {
-                    const error = await response.json();
-                    throw new Error(error.error);
+    async function editAdmin(adminId) {
+        const admin = currentAdmins.find(a => a.id === adminId);
+        if (!admin) return;
+
+        document.getElementById('edit-admin-id').value = admin.id;
+        document.getElementById('edit-username').value = admin.username;
+        document.getElementById('edit-email').value = admin.email;
+        document.getElementById('edit-role').value = admin.role;
+        document.getElementById('edit-status').value = admin.status;
+
+        openEditAdminModal();
+    }
+
+    async function updateAdmin() {
+        const adminId = document.getElementById('edit-admin-id').value;
+        const updateData = {
+            email: document.getElementById('edit-email').value,
+            role: document.getElementById('edit-role').value,
+            status: document.getElementById('edit-status').value
+        };
+
+        try {
+            const response = await fetch('/api/admins/' + adminId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updateData)
+            });
+
+            if (response.ok) {
+                showNotification('Admin updated successfully');
+                closeEditAdminModal();
+                loadAdmins();
+            } else {
+                if (response.status === 401) {
+                    showNotification('Authentication required. Please log in again.', 'error');
+                    return;
                 }
-            } catch (error) {
-                showNotification('Error deleting admin: ' + error.message, 'error');
+                if (response.status === 403) {
+                    showNotification('Access denied. Only superadmins can manage users.', 'error');
+                    return;
+                }
+                const error = await response.text();
+                throw new Error(error);
             }
+        } catch (error) {
+            console.error('Error updating admin:', error);
+            showNotification('Error updating admin: ' + error.message, 'error');
         }
+    }
 
-        function showNotification(message, type = 'success') {
-            // Remove existing notifications
-            document.querySelectorAll('.notification').forEach(el => el.remove());
+    async function deleteAdmin(adminId, username) {
+        if (!confirm(`Are you sure you want to delete admin "${username}"? This action cannot be undone.`)) return;
+        
+        try {
+            const response = await fetch('/api/admins/' + adminId, {
+                method: 'DELETE'
+            });
             
-            const notification = document.createElement('div');
-            notification.className = `notification fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium z-50 ${
-                type === 'error' ? 'bg-red-500' : 
-                type === 'warning' ? 'bg-yellow-500' : 
-                'bg-green-500'
-            }`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
+            if (response.ok) {
+                showNotification('Admin deleted successfully');
+                loadAdmins();
+            } else {
+                if (response.status === 401) {
+                    showNotification('Authentication required. Please log in again.', 'error');
+                    return;
+                }
+                if (response.status === 403) {
+                    showNotification('Access denied. Only superadmins can manage users.', 'error');
+                    return;
+                }
+                const error = await response.text();
+                throw new Error(error);
+            }
+        } catch (error) {
+            console.error('Error deleting admin:', error);
+            showNotification('Error deleting admin: ' + error.message, 'error');
+        }
+    }
+
+    function showNotification(message, type = 'success') {
+        // Remove existing notifications
+        document.querySelectorAll('.notification').forEach(el => el.remove());
+        
+        const notification = document.createElement('div');
+        notification.className = `notification fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium z-50 ${
+            type === 'error' ? 'bg-red-500' : 
+            type === 'warning' ? 'bg-yellow-500' : 
+            'bg-green-500'
+        }`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
             setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
     </script>
     {{codeBeforBody}}
 </body>
