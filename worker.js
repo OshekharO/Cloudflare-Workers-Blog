@@ -77,7 +77,7 @@ class Blog {
 
         await this.put(article.id, article);
 
-        // Only add to main index if published
+        // Handle index updates
         const index = await this.listArticles();
         const existingIndex = index.findIndex(item => item.id === article.id);
         
@@ -93,15 +93,16 @@ class Blog {
         };
 
         if (existingIndex >= 0) {
+            // Update existing article
             index[existingIndex] = indexItem;
-        } else if (article.status === 'published') {
+        } else {
+            // Add new article to index
             index.unshift(indexItem);
         }
 
-        // Remove drafts from main index
-        const filteredIndex = index.filter(item => item.status !== 'draft');
-        filteredIndex.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
-        await this.put('SYSTEM_INDEX_LIST', filteredIndex);
+        // Save the complete index (including drafts)
+        index.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+        await this.put('SYSTEM_INDEX_LIST', index);
 
         return article.id;
     }
@@ -111,6 +112,23 @@ class Blog {
         const index = await this.listArticles();
         const filtered = index.filter(item => item.id !== id);
         await this.put('SYSTEM_INDEX_LIST', filtered);
+    }
+
+    // New method to get all articles including drafts for admin
+    async listAllArticles() {
+        return await this.listArticles(); // Now includes drafts
+    }
+
+    // Method to get only published articles
+    async listPublishedArticles() {
+        const articles = await this.listArticles();
+        return articles.filter(article => article.status !== 'draft');
+    }
+
+    // Method to get only drafts
+    async listDraftArticles() {
+        const articles = await this.listArticles();
+        return articles.filter(article => article.status === 'draft');
     }
 
     async fetchThemeTemplate(templateName) {
@@ -274,22 +292,14 @@ export default {
             try {
                 if (path === '/api/articles' && method === 'GET') {
                     const showDrafts = url.searchParams.get('drafts') === 'true';
-                    let articles = await blog.listArticles();
                     
+                    let articles;
                     if (showDrafts) {
-                        // For drafts, we need to get all articles and filter
-                        const allArticles = [];
-                        const index = await blog.listArticles();
-                        
-                        for (const item of index) {
-                            if (item.status === 'draft') {
-                                allArticles.push(item);
-                            }
-                        }
-                        articles = allArticles;
+                        // Get only drafts for admin drafts tab
+                        articles = await blog.listDraftArticles();
                     } else {
-                        // For published articles, filter out drafts
-                        articles = articles.filter(article => article.status !== 'draft');
+                        // Get published articles for public site and admin published tab
+                        articles = await blog.listPublishedArticles();
                     }
                     
                     return jsonResponse(articles);
@@ -307,10 +317,15 @@ export default {
 
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'GET') {
                     const permalink = path.split('/').pop();
-                    const articles = await blog.listArticles();
+                    const articles = await blog.listAllArticles(); // Search in all articles including drafts
                     const article = articles.find(a => a.permalink === permalink);
                     
                     if (!article) {
+                        return jsonResponse({ error: 'Article not found' }, 404);
+                    }
+                    
+                    // Don't serve draft articles to public
+                    if (!path.startsWith('/admin') && article.status === 'draft') {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
@@ -326,7 +341,7 @@ export default {
                     const permalink = path.split('/').pop();
                     const article = await request.json();
                     
-                    const articles = await blog.listArticles();
+                    const articles = await blog.listAllArticles();
                     const existing = articles.find(a => a.permalink === permalink);
                     if (!existing) {
                         return jsonResponse({ error: 'Article not found' }, 404);
@@ -343,7 +358,7 @@ export default {
                     }
                     
                     const permalink = path.split('/').pop();
-                    const articles = await blog.listArticles();
+                    const articles = await blog.listAllArticles();
                     const article = articles.find(a => a.permalink === permalink);
                     
                     if (!article) {
@@ -448,7 +463,7 @@ export default {
             try {
                 const template = await blog.fetchThemeTemplate('article');
                 const permalink = path.split('/').pop();
-                const articles = await blog.listArticles();
+                const articles = await blog.listPublishedArticles(); // Only published articles for public
                 const article = articles.find(a => a.permalink === permalink);
                 
                 if (!article) {
