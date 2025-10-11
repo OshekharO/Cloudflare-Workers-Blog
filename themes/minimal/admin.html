@@ -1,321 +1,548 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - {{siteName}}</title>
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <!-- Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
-
-    <style>
-      body {
-        font-family: "Inter", sans-serif;
-      }
-    </style>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     {{codeBeforHead}}
-  </head>
-  <body class="bg-gray-50 min-h-screen">
-    <!-- Navigation -->
+</head>
+<body class="bg-gray-50 min-h-screen">
     <nav class="bg-white shadow-sm border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <i class="ri-admin-line text-2xl text-blue-600 mr-3"></i>
-            <h1 class="text-xl font-bold text-gray-900">Blog Admin</h1>
-          </div>
-          <a href="/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"> <i class="ri-eye-line mr-1"></i>View Blog </a>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="ri-admin-line text-2xl text-blue-600 mr-3"></i>
+                    <h1 class="text-xl font-bold text-gray-900">Blog Admin</h1>
+                </div>
+                <a href="/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                    <i class="ri-eye-line mr-1"></i>View Blog
+                </a>
+            </div>
         </div>
-      </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="border-b border-gray-200 px-6 py-4">
-          <div class="flex items-center justify-between">
-            <div class="flex space-x-4">
-              <button id="published-tab" class="tab-button px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600">
-                Published
-              </button>
-              <button id="drafts-tab" class="tab-button px-4 py-2 font-medium text-gray-500 border-b-2 border-transparent">
-                Drafts
-              </button>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <a href="/admin/edit" class="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow text-center">
+                <i class="ri-add-line text-xl text-blue-600 mb-2 block"></i>
+                <h3 class="font-semibold text-gray-900 text-sm">New Article</h3>
+            </a>
+            
+            <button onclick="exportArticles()" class="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow text-center">
+                <i class="ri-download-line text-xl text-green-600 mb-2 block"></i>
+                <h3 class="font-semibold text-gray-900 text-sm">Export</h3>
+            </button>
+
+            <button onclick="openImportModal()" class="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow text-center">
+                <i class="ri-upload-line text-xl text-purple-600 mb-2 block"></i>
+                <h3 class="font-semibold text-gray-900 text-sm">Import</h3>
+            </button>
+
+            <button onclick="showDebugInfo()" class="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow text-center">
+                <i class="ri-bug-line text-xl text-orange-600 mb-2 block"></i>
+                <h3 class="font-semibold text-gray-900 text-sm">Debug</h3>
+            </button>
+        </div>
+
+        <!-- Articles Management -->
+        <div class="bg-white rounded-lg border border-gray-200 mb-8">
+            <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+                <h2 class="text-lg font-semibold text-gray-900">Articles</h2>
             </div>
-            <a href="/admin/edit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"> <i class="ri-add-line mr-1"></i>New </a>
-          </div>
+            <div class="p-4 sm:p-6">
+                <div class="flex space-x-4 mb-6 overflow-x-auto">
+                    <button id="published-tab" class="px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
+                        Published
+                    </button>
+                    <button id="drafts-tab" class="px-4 py-2 font-medium text-gray-500 border-b-2 border-transparent whitespace-nowrap">
+                        Drafts
+                    </button>
+                </div>
+
+                <div id="published-list">
+                    <div class="flex justify-center items-center py-12">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                </div>
+
+                <div id="drafts-list" class="hidden">
+                    <div class="flex justify-center items-center py-12">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="published-list" class="p-6">
-          <!-- Loading State -->
-          <div class="flex justify-center items-center py-12">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
-        </div>
+        <!-- Tools -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- SEO Tools -->
+            <div class="bg-white rounded-lg border border-gray-200">
+                <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+                    <h2 class="text-lg font-semibold text-gray-900">SEO Tools</h2>
+                </div>
+                <div class="p-4 sm:p-6">
+                    <div class="space-y-4">
+                        <a href="/rss.xml" target="_blank" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center">
+                                <i class="ri-rss-line text-lg text-pink-600 mr-3"></i>
+                                <div>
+                                    <h3 class="font-medium text-gray-900">RSS Feed</h3>
+                                    <p class="text-gray-600 text-sm">Subscribe to content</p>
+                                </div>
+                            </div>
+                            <i class="ri-external-link-line text-gray-400"></i>
+                        </a>
+                        
+                        <a href="/sitemap.xml" target="_blank" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center">
+                                <i class="ri-map-2-line text-lg text-indigo-600 mr-3"></i>
+                                <div>
+                                    <h3 class="font-medium text-gray-900">Sitemap</h3>
+                                    <p class="text-gray-600 text-sm">Search engine index</p>
+                                </div>
+                            </div>
+                            <i class="ri-external-link-line text-gray-400"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-        <div id="drafts-list" class="p-6 hidden">
-          <!-- Drafts loading state -->
-          <div class="flex justify-center items-center py-12">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
+            <!-- System Tools -->
+            <div class="bg-white rounded-lg border border-gray-200">
+                <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+                    <h2 class="text-lg font-semibold text-gray-900">System Tools</h2>
+                </div>
+                <div class="p-4 sm:p-6">
+                    <div class="space-y-4">
+                        <button onclick="fixMissingArticles()" class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                            <div class="flex items-center">
+                                <i class="ri-tools-line text-lg text-yellow-600 mr-3"></i>
+                                <div>
+                                    <h3 class="font-medium text-gray-900">Fix Articles</h3>
+                                    <p class="text-gray-600 text-sm">Repair missing data</p>
+                                </div>
+                            </div>
+                            <i class="ri-arrow-right-line text-gray-400"></i>
+                        </button>
+                        
+                        <button onclick="showDebugInfo()" class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                            <div class="flex items-center">
+                                <i class="ri-bug-line text-lg text-orange-600 mr-3"></i>
+                                <div>
+                                    <h3 class="font-medium text-gray-900">System Info</h3>
+                                    <p class="text-gray-600 text-sm">Debug information</p>
+                                </div>
+                            </div>
+                            <i class="ri-arrow-right-line text-gray-400"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Import Articles</h3>
+                <button onclick="closeImportModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <input type="file" id="import-file" accept=".json" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                <p class="text-gray-500 text-sm mt-2">Select exported JSON file</p>
+            </div>
+            
+            <div class="flex space-x-3">
+                <button onclick="closeImportModal()" class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    Cancel
+                </button>
+                <button onclick="importArticles()" class="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors">
+                    Import
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Modal -->
+    <div id="debug-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">System Information</h3>
+                <button onclick="closeDebugModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="debug-content" class="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-4">
+                <div class="flex justify-center items-center py-8">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                </div>
+            </div>
+            
+            <div class="flex space-x-3 mt-4">
+                <button onclick="closeDebugModal()" class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    Close
+                </button>
+                <button onclick="fixMissingArticles()" class="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition-colors">
+                    Fix Articles
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-      // Tab functionality
-      document.getElementById("published-tab").addEventListener("click", () => {
-        switchTab("published");
-      });
-
-      document.getElementById("drafts-tab").addEventListener("click", () => {
-        switchTab("drafts");
-      });
-
-      function switchTab(tab) {
-        // Update active tab
-        document.querySelectorAll(".tab-button").forEach((btn) => {
-          btn.classList.remove("text-blue-600", "border-blue-600");
-          btn.classList.add("text-gray-500", "border-transparent");
+        // Tab functionality
+        document.getElementById("published-tab").addEventListener("click", () => {
+            switchTab("published");
         });
 
-        document.getElementById(`${tab}-tab`).classList.add("text-blue-600", "border-blue-600");
-        document.getElementById(`${tab}-tab`).classList.remove("text-gray-500", "border-transparent");
+        document.getElementById("drafts-tab").addEventListener("click", () => {
+            switchTab("drafts");
+        });
 
-        // Show/hide content
-        document.getElementById("published-list").classList.toggle("hidden", tab !== "published");
-        document.getElementById("drafts-list").classList.toggle("hidden", tab !== "drafts");
+        function switchTab(tab) {
+            // Update active tab
+            document.querySelectorAll('[id$="-tab"]').forEach(btn => {
+                btn.classList.remove("text-blue-600", "border-blue-600");
+                btn.classList.add("text-gray-500", "border-transparent");
+            });
 
-        // Load content if needed
-        if (tab === "published") {
-          loadArticles();
-        } else if (tab === "drafts") {
-          loadDrafts();
+            document.getElementById(`${tab}-tab`).classList.add("text-blue-600", "border-blue-600");
+            document.getElementById(`${tab}-tab`).classList.remove("text-gray-500", "border-transparent");
+
+            // Show/hide content
+            document.getElementById("published-list").classList.toggle("hidden", tab !== "published");
+            document.getElementById("drafts-list").classList.toggle("hidden", tab !== "drafts");
+
+            // Load content
+            if (tab === "published") {
+                loadArticles();
+            } else if (tab === "drafts") {
+                loadDrafts();
+            }
         }
-      }
 
-      async function loadArticles() {
-        try {
-          const response = await fetch("/api/articles");
-          if (!response.ok) throw new Error("Failed to load articles");
-          const articles = await response.json();
-          const container = document.getElementById("published-list");
+        async function loadArticles() {
+            try {
+                const response = await fetch("/api/articles");
+                if (!response.ok) throw new Error("Failed to load articles");
+                const articles = await response.json();
+                const container = document.getElementById("published-list");
 
-          if (articles.length === 0) {
-            container.innerHTML = `
-                        <div class="text-center py-12">
-                            <i class="ri-inbox-line text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-lg font-semibold text-gray-600 mb-2">No articles yet</h3>
-                            <p class="text-gray-500 mb-4">Create your first article to get started</p>
-                            <a href="/admin/edit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors inline-flex items-center">
-                                <i class="ri-add-line mr-1"></i>Create Article
-                            </a>
+                if (articles.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-inbox-line text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-gray-500">No published articles</p>
                         </div>
                     `;
-            return;
-          }
+                    return;
+                }
 
-          container.innerHTML = `
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-50 border-b border-gray-200">
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Label</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                ${articles
-                                  .map(
-                                    (article) => `
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="px-4 py-4">
-                                            <div class="font-medium text-gray-900">${article.title}</div>
-                                            <div class="text-sm text-gray-500">/${article.permalink}</div>
-                                        </td>
-                                        <td class="px-4 py-4">
-                                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${article.label}</span>
-                                        </td>
-                                        <td class="px-4 py-4 text-sm text-gray-500">${new Date(article.createDate).toLocaleDateString()}</td>
-                                        <td class="px-4 py-4">
-                                            <div class="flex space-x-2">
-                                                <a href="/admin/edit?permalink=${article.permalink}" class="bg-blue-100 text-blue-700 p-2 rounded-lg hover:bg-blue-200 transition-colors" title="Edit">
-                                                    <i class="ri-edit-line"></i>
-                                                </a>
-                                                <button onclick="deleteArticle('${article.permalink}')" class="bg-red-100 text-red-700 p-2 rounded-lg hover:bg-red-200 transition-colors" title="Delete">
-                                                    <i class="ri-delete-bin-line"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `
-                                  )
-                                  .join("")}
-                            </tbody>
-                        </table>
+                container.innerHTML = articles.map(article => `
+                    <div class="border-b border-gray-100 last:border-0 py-4">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-medium text-gray-900 truncate">${article.title}</h3>
+                                <div class="flex items-center mt-2 space-x-2 flex-wrap">
+                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${article.label}</span>
+                                    <span class="text-gray-500 text-sm">${new Date(article.createDate).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2 sm:ml-4">
+                                <a href="/admin/edit?permalink=${article.permalink}" class="text-blue-600 hover:text-blue-700 p-2" title="Edit">
+                                    <i class="ri-edit-line"></i>
+                                </a>
+                                <button onclick="deleteArticle('${article.permalink}')" class="text-red-600 hover:text-red-700 p-2" title="Delete">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join("");
+            } catch (error) {
+                console.error("Error loading articles:", error);
+                const container = document.getElementById("published-list");
+                container.innerHTML = `
+                    <div class="text-center py-8 text-red-600">
+                        <i class="ri-error-warning-line text-2xl mb-2"></i>
+                        <p>Error loading articles</p>
                     </div>
                 `;
-        } catch (error) {
-          console.error("Error loading articles:", error);
-          const container = document.getElementById("published-list");
-          container.innerHTML = `
-                    <div class="text-center py-12">
-                        <i class="ri-error-warning-line text-6xl text-red-300 mb-4"></i>
-                        <h3 class="text-lg font-semibold text-red-600 mb-2">Error loading articles</h3>
-                        <p class="text-gray-500">Please try again later</p>
-                    </div>
-                `;
+            }
         }
-      }
 
-      async function loadDrafts() {
-        try {
-          const response = await fetch("/api/articles?drafts=true");
-          if (!response.ok) throw new Error("Failed to load drafts");
-          const drafts = await response.json();
-          const container = document.getElementById("drafts-list");
+        async function loadDrafts() {
+            try {
+                const response = await fetch("/api/articles?drafts=true");
+                if (!response.ok) throw new Error("Failed to load drafts");
+                const drafts = await response.json();
+                const container = document.getElementById("drafts-list");
 
-          if (drafts.length === 0) {
-            container.innerHTML = `
-                        <div class="text-center py-12">
-                            <i class="ri-draft-line text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-lg font-semibold text-gray-600 mb-2">No drafts yet</h3>
-                            <p class="text-gray-500">Create your first draft to get started</p>
+                if (drafts.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-draft-line text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-gray-500">No drafts</p>
                         </div>
                     `;
-            return;
-          }
+                    return;
+                }
 
-          container.innerHTML = `
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-50 border-b border-gray-200">
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Label</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Modified</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                ${drafts
-                                  .map(
-                                    (draft) => `
-                                    <tr class="hover:bg-gray-50 transition-colors bg-yellow-50">
-                                        <td class="px-4 py-4">
-                                            <div class="font-medium text-gray-900 flex items-center">
-                                                <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded mr-2">Draft</span>
-                                                ${draft.title}
-                                            </div>
-                                            <div class="text-sm text-gray-500">/${draft.permalink}</div>
-                                        </td>
-                                        <td class="px-4 py-4">
-                                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${draft.label}</span>
-                                        </td>
-                                        <td class="px-4 py-4 text-sm text-gray-500">${new Date(draft.createDate).toLocaleDateString()}</td>
-                                        <td class="px-4 py-4">
-                                            <div class="flex space-x-2">
-                                                <a href="/admin/edit?permalink=${draft.permalink}" class="bg-blue-100 text-blue-700 p-2 rounded-lg hover:bg-blue-200 transition-colors" title="Edit">
-                                                    <i class="ri-edit-line"></i>
-                                                </a>
-                                                <button onclick="publishDraft('${draft.permalink}')" class="bg-green-100 text-green-700 p-2 rounded-lg hover:bg-green-200 transition-colors" title="Publish">
-                                                    <i class="ri-send-plane-line"></i>
-                                                </button>
-                                                <button onclick="deleteArticle('${draft.permalink}')" class="bg-red-100 text-red-700 p-2 rounded-lg hover:bg-red-200 transition-colors" title="Delete">
-                                                    <i class="ri-delete-bin-line"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `
-                                  )
-                                  .join("")}
-                            </tbody>
-                        </table>
+                container.innerHTML = drafts.map(draft => `
+                    <div class="border-b border-gray-100 last:border-0 py-4">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center space-x-2 mb-2 flex-wrap">
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Draft</span>
+                                    <h3 class="font-medium text-gray-900 truncate">${draft.title}</h3>
+                                </div>
+                                <div class="flex items-center space-x-2 flex-wrap">
+                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${draft.label}</span>
+                                    <span class="text-gray-500 text-sm">${new Date(draft.createDate).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2 sm:ml-4">
+                                <a href="/admin/edit?permalink=${draft.permalink}" class="text-blue-600 hover:text-blue-700 p-2" title="Edit">
+                                    <i class="ri-edit-line"></i>
+                                </a>
+                                <button onclick="publishDraft('${draft.permalink}')" class="text-green-600 hover:text-green-700 p-2" title="Publish">
+                                    <i class="ri-send-plane-line"></i>
+                                </button>
+                                <button onclick="deleteArticle('${draft.permalink}')" class="text-red-600 hover:text-red-700 p-2" title="Delete">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join("");
+            } catch (error) {
+                console.error("Error loading drafts:", error);
+                const container = document.getElementById("drafts-list");
+                container.innerHTML = `
+                    <div class="text-center py-8 text-red-600">
+                        <i class="ri-error-warning-line text-2xl mb-2"></i>
+                        <p>Error loading drafts</p>
                     </div>
                 `;
-        } catch (error) {
-          console.error("Error loading drafts:", error);
-          const container = document.getElementById("drafts-list");
-          container.innerHTML = `
-                    <div class="text-center py-12">
-                        <i class="ri-error-warning-line text-6xl text-red-300 mb-4"></i>
-                        <h3 class="text-lg font-semibold text-red-600 mb-2">Error loading drafts</h3>
-                        <p class="text-gray-500">Please try again later</p>
-                    </div>
+            }
+        }
+
+        async function deleteArticle(permalink) {
+            if (!confirm("Delete this article?")) return;
+
+            try {
+                const response = await fetch("/api/articles/" + permalink, { method: "DELETE" });
+                if (response.ok) {
+                    showNotification("Article deleted");
+                    loadArticles();
+                    loadDrafts();
+                } else {
+                    throw new Error("Delete failed");
+                }
+            } catch (error) {
+                showNotification("Error deleting article", "error");
+            }
+        }
+
+        async function publishDraft(permalink) {
+            try {
+                const response = await fetch("/api/articles/" + permalink);
+                if (!response.ok) throw new Error("Draft not found");
+                const draft = await response.json();
+                draft.status = "published";
+
+                const updateResponse = await fetch("/api/articles/" + permalink, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(draft)
+                });
+
+                if (updateResponse.ok) {
+                    showNotification("Draft published");
+                    loadDrafts();
+                    loadArticles();
+                } else {
+                    throw new Error("Publish failed");
+                }
+            } catch (error) {
+                showNotification("Error publishing draft", "error");
+            }
+        }
+
+        // Export/Import functions
+        async function exportArticles() {
+            try {
+                const response = await fetch('/api/export');
+                if (!response.ok) throw new Error('Export failed');
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `blog-export-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                showNotification('Articles exported');
+            } catch (error) {
+                showNotification('Export failed', 'error');
+            }
+        }
+
+        function openImportModal() {
+            document.getElementById('import-modal').classList.remove('hidden');
+        }
+
+        function closeImportModal() {
+            document.getElementById('import-modal').classList.add('hidden');
+            document.getElementById('import-file').value = '';
+        }
+
+        async function importArticles() {
+            const fileInput = document.getElementById('import-file');
+            const file = fileInput.files[0];
+            if (!file) {
+                showNotification('Select a file', 'warning');
+                return;
+            }
+            
+            try {
+                const text = await file.text();
+                const articles = JSON.parse(text);
+                if (!Array.isArray(articles)) throw new Error('Invalid file');
+
+                const response = await fetch('/api/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: text
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    showNotification(`Imported ${result.imported} articles`);
+                    closeImportModal();
+                    loadArticles();
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                showNotification('Import failed: ' + error.message, 'error');
+            }
+        }
+
+        // Debug and Fix functions
+        async function showDebugInfo() {
+            try {
+                const response = await fetch('/api/debug');
+                const data = await response.json();
+                
+                let debugHTML = `
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-lg p-4 border">
+                            <h4 class="font-semibold text-gray-900 mb-2">System Summary</h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">Total Articles:</span>
+                                    <span class="font-medium ml-2">${data.total}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">System Index:</span>
+                                    <span class="font-medium ml-2">${data.systemIndexNum || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
                 `;
+
+                if (data.allArticles && data.allArticles.length > 0) {
+                    debugHTML += `
+                        <div class="bg-white rounded-lg p-4 border">
+                            <h4 class="font-semibold text-gray-900 mb-3">Article Status</h4>
+                            <div class="space-y-3">
+                    `;
+                    
+                    data.allArticles.forEach(item => {
+                        const status = item.exists ? '✅' : '❌';
+                        debugHTML += `
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="font-medium">${item.index.title}</span>
+                                <div class="flex items-center space-x-2">
+                                    <span>${status}</span>
+                                    <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">${item.index.status || 'published'}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    debugHTML += `</div></div>`;
+                }
+
+                debugHTML += `</div>`;
+                
+                document.getElementById('debug-content').innerHTML = debugHTML;
+                document.getElementById('debug-modal').classList.remove('hidden');
+            } catch (error) {
+                showNotification('Error loading debug info', 'error');
+            }
         }
-      }
 
-      async function deleteArticle(permalink) {
-        if (!confirm("Are you sure you want to delete this article? This action cannot be undone.")) return;
-
-        try {
-          const response = await fetch("/api/articles/" + permalink, {
-            method: "DELETE",
-          });
-
-          if (response.ok) {
-            alert("Article deleted successfully");
-            loadArticles();
-            loadDrafts();
-          } else {
-            const error = await response.text();
-            alert("Error deleting article: " + error);
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Error deleting article: " + error.message);
+        function closeDebugModal() {
+            document.getElementById('debug-modal').classList.add('hidden');
         }
-      }
 
-      async function publishDraft(permalink) {
-        try {
-          // First, get the draft article
-          const response = await fetch("/api/articles/" + permalink);
-          if (!response.ok) {
-            const error = await response.text();
-            throw new Error(error);
-          }
-
-          const draft = await response.json();
-
-          // Update status to published
-          draft.status = "published";
-
-          const updateResponse = await fetch("/api/articles/" + permalink, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(draft),
-          });
-
-          if (updateResponse.ok) {
-            alert("Draft published successfully!");
-            loadDrafts();
-            loadArticles();
-          } else {
-            const error = await updateResponse.text();
-            throw new Error(error);
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Error publishing draft: " + error.message);
+        async function fixMissingArticles() {
+            if (!confirm('This will attempt to fix any missing article data. Continue?')) return;
+            
+            try {
+                const response = await fetch('/api/fix-missing-articles', { method: 'POST' });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification(`Fixed ${result.fixedCount} articles`, 'success');
+                    closeDebugModal();
+                    loadArticles();
+                    loadDrafts();
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                showNotification('Error fixing articles: ' + error.message, 'error');
+            }
         }
-      }
 
-      // Load published articles by default
-      loadArticles();
+        function showNotification(message, type = 'success') {
+            // Remove existing notifications
+            document.querySelectorAll('.notification').forEach(el => el.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium z-50 ${
+                type === 'error' ? 'bg-red-500' : 
+                type === 'warning' ? 'bg-yellow-500' : 
+                'bg-green-500'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Load published articles by default
+        loadArticles();
     </script>
-
     {{codeBeforBody}}
-  </body>
+</body>
 </html>
