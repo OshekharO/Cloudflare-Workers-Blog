@@ -70,22 +70,6 @@
             background-clip: text;
         }
         
-        .btn-gradient {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            color: white;
-            font-weight: 500;
-            padding: 12px 30px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-            color: white;
-        }
-        
         .tag-badge {
             background: linear-gradient(135deg, var(--accent-color), #3b82f6);
             color: white;
@@ -154,10 +138,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
-                    <a href="/" class="btn btn-outline-primary btn-sm me-2">
+                    <a href="/" class="btn btn-outline-primary btn-sm me-2 mt-2">
                         <i class="bi bi-house me-1"></i> Home
                     </a>
-                    <a href="/admin/" class="btn btn-gradient btn-sm">Admin</a>
+                    <a href="/admin/" class="btn btn-outline-primary btn-sm me-2 mt-2">Admin</a>
                 </div>
             </div>
         </div>
@@ -201,7 +185,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container text-center">
-            <div class="text-muted">{{copyRight}}</div>
+            <div>{{copyRight}}</div>
         </div>
     </footer>
 
