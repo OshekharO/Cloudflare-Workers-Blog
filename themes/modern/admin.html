@@ -35,6 +35,8 @@
             left: 0;
             top: 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
 
         .sidebar-brand {
@@ -74,6 +76,7 @@
         .main-content {
             margin-left: var(--sidebar-width);
             padding: 2rem;
+            transition: margin-left 0.3s ease;
         }
 
         .admin-card {
@@ -170,23 +173,154 @@
             opacity: 0.5;
         }
 
-        @media (max-width: 768px) {
+        .stats-card {
+            background: var(--gradient);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .mobile-header {
+            display: none;
+            background: var(--gradient);
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
             .sidebar {
-                width: 100%;
-                position: relative;
-                min-height: auto;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
             }
             
             .main-content {
                 margin-left: 0;
                 padding: 1rem;
             }
+            
+            .mobile-header {
+                display: flex;
+                justify-content: between;
+                align-items: center;
+            }
+            
+            .admin-card-body {
+                padding: 1rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            
+            .btn-group .btn {
+                border-radius: 6px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+            
+            .admin-card-header {
+                padding: 1rem;
+            }
+            
+            .admin-card-body {
+                padding: 0.75rem;
+            }
+            
+            .table td, .table th {
+                padding: 0.5rem 0.25rem;
+            }
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            z-index: 1100;
+        }
+
+        /* Tab styles */
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--secondary);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            background: transparent;
+        }
+
+        /* Tool section styles */
+        .tool-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
     </style>
     {{codeBeforHead}}
 </head>
 <body>
-    <div class="sidebar">
+    <!-- Mobile Header -->
+    <div class="mobile-header d-lg-none">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h5 class="mb-0 ms-3">
+            <i class="fas fa-cogs me-2"></i>Admin Panel
+        </h5>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <h4 class="mb-0">
                 <i class="fas fa-cogs me-2"></i>Admin Panel
@@ -205,6 +339,12 @@
                     <span>New Article</span>
                 </a>
             </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link" onclick="showTools()">
+                    <i class="fas fa-tools"></i>
+                    <span>Tools</span>
+                </a>
+            </div>
             <div class="nav-item mt-4">
                 <a href="/" class="nav-link">
                     <i class="fas fa-eye"></i>
@@ -214,15 +354,59 @@
         </nav>
     </div>
 
-    <div class="main-content">
-        <div class="admin-card">
-            <div class="admin-card-header">
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Dashboard Stats -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="stats-number" id="total-articles">0</div>
+                    <div class="stats-label">Total Articles</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="stats-number" id="published-articles">0</div>
+                    <div class="stats-label">Published</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="stats-number" id="draft-articles">0</div>
+                    <div class="stats-label">Drafts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Articles Section -->
+        <div class="admin-card" id="articles-section">
+            <div class="admin-card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
-                    <i class="fas fa-newspaper me-2"></i>Published Articles
+                    <i class="fas fa-newspaper me-2"></i>Article Management
                 </h5>
+                <a href="/admin/edit" class="btn-admin">
+                    <i class="fas fa-plus me-1"></i>New Article
+                </a>
             </div>
             <div class="admin-card-body">
-                <div id="articles-list">
+                <ul class="nav nav-tabs mb-4">
+                    <li class="nav-item">
+                        <button class="nav-link active" onclick="switchTab('published')">Published</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" onclick="switchTab('drafts')">Drafts</button>
+                    </li>
+                </ul>
+
+                <div id="published-list">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="drafts-list" class="d-none">
                     <div class="text-center py-5">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -231,16 +415,208 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tools Section -->
+        <div class="admin-card d-none" id="tools-section">
+            <div class="admin-card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-tools me-2"></i>Admin Tools
+                </h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="tool-card">
+                            <h6><i class="fas fa-download text-success me-2"></i>Export Articles</h6>
+                            <p class="text-muted small mb-3">Download all articles as JSON backup</p>
+                            <button class="btn btn-success w-100" onclick="exportArticles()">
+                                <i class="fas fa-download me-1"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="tool-card">
+                            <h6><i class="fas fa-upload text-primary me-2"></i>Import Articles</h6>
+                            <p class="text-muted small mb-3">Upload JSON file to restore articles</p>
+                            <button class="btn btn-primary w-100" onclick="openImportModal()">
+                                <i class="fas fa-upload me-1"></i>Import
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="tool-card">
+                            <h6><i class="fas fa-wrench text-warning me-2"></i>Fix Articles</h6>
+                            <p class="text-muted small mb-3">Repair missing article data</p>
+                            <button class="btn btn-warning w-100" onclick="fixMissingArticles()">
+                                <i class="fas fa-wrench me-1"></i>Fix Data
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="tool-card">
+                            <h6><i class="fas fa-bug text-danger me-2"></i>Debug Info</h6>
+                            <p class="text-muted small mb-3">View system information</p>
+                            <button class="btn btn-danger w-100" onclick="showDebugInfo()">
+                                <i class="fas fa-bug me-1"></i>Debug
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="tool-card">
+                            <h6><i class="fas fa-rss text-info me-2"></i>RSS Feed</h6>
+                            <p class="text-muted small mb-2">Your blog's RSS feed URL</p>
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="/rss.xml" readonly>
+                                <button class="btn btn-outline-info" onclick="copyToClipboard('/rss.xml')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="tool-card">
+                            <h6><i class="fas fa-sitemap text-info me-2"></i>Sitemap</h6>
+                            <p class="text-muted small mb-2">Your blog's sitemap URL</p>
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="/sitemap.xml" readonly>
+                                <button class="btn btn-outline-info" onclick="copyToClipboard('/sitemap.xml')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Articles</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" id="importFile" class="form-control" accept=".json">
+                    <div class="form-text">Select a JSON file previously exported from this blog</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="importArticles()">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto" id="toastTitle">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage"></div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        }
+
+        // Section navigation
+        function showTools() {
+            document.getElementById('articles-section').classList.add('d-none');
+            document.getElementById('tools-section').classList.remove('d-none');
+            updateNavActive('tools');
+            if (window.innerWidth <= 992) {
+                toggleSidebar();
+            }
+        }
+
+        function showArticles() {
+            document.getElementById('tools-section').classList.add('d-none');
+            document.getElementById('articles-section').classList.remove('d-none');
+            updateNavActive('articles');
+        }
+
+        function updateNavActive(section) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            if (section === 'articles') {
+                document.querySelector('a[href="/admin/"]').classList.add('active');
+            } else if (section === 'tools') {
+                document.querySelector('a[href="#"]').classList.add('active');
+            }
+        }
+
+        // Tab management
+        function switchTab(tab) {
+            const publishedList = document.getElementById('published-list');
+            const draftsList = document.getElementById('drafts-list');
+            const tabs = document.querySelectorAll('.nav-tabs .nav-link');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tab === 'published') {
+                publishedList.classList.remove('d-none');
+                draftsList.classList.add('d-none');
+                loadArticles();
+            } else {
+                publishedList.classList.add('d-none');
+                draftsList.classList.remove('d-none');
+                loadDrafts();
+            }
+        }
+
+        // Toast notification
+        function showToast(title, message, type = 'info') {
+            const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            document.getElementById('liveToast').className = `toast ${type}`;
+            toast.show();
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Success', 'URL copied to clipboard', 'bg-success text-white');
+            });
+        }
+
+        // Load dashboard stats
+        async function loadStats() {
+            try {
+                const [articles, drafts] = await Promise.all([
+                    fetch('/api/articles').then(r => r.json()),
+                    fetch('/api/articles?drafts=true').then(r => r.json())
+                ]);
+                
+                document.getElementById('total-articles').textContent = articles.length + drafts.length;
+                document.getElementById('published-articles').textContent = articles.length;
+                document.getElementById('draft-articles').textContent = drafts.length;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Original article functions
         async function loadArticles() {
             try {
                 const response = await fetch('/api/articles');
                 if (!response.ok) throw new Error('Failed to load articles');
                 const articles = await response.json();
-                const container = document.getElementById('articles-list');
+                const container = document.getElementById('published-list');
                 
                 if (articles.length === 0) {
                     container.innerHTML = `
@@ -294,6 +670,7 @@
                 `;
             } catch (error) {
                 console.error('Error loading articles:', error);
+                const container = document.getElementById('published-list');
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-exclamation-triangle text-danger"></i>
@@ -302,6 +679,76 @@
                         <button onclick="loadArticles()" class="btn-admin">
                             <i class="fas fa-redo me-1"></i>Retry
                         </button>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadDrafts() {
+            try {
+                const response = await fetch('/api/articles?drafts=true');
+                if (!response.ok) throw new Error('Failed to load drafts');
+                const drafts = await response.json();
+                const container = document.getElementById('drafts-list');
+                
+                if (drafts.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-draft"></i>
+                            <h5 class="text-muted">No drafts yet</h5>
+                            <p class="text-muted">Create your first draft to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Label</th>
+                                    <th>Date</th>
+                                    <th width="140">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${drafts.map(draft => `
+                                    <tr>
+                                        <td>
+                                            <strong>${draft.title}</strong>
+                                            <br><small class="text-muted">/${draft.permalink}</small>
+                                        </td>
+                                        <td><span class="badge-admin">${draft.label}</span></td>
+                                        <td>${new Date(draft.createDate).toLocaleDateString()}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="/admin/edit?permalink=${draft.permalink}" class="btn btn-outline-admin">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button onclick="publishDraft('${draft.permalink}')" class="btn btn-outline-success">
+                                                    <i class="fas fa-paper-plane"></i>
+                                                </button>
+                                                <button onclick="deleteArticle('${draft.permalink}')" class="btn btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading drafts:', error);
+                const container = document.getElementById('drafts-list');
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle text-danger"></i>
+                        <h5 class="text-danger">Error loading drafts</h5>
+                        <p class="text-muted">Please try again later</p>
                     </div>
                 `;
             }
@@ -316,17 +763,152 @@
                 });
                 
                 if (response.ok) {
+                    showToast('Success', 'Article deleted successfully');
                     loadArticles();
+                    loadDrafts();
+                    loadStats();
                 } else {
-                    alert('Error deleting article');
+                    throw new Error('Delete failed');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error deleting article');
+                showToast('Error', 'Failed to delete article', 'bg-danger text-white');
             }
         }
 
-        loadArticles();
+        async function publishDraft(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) throw new Error('Draft not found');
+                
+                const draft = await response.json();
+                draft.status = 'published';
+
+                const updateResponse = await fetch('/api/articles/' + permalink, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(draft)
+                });
+
+                if (updateResponse.ok) {
+                    showToast('Success', 'Draft published successfully');
+                    loadDrafts();
+                    loadArticles();
+                    loadStats();
+                } else {
+                    throw new Error('Publish failed');
+                }
+            } catch (error) {
+                showToast('Error', 'Failed to publish draft', 'bg-danger text-white');
+            }
+        }
+
+        // Tool functions
+        async function exportArticles() {
+            try {
+                const response = await fetch('/api/export');
+                if (!response.ok) throw new Error('Export failed');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `blog-export-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                showToast('Success', 'Articles exported successfully');
+            } catch (error) {
+                showToast('Error', 'Export failed', 'bg-danger text-white');
+            }
+        }
+
+        function openImportModal() {
+            const modal = new bootstrap.Modal(document.getElementById('importModal'));
+            modal.show();
+        }
+
+        async function importArticles() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('Warning', 'Please select a file', 'bg-warning text-dark');
+                return;
+            }
+            
+            try {
+                const text = await file.text();
+                const articles = JSON.parse(text);
+                
+                if (!Array.isArray(articles)) {
+                    throw new Error('Invalid file format');
+                }
+                
+                const response = await fetch('/api/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: text
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast('Success', `Imported ${result.imported} articles`);
+                    bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+                    loadArticles();
+                    loadStats();
+                } else {
+                    throw new Error(result.error || 'Import failed');
+                }
+            } catch (error) {
+                showToast('Error', 'Import failed: ' + error.message, 'bg-danger text-white');
+            }
+        }
+
+        async function fixMissingArticles() {
+            if (!confirm('This will attempt to fix any missing article data. Continue?')) return;
+            
+            try {
+                const response = await fetch('/api/fix-missing-articles', { method: 'POST' });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast('Success', `Fixed ${result.fixedCount} articles`);
+                    loadArticles();
+                    loadStats();
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                showToast('Error', 'Fix failed: ' + error.message, 'bg-danger text-white');
+            }
+        }
+
+        async function showDebugInfo() {
+            try {
+                const response = await fetch('/api/debug');
+                const data = await response.json();
+                alert(`Debug Information:\n\nTotal Articles: ${data.total}\nSystem Index: ${data.systemIndexNum}\n\nUse browser console for detailed debug information.`);
+                console.log('Debug Data:', data);
+            } catch (error) {
+                showToast('Error', 'Failed to load debug info', 'bg-danger text-white');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadArticles();
+            loadStats();
+        });
+
+        // Close sidebar when clicking on main content on mobile
+        document.getElementById('mainContent').addEventListener('click', function() {
+            if (window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            }
+        });
     </script>
     {{codeBeforBody}}
 </body>
