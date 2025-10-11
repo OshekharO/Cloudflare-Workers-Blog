@@ -90,6 +90,16 @@
             border-top: 1px solid #e0e0e0;
             margin-top: 30px;
         }
+        
+        .status-badge {
+            background: #ff9800;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 10px;
+        }
     </style>
     
     {{codeBeforHead}}
@@ -102,6 +112,7 @@
                 <a href="/admin/edit" class="brand-logo">
                     <i class="material-icons left">edit</i>
                     {{action}} Article
+                    ${isEditing && article.status === 'draft' ? '<span class="status-badge">DRAFT</span>' : ''}
                 </a>
                 <ul class="right">
                     <li><a href="/admin/" class="waves-effect waves-light">
@@ -169,9 +180,17 @@
                                 </div>
                                 
                                 <div class="row">
-                                    <div class="input-field col s12">
+                                    <div class="input-field col s12 m6">
                                         <input id="createDate" type="datetime-local" required>
                                         <label for="createDate">Publish Date *</label>
+                                    </div>
+                                    
+                                    <div class="input-field col s12 m6">
+                                        <select id="status">
+                                            <option value="published">Published</option>
+                                            <option value="draft">Draft</option>
+                                        </select>
+                                        <label>Status</label>
                                     </div>
                                 </div>
                                 
@@ -269,12 +288,19 @@
                 document.getElementById('title').value = article.title;
                 document.getElementById('img').value = article.img || '';
                 document.getElementById('label').value = article.label;
-                M.FormSelect.init(document.querySelector('#label'));
+                document.getElementById('status').value = article.status || 'published';
                 document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
                 
                 easyMDE.value(article.content);
                 
+                M.FormSelect.init(document.querySelectorAll('select'));
                 M.updateTextFields();
+                
+                // Update nav title with draft badge
+                if (article.status === 'draft') {
+                    const navTitle = document.querySelector('.brand-logo');
+                    navTitle.innerHTML += '<span class="status-badge">DRAFT</span>';
+                }
             } catch (error) {
                 console.error('Error loading article:', error);
                 M.toast({html: 'Error loading article', classes: 'red'});
@@ -296,7 +322,8 @@
                 img: document.getElementById('img').value,
                 label: document.getElementById('label').value,
                 createDate: document.getElementById('createDate').value,
-                content: easyMDE.value()
+                content: easyMDE.value(),
+                status: document.getElementById('status').value
             };
 
             try {
@@ -312,7 +339,12 @@
                 });
 
                 if (response.ok) {
-                    M.toast({html: isEditing ? 'Article updated successfully!' : 'Article created successfully!', classes: 'green'});
+                    const message = isEditing ? 'Article updated successfully!' : 'Article created successfully!';
+                    if (formData.status === 'draft') {
+                        M.toast({html: message + ' (Saved as draft)', classes: 'orange'});
+                    } else {
+                        M.toast({html: message, classes: 'green'});
+                    }
                     setTimeout(() => {
                         window.location.href = '/admin/';
                     }, 1000);
