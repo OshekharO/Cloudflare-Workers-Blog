@@ -24,57 +24,61 @@
         
         .article-content {
             line-height: 1.7;
+            max-width: 100%;
+            overflow-wrap: break-word;
         }
         
+        /* Mobile-first typography */
         .article-content h1 {
-            font-size: 2.25rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin: 2rem 0 1rem;
-            line-height: 1.2;
+            margin: 1.5rem 0 1rem;
+            line-height: 1.3;
         }
         
         .article-content h2 {
-            font-size: 1.875rem;
-            font-weight: 600;
-            margin: 1.8rem 0 1rem;
-            border-left: 4px solid #3b82f6;
-            padding-left: 1rem;
-        }
-        
-        .article-content h3 {
             font-size: 1.5rem;
             font-weight: 600;
             margin: 1.5rem 0 0.8rem;
+            border-left: 3px solid #3b82f6;
+            padding-left: 0.75rem;
+        }
+        
+        .article-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.25rem 0 0.6rem;
         }
         
         .article-content p {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
         
         .article-content blockquote {
-            border-left: 4px solid #3b82f6;
-            padding: 1rem 1.5rem;
-            margin: 1.5rem 0;
+            border-left: 3px solid #3b82f6;
+            padding: 0.75rem 1rem;
+            margin: 1.25rem 0;
             font-style: italic;
             background: #f8fafc;
-            border-radius: 0 0.5rem 0.5rem 0;
+            border-radius: 0 0.375rem 0.375rem 0;
         }
         
         .article-content code {
             background: #f1f5f9;
-            padding: 0.2rem 0.4rem;
+            padding: 0.15rem 0.3rem;
             border-radius: 0.25rem;
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: #dc2626;
         }
         
         .article-content pre {
             background: #1f2937;
             color: #f9fafb;
-            padding: 1.2rem;
+            padding: 1rem;
             border-radius: 0.5rem;
             overflow-x: auto;
-            margin: 1.2rem 0;
+            margin: 1rem 0;
+            font-size: 0.875rem;
         }
         
         .article-content pre code {
@@ -84,23 +88,24 @@
         }
         
         .article-content ul, .article-content ol {
-            padding-left: 1.5rem;
+            padding-left: 1.25rem;
             margin: 1rem 0;
         }
         
         .article-content li {
-            margin: 0.5rem 0;
+            margin: 0.375rem 0;
         }
         
         .article-content table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.5rem 0;
+            margin: 1.25rem 0;
+            font-size: 0.875rem;
         }
         
         .article-content table th,
         .article-content table td {
-            padding: 0.75rem;
+            padding: 0.5rem;
             border: 1px solid #e5e7eb;
             text-align: left;
         }
@@ -114,7 +119,7 @@
             max-width: 100%;
             height: auto;
             border-radius: 0.5rem;
-            margin: 1.5rem 0;
+            margin: 1.25rem 0;
         }
         
         .gradient-text {
@@ -122,6 +127,57 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        /* Desktop enhancements */
+        @media (min-width: 768px) {
+            .article-content h1 {
+                font-size: 2.25rem;
+                margin: 2rem 0 1rem;
+            }
+            
+            .article-content h2 {
+                font-size: 1.875rem;
+                margin: 1.8rem 0 1rem;
+                border-left: 4px solid #3b82f6;
+                padding-left: 1rem;
+            }
+            
+            .article-content h3 {
+                font-size: 1.5rem;
+                margin: 1.5rem 0 0.8rem;
+            }
+            
+            .article-content p {
+                margin-bottom: 1.2rem;
+            }
+            
+            .article-content blockquote {
+                padding: 1rem 1.5rem;
+                margin: 1.5rem 0;
+                border-left: 4px solid #3b82f6;
+            }
+            
+            .article-content pre {
+                padding: 1.2rem;
+                margin: 1.2rem 0;
+                font-size: 0.9rem;
+            }
+            
+            .article-content table {
+                font-size: 0.95rem;
+            }
+            
+            .article-content table th,
+            .article-content table td {
+                padding: 0.75rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .article-content h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
     
@@ -132,13 +188,15 @@
     <nav class="bg-white shadow-sm border-b border-gray-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-xl font-bold gradient-text">{{siteName}}</a>
-                <div class="flex items-center space-x-4">
-                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
-                        <i class="ri-bookmark-line mr-1"></i>Fav
+                <a href="/" class="text-lg sm:text-xl font-bold gradient-text truncate">{{siteName}}</a>
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center">
+                        <i class="ri-bookmark-line sm:mr-1"></i>
+                        <span class="hidden sm:inline">Fav</span>
                     </a>
-                    <a href="/" class="text-gray-600 hover:text-gray-900 transition-colors">
-                        <i class="ri-home-line mr-1"></i>Home
+                    <a href="/" class="text-gray-600 hover:text-gray-900 transition-colors flex items-center px-3 py-2 rounded-lg hover:bg-gray-100">
+                        <i class="ri-home-line sm:mr-1"></i>
+                        <span class="hidden sm:inline">Home</span>
                     </a>
                 </div>
             </div>
@@ -146,59 +204,62 @@
     </nav>
 
     <!-- Article Content -->
-    <main class="flex-1 py-8">
+    <main class="flex-1 py-4 sm:py-8">
         <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <!-- Article Header -->
-                <div class="border-b border-gray-100 px-6 py-8">
-                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{{title}}</h1>
-                    <div class="flex flex-wrap items-center gap-4 text-gray-600">
+                <div class="border-b border-gray-100 px-4 py-6 sm:px-6 sm:py-8">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">{{title}}</h1>
+                    <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-gray-600 text-sm sm:text-base">
                         <div class="flex items-center">
-                            <i class="ri-calendar-line mr-2"></i>
+                            <i class="ri-calendar-line mr-2 text-base"></i>
                             <span>{{createDate}}</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">{{label}}</span>
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium">{{label}}</span>
                         </div>
                     </div>
                     {{#img}}
-                    <img src="{{img}}" alt="{{title}}" class="w-full h-64 md:h-80 object-cover rounded-lg mt-6">
+                    <img src="{{img}}" alt="{{title}}" class="w-full h-48 sm:h-64 md:h-80 object-cover rounded-lg mt-4 sm:mt-6">
                     {{/img}}
                 </div>
 
                 <!-- Article Content -->
-                <div class="px-6 py-8">
+                <div class="px-4 py-6 sm:px-6 sm:py-8">
                     <div id="raw-content" class="hidden">{{content}}</div>
-                    <div id="article-content" class="article-content prose prose-lg max-w-none">
+                    <div id="article-content" class="article-content">
                         <!-- Loading State -->
-                        <div class="flex justify-center items-center py-12">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <div class="flex justify-center items-center py-8 sm:py-12">
+                            <div class="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Article Footer -->
-                <div class="border-t border-gray-100 px-6 py-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <a href="/" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                <div class="border-t border-gray-100 px-4 py-4 sm:px-6 sm:py-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+                        <a href="/" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm sm:text-base w-full sm:w-auto justify-center sm:justify-start py-2 sm:py-0">
                             <i class="ri-arrow-left-line mr-2"></i>
                             Back to Home
                         </a>
                         
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm text-gray-600 mr-2">Share:</span>
-                            <button onclick="shareOnTwitter()" class="bg-blue-400 text-white p-2 rounded-lg hover:bg-blue-500 transition-colors" title="Share on Twitter">
-                                <i class="ri-twitter-fill"></i>
-                            </button>
-                            <button onclick="shareOnFacebook()" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors" title="Share on Facebook">
-                                <i class="ri-facebook-fill"></i>
-                            </button>
-                            <button onclick="shareOnLinkedIn()" class="bg-blue-800 text-white p-2 rounded-lg hover:bg-blue-900 transition-colors" title="Share on LinkedIn">
-                                <i class="ri-linkedin-fill"></i>
-                            </button>
-                            <button onclick="copyShareLink()" class="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition-colors" title="Copy link">
-                                <i class="ri-links-line"></i>
-                            </button>
+                        <div class="flex items-center justify-center sm:justify-end w-full sm:w-auto">
+                            <span class="text-sm text-gray-600 mr-3 hidden sm:inline">Share:</span>
+                            <span class="text-sm text-gray-600 mr-3 sm:hidden">Share</span>
+                            <div class="flex items-center space-x-1 sm:space-x-2">
+                                <button onclick="shareOnTwitter()" class="bg-blue-400 text-white p-2 rounded-lg hover:bg-blue-500 transition-colors text-sm" title="Share on Twitter">
+                                    <i class="ri-twitter-fill text-base"></i>
+                                </button>
+                                <button onclick="shareOnFacebook()" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors text-sm" title="Share on Facebook">
+                                    <i class="ri-facebook-fill text-base"></i>
+                                </button>
+                                <button onclick="shareOnLinkedIn()" class="bg-blue-800 text-white p-2 rounded-lg hover:bg-blue-900 transition-colors text-sm" title="Share on LinkedIn">
+                                    <i class="ri-linkedin-fill text-base"></i>
+                                </button>
+                                <button onclick="copyShareLink()" class="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition-colors text-sm" title="Copy link">
+                                    <i class="ri-links-line text-base"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -207,14 +268,14 @@
     </main>
 
     <!-- Share Notification -->
-    <div id="share-notification" class="fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg bg-green-500 text-white font-medium z-50 transform translate-y-16 transition-transform duration-300 hidden">
+    <div id="share-notification" class="fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg bg-green-500 text-white font-medium z-50 transform translate-y-16 transition-transform duration-300 hidden text-sm sm:text-base max-w-xs sm:max-w-none">
         Link copied to clipboard!
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-8">
+    <footer class="bg-white border-t border-gray-200 py-6 sm:py-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-600">{{copyRight}}</p>
+            <p class="text-gray-600 text-sm sm:text-base">{{copyRight}}</p>
         </div>
     </footer>
 
@@ -279,7 +340,7 @@
             rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
             
             if (!rawContent || rawContent.trim() === '') {
-                contentElement.innerHTML = '<div class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">No content available.</div>';
+                contentElement.innerHTML = '<div class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm sm:text-base">No content available.</div>';
                 return;
             }
             
@@ -310,19 +371,28 @@
                             block.classList.add('hljs');
                         }
                     });
+
+                    // Improve mobile code block experience
+                    const preBlocks = document.querySelectorAll('pre');
+                    preBlocks.forEach(block => {
+                        block.style.webkitOverflowScrolling = 'touch';
+                    });
                 } catch (error) {
                     console.error('Error parsing markdown:', error);
                     contentElement.innerHTML = `
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700 mb-4">
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700 mb-4 text-sm sm:text-base">
                             Error rendering content. Showing raw text.
                         </div>
-                        <pre class="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg">${rawContent}</pre>
+                        <pre class="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg text-sm sm:text-base overflow-x-auto">${rawContent}</pre>
                     `;
                 }
             } else {
-                contentElement.innerHTML = `<pre class="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg">${rawContent}</pre>`;
+                contentElement.innerHTML = `<pre class="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg text-sm sm:text-base overflow-x-auto">${rawContent}</pre>`;
             }
         }
+        
+        // Improve mobile touch experience
+        document.addEventListener('touchstart', function() {}, { passive: true });
         
         document.addEventListener('DOMContentLoaded', renderMarkdown);
     </script>
