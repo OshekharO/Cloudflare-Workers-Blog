@@ -134,6 +134,9 @@
             <div class="flex justify-between items-center h-16">
                 <a href="/" class="text-xl font-bold gradient-text">{{siteName}}</a>
                 <div class="flex items-center space-x-4">
+                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                        <i class="ri-bookmark-line mr-1"></i>Bookmarks
+                    </a>
                     <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200">
                         <i class="ri-admin-line mr-1"></i>Admin
                     </a>
@@ -179,14 +182,37 @@
 
                 <!-- Article Footer -->
                 <div class="border-t border-gray-100 px-6 py-6">
-                    <a href="/" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                        <i class="ri-arrow-left-line mr-2"></i>
-                        Back to Home
-                    </a>
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <a href="/" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                            <i class="ri-arrow-left-line mr-2"></i>
+                            Back to Home
+                        </a>
+                        
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-600 mr-2">Share:</span>
+                            <button onclick="shareOnTwitter()" class="bg-blue-400 text-white p-2 rounded-lg hover:bg-blue-500 transition-colors" title="Share on Twitter">
+                                <i class="ri-twitter-fill"></i>
+                            </button>
+                            <button onclick="shareOnFacebook()" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors" title="Share on Facebook">
+                                <i class="ri-facebook-fill"></i>
+                            </button>
+                            <button onclick="shareOnLinkedIn()" class="bg-blue-800 text-white p-2 rounded-lg hover:bg-blue-900 transition-colors" title="Share on LinkedIn">
+                                <i class="ri-linkedin-fill"></i>
+                            </button>
+                            <button onclick="copyShareLink()" class="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition-colors" title="Copy link">
+                                <i class="ri-links-line"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </article>
     </main>
+
+    <!-- Share Notification -->
+    <div id="share-notification" class="fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg bg-green-500 text-white font-medium z-50 transform translate-y-16 transition-transform duration-300 hidden">
+        Link copied to clipboard!
+    </div>
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 py-8">
@@ -196,6 +222,58 @@
     </footer>
 
     <script>
+        function getShareUrl() {
+            return window.location.href;
+        }
+
+        function getShareTitle() {
+            return document.title.replace(` - ${'{{siteName}}'}`, '');
+        }
+
+        function shareOnTwitter() {
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareTitle())}&url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        async function copyShareLink() {
+            try {
+                await navigator.clipboard.writeText(getShareUrl());
+                showShareNotification();
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = getShareUrl();
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showShareNotification();
+            }
+        }
+
+        function showShareNotification() {
+            const notification = document.getElementById('share-notification');
+            notification.classList.remove('hidden');
+            notification.classList.remove('translate-y-16');
+            
+            setTimeout(() => {
+                notification.classList.add('translate-y-16');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 300);
+            }, 2000);
+        }
+
         function renderMarkdown() {
             const contentElement = document.getElementById('article-content');
             const rawContentElement = document.getElementById('raw-content');
