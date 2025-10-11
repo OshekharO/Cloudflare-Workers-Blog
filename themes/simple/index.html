@@ -75,6 +75,7 @@
             height: 100%;
             background: white;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
         }
         
         .article-card:hover {
@@ -186,6 +187,63 @@
             color: var(--primary-light);
         }
         
+        .bookmark-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .bookmark-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .bookmark-btn.bookmarked {
+            color: #ff9800;
+        }
+        
+        .share-btn {
+            position: absolute;
+            top: 65px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .share-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .article-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .article-actions .btn {
+            margin: 0;
+        }
+        
         @media only screen and (max-width: 992px) {
             .hero-title {
                 font-size: 2.8rem;
@@ -216,10 +274,31 @@
             .article-title {
                 font-size: 1.2rem;
             }
+            
+            .bookmark-btn, .share-btn {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .bookmark-btn {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .share-btn {
+                top: 55px;
+                right: 10px;
+            }
         }
         
         .nav-wrapper .btn {
             margin-left: 10px;
+        }
+        
+        /* Toast customization */
+        .toast {
+            border-radius: 8px;
+            font-weight: 500;
         }
     </style>
     
@@ -235,15 +314,23 @@
                     <i class="material-icons">menu</i>
                 </a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="/admin/" class="btn blue waves-effect waves-light btn-custom">Admin</a></li>
+                    <li><a href="/bookmarks" class="btn blue lighten-1 waves-effect waves-light btn-custom">
+                        <i class="material-icons left">bookmark</i>
+                        Bookmarks
+                    </a></li>
+                    <li><a href="/admin/" class="btn blue darken-2 waves-effect waves-light btn-custom">
+                        <i class="material-icons left">admin_panel_settings</i>
+                        Admin
+                    </a></li>
                 </ul>
             </div>
         </nav>
     </header>
 
     <ul class="sidenav" id="mobile-demo">
-        <li><a href="/" class="blue-text">Home</a></li>
-        <li><a href="/admin/" class="blue-text">Admin</a></li>
+        <li><a href="/" class="blue-text"><i class="material-icons blue-text">home</i>Home</a></li>
+        <li><a href="/bookmarks" class="blue-text"><i class="material-icons blue-text">bookmark</i>Bookmarks</a></li>
+        <li><a href="/admin/" class="blue-text"><i class="material-icons blue-text">admin_panel_settings</i>Admin</a></li>
     </ul>
 
     <!-- Hero Section -->
@@ -287,6 +374,43 @@
         </section>
     </main>
 
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <h4>Share Article</h4>
+            <p id="share-article-title" class="grey-text"></p>
+            <div class="row center-align">
+                <div class="col s3">
+                    <a class="btn-floating blue lighten-1 waves-effect waves-light" onclick="shareOnPlatform('twitter')">
+                        <i class="material-icons">flutter_dash</i>
+                    </a>
+                    <p class="small">Twitter</p>
+                </div>
+                <div class="col s3">
+                    <a class="btn-floating blue darken-3 waves-effect waves-light" onclick="shareOnPlatform('facebook')">
+                        <i class="material-icons">thumb_up</i>
+                    </a>
+                    <p class="small">Facebook</p>
+                </div>
+                <div class="col s3">
+                    <a class="btn-floating blue darken-2 waves-effect waves-light" onclick="shareOnPlatform('linkedin')">
+                        <i class="material-icons">work</i>
+                    </a>
+                    <p class="small">LinkedIn</p>
+                </div>
+                <div class="col s3">
+                    <a class="btn-floating grey waves-effect waves-light" onclick="copyArticleLink()">
+                        <i class="material-icons">link</i>
+                    </a>
+                    <p class="small">Copy Link</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="page-footer white">
         <div class="container">
@@ -309,9 +433,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     
     <script>
+        let currentSharePermalink = '';
+        let currentShareTitle = '';
+
         // Initialize Materialize components
         document.addEventListener('DOMContentLoaded', function() {
             M.Sidenav.init(document.querySelectorAll('.sidenav'));
+            M.Modal.init(document.querySelectorAll('.modal'));
         });
 
         async function loadArticles() {
@@ -333,6 +461,7 @@
                 }
 
                 container.innerHTML = articles.map(article => {
+                    const isBookmarked = isArticleBookmarked(article.permalink);
                     const imgHtml = article.img ? 
                         `<img src="${article.img}" class="article-image" alt="${article.title}">` : 
                         `<div class="article-placeholder">
@@ -342,6 +471,16 @@
                     return `
                     <div class="col s12 m6 l4">
                         <div class="article-card">
+                            <div class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
+                                 onclick="toggleBookmark('${article.permalink}', '${article.title.replace(/'/g, "\\'")}', '${article.img || ''}', '${article.label}')"
+                                 title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
+                                <i class="material-icons">${isBookmarked ? 'bookmark' : 'bookmark_border'}</i>
+                            </div>
+                            <div class="share-btn" 
+                                 onclick="shareArticle('${article.permalink}', '${article.title.replace(/'/g, "\\'")}')"
+                                 title="Share article">
+                                <i class="material-icons">share</i>
+                            </div>
                             ${imgHtml}
                             <div class="article-content">
                                 <h3 class="article-title">${article.title}</h3>
@@ -353,10 +492,12 @@
                                     <span class="article-label">${article.label}</span>
                                 </div>
                                 <p class="article-excerpt">${article.excerpt || ''}</p>
-                                <a href="/article/${article.permalink}" class="btn-custom btn waves-effect waves-light">
-                                    Read More
-                                    <i class="material-icons right">arrow_forward</i>
-                                </a>
+                                <div class="article-actions">
+                                    <a href="/article/${article.permalink}" class="btn-custom btn waves-effect waves-light">
+                                        Read More
+                                        <i class="material-icons right">arrow_forward</i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -374,6 +515,83 @@
                 `;
             }
         }
+
+        // Bookmark functionality
+        function getBookmarks() {
+            return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+        }
+
+        function saveBookmarks(bookmarks) {
+            localStorage.setItem('blog_bookmarks', JSON.stringify(bookmarks));
+        }
+
+        function isArticleBookmarked(permalink) {
+            const bookmarks = getBookmarks();
+            return bookmarks.some(bookmark => bookmark.permalink === permalink);
+        }
+
+        function toggleBookmark(permalink, title, img, label) {
+            const bookmarks = getBookmarks();
+            const existingIndex = bookmarks.findIndex(bookmark => bookmark.permalink === permalink);
+            
+            if (existingIndex > -1) {
+                bookmarks.splice(existingIndex, 1);
+                saveBookmarks(bookmarks);
+                M.toast({html: 'Bookmark removed', classes: 'orange'});
+            } else {
+                bookmarks.push({
+                    permalink,
+                    title,
+                    img,
+                    label,
+                    bookmarkedAt: new Date().toISOString()
+                });
+                saveBookmarks(bookmarks);
+                M.toast({html: 'Article bookmarked!', classes: 'green'});
+            }
+            
+            loadArticles();
+        }
+
+        // Share functionality
+        function shareArticle(permalink, title) {
+            currentSharePermalink = permalink;
+            currentShareTitle = title;
+            document.getElementById('share-article-title').textContent = title;
+            const modal = M.Modal.getInstance(document.getElementById('share-modal'));
+            modal.open();
+        }
+
+        function shareOnPlatform(platform) {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            
+            const shareUrls = {
+                twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareTitle)}&url=${encodeURIComponent(url)}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+            };
+            
+            window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+            M.Modal.getInstance(document.getElementById('share-modal')).close();
+        }
+
+        async function copyArticleLink() {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            try {
+                await navigator.clipboard.writeText(url);
+                M.toast({html: 'Link copied to clipboard!', classes: 'green'});
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                M.toast({html: 'Link copied to clipboard!', classes: 'green'});
+            }
+            M.Modal.getInstance(document.getElementById('share-modal')).close();
+        }
+
         loadArticles();
     </script>
     
