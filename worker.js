@@ -68,8 +68,11 @@ class Blog {
             await this.put('SYSTEM_INDEX_NUM', (currentNum + 1).toString());
         }
 
-        // Add status field with default 'published'
-        article.status = article.status || 'published';
+        // Add status field with default 'published' for existing articles
+        if (!article.status) {
+            article.status = 'published';
+        }
+        
         article.contentMarkdown = article.content;
         
         const plainText = this.stripMarkdown(article.content);
@@ -114,11 +117,6 @@ class Blog {
         await this.put('SYSTEM_INDEX_LIST', filtered);
     }
 
-    // New method to get all articles including drafts for admin
-    async listAllArticles() {
-        return await this.listArticles(); // Now includes drafts
-    }
-
     // Method to get only published articles
     async listPublishedArticles() {
         const articles = await this.listArticles();
@@ -129,6 +127,18 @@ class Blog {
     async listDraftArticles() {
         const articles = await this.listArticles();
         return articles.filter(article => article.status === 'draft');
+    }
+
+    // Method to get article by permalink (searches all articles)
+    async getArticleByPermalink(permalink) {
+        const articles = await this.listArticles();
+        const article = articles.find(a => a.permalink === permalink);
+        
+        if (!article) {
+            return null;
+        }
+        
+        return await this.getArticle(article.id);
     }
 
     async fetchThemeTemplate(templateName) {
@@ -317,20 +327,21 @@ export default {
 
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'GET') {
                     const permalink = path.split('/').pop();
-                    const articles = await blog.listAllArticles(); // Search in all articles including drafts
-                    const article = articles.find(a => a.permalink === permalink);
+                    
+                    // Use the new method that searches all articles (including drafts)
+                    const article = await blog.getArticleByPermalink(permalink);
                     
                     if (!article) {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
                     // Don't serve draft articles to public
-                    if (!path.startsWith('/admin') && article.status === 'draft') {
+                    const isAdminRequest = request.headers.get('Authorization') || path.includes('/admin');
+                    if (!isAdminRequest && article.status === 'draft') {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    const fullArticle = await blog.getArticle(article.id);
-                    return jsonResponse(fullArticle);
+                    return jsonResponse(article);
                 }
 
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'PUT') {
@@ -339,16 +350,23 @@ export default {
                     }
                     
                     const permalink = path.split('/').pop();
-                    const article = await request.json();
+                    const articleData = await request.json();
                     
-                    const articles = await blog.listAllArticles();
-                    const existing = articles.find(a => a.permalink === permalink);
-                    if (!existing) {
+                    // Use the new method that searches all articles (including drafts)
+                    const existingArticle = await blog.getArticleByPermalink(permalink);
+                    
+                    if (!existingArticle) {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    article.id = existing.id;
-                    await blog.saveArticle(article);
+                    // Merge the existing article with the updated data
+                    const updatedArticle = {
+                        ...existingArticle,
+                        ...articleData,
+                        id: existingArticle.id // Ensure ID is preserved
+                    };
+                    
+                    await blog.saveArticle(updatedArticle);
                     return jsonResponse({ success: true });
                 }
 
@@ -358,8 +376,7 @@ export default {
                     }
                     
                     const permalink = path.split('/').pop();
-                    const articles = await blog.listAllArticles();
-                    const article = articles.find(a => a.permalink === permalink);
+                    const article = await blog.getArticleByPermalink(permalink);
                     
                     if (!article) {
                         return jsonResponse({ error: 'Article not found' }, 404);
