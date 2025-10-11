@@ -68,6 +68,16 @@
             font-weight: 500;
         }
         
+        .draft-badge {
+            background: #ff9800;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+        
         .btn-small {
             border-radius: 16px;
             margin: 0 2px;
@@ -90,6 +100,31 @@
             justify-content: center;
             align-items: center;
             height: 200px;
+        }
+        
+        .tabs .tab a {
+            color: var(--primary);
+        }
+        
+        .tabs .tab a:hover {
+            color: var(--primary-dark);
+        }
+        
+        .tabs .tab a.active {
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+        
+        .tabs .indicator {
+            background-color: var(--primary);
+        }
+        
+        .draft-row {
+            background-color: #fff8e1;
+        }
+        
+        .draft-row:hover {
+            background-color: #ffecb3 !important;
         }
     </style>
     
@@ -123,25 +158,56 @@
                         <div class="card-content">
                             <div class="card-title">
                                 <i class="material-icons left">article</i>
-                                Published Articles
+                                Article Management
                                 <a href="/admin/edit" class="btn blue waves-effect waves-light right">
                                     <i class="material-icons left">add</i>
                                     New Article
                                 </a>
                             </div>
                             
-                            <div id="articles-list">
-                                <div class="loading-container">
-                                    <div class="preloader-wrapper big active">
-                                        <div class="spinner-layer spinner-blue-only">
-                                            <div class="circle-clipper left">
-                                                <div class="circle"></div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <ul class="tabs">
+                                        <li class="tab col s6"><a class="active" href="#published-tab">Published</a></li>
+                                        <li class="tab col s6"><a href="#drafts-tab">Drafts</a></li>
+                                    </ul>
+                                </div>
+                                
+                                <div id="published-tab" class="col s12">
+                                    <div id="published-list" class="section">
+                                        <div class="loading-container">
+                                            <div class="preloader-wrapper big active">
+                                                <div class="spinner-layer spinner-blue-only">
+                                                    <div class="circle-clipper left">
+                                                        <div class="circle"></div>
+                                                    </div>
+                                                    <div class="gap-patch">
+                                                        <div class="circle"></div>
+                                                    </div>
+                                                    <div class="circle-clipper right">
+                                                        <div class="circle"></div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="gap-patch">
-                                                <div class="circle"></div>
-                                            </div>
-                                            <div class="circle-clipper right">
-                                                <div class="circle"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="drafts-tab" class="col s12">
+                                    <div id="drafts-list" class="section">
+                                        <div class="loading-container">
+                                            <div class="preloader-wrapper big active">
+                                                <div class="spinner-layer spinner-blue-only">
+                                                    <div class="circle-clipper left">
+                                                        <div class="circle"></div>
+                                                    </div>
+                                                    <div class="gap-patch">
+                                                        <div class="circle"></div>
+                                                    </div>
+                                                    <div class="circle-clipper right">
+                                                        <div class="circle"></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -169,18 +235,41 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     
     <script>
-        async function loadArticles() {
+        let currentTab = 'published';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            M.AutoInit();
+            M.Tabs.init(document.querySelectorAll('.tabs'));
+            loadPublishedArticles();
+            
+            // Add tab change listener
+            const tabs = document.querySelectorAll('.tab a');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#published-tab') {
+                        currentTab = 'published';
+                        loadPublishedArticles();
+                    } else if (href === '#drafts-tab') {
+                        currentTab = 'drafts';
+                        loadDrafts();
+                    }
+                });
+            });
+        });
+
+        async function loadPublishedArticles() {
             try {
                 const response = await fetch('/api/articles');
                 if (!response.ok) throw new Error('Failed to load articles');
                 const articles = await response.json();
-                const container = document.getElementById('articles-list');
+                const container = document.getElementById('published-list');
                 
                 if (articles.length === 0) {
                     container.innerHTML = `
                         <div class="no-articles">
                             <i class="material-icons">inbox</i>
-                            <h5 class="grey-text">No articles yet</h5>
+                            <h5 class="grey-text">No published articles yet</h5>
                             <p class="grey-text">Create your first article to get started</p>
                             <a href="/admin/edit" class="btn blue waves-effect waves-light">
                                 <i class="material-icons left">add</i>
@@ -198,7 +287,7 @@
                                 <th>Title</th>
                                 <th>Label</th>
                                 <th>Date</th>
-                                <th width="120">Actions</th>
+                                <th width="140">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -211,10 +300,10 @@
                                     <td><span class="badge">${article.label}</span></td>
                                     <td>${new Date(article.createDate).toLocaleDateString()}</td>
                                     <td>
-                                        <a href="/admin/edit?permalink=${article.permalink}" class="btn-small blue waves-effect waves-light">
+                                        <a href="/admin/edit?permalink=${article.permalink}" class="btn-small blue waves-effect waves-light" title="Edit">
                                             <i class="material-icons">edit</i>
                                         </a>
-                                        <button onclick="deleteArticle('${article.permalink}')" class="btn-small red waves-effect waves-light">
+                                        <button onclick="deleteArticle('${article.permalink}')" class="btn-small red waves-effect waves-light" title="Delete">
                                             <i class="material-icons">delete</i>
                                         </button>
                                     </td>
@@ -225,11 +314,78 @@
                 `;
             } catch (error) {
                 console.error('Error loading articles:', error);
-                const container = document.getElementById('articles-list');
+                const container = document.getElementById('published-list');
                 container.innerHTML = `
                     <div class="no-articles">
                         <i class="material-icons red-text">error_outline</i>
                         <h5 class="red-text">Error loading articles</h5>
+                        <p class="grey-text">Please try again later</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadDrafts() {
+            try {
+                const response = await fetch('/api/articles?drafts=true');
+                if (!response.ok) throw new Error('Failed to load drafts');
+                const drafts = await response.json();
+                const container = document.getElementById('drafts-list');
+                
+                if (drafts.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-articles">
+                            <i class="material-icons">drafts</i>
+                            <h5 class="grey-text">No drafts yet</h5>
+                            <p class="grey-text">Create your first draft to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table class="striped admin-table responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Label</th>
+                                <th>Last Modified</th>
+                                <th width="180">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${drafts.map(draft => `
+                                <tr class="draft-row">
+                                    <td>
+                                        <span class="draft-badge">Draft</span>
+                                        <strong>${draft.title}</strong>
+                                        <br><small class="grey-text">/${draft.permalink}</small>
+                                    </td>
+                                    <td><span class="badge">${draft.label}</span></td>
+                                    <td>${new Date(draft.createDate).toLocaleDateString()}</td>
+                                    <td>
+                                        <a href="/admin/edit?permalink=${draft.permalink}" class="btn-small blue waves-effect waves-light" title="Edit">
+                                            <i class="material-icons">edit</i>
+                                        </a>
+                                        <button onclick="publishDraft('${draft.permalink}')" class="btn-small green waves-effect waves-light" title="Publish">
+                                            <i class="material-icons">publish</i>
+                                        </button>
+                                        <button onclick="deleteArticle('${draft.permalink}')" class="btn-small red waves-effect waves-light" title="Delete">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading drafts:', error);
+                const container = document.getElementById('drafts-list');
+                container.innerHTML = `
+                    <div class="no-articles">
+                        <i class="material-icons red-text">error_outline</i>
+                        <h5 class="red-text">Error loading drafts</h5>
                         <p class="grey-text">Please try again later</p>
                     </div>
                 `;
@@ -246,7 +402,11 @@
                 
                 if (response.ok) {
                     M.toast({html: 'Article deleted successfully', classes: 'green'});
-                    loadArticles();
+                    if (currentTab === 'published') {
+                        loadPublishedArticles();
+                    } else {
+                        loadDrafts();
+                    }
                 } else {
                     M.toast({html: 'Error deleting article', classes: 'red'});
                 }
@@ -256,10 +416,34 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            M.AutoInit();
-            loadArticles();
-        });
+        async function publishDraft(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) throw new Error('Draft not found');
+                
+                const draft = await response.json();
+                draft.status = 'published';
+                
+                const updateResponse = await fetch('/api/articles/' + permalink, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(draft)
+                });
+                
+                if (updateResponse.ok) {
+                    M.toast({html: 'Draft published successfully!', classes: 'green'});
+                    loadDrafts();
+                    loadPublishedArticles();
+                } else {
+                    M.toast({html: 'Error publishing draft', classes: 'red'});
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                M.toast({html: 'Error publishing draft', classes: 'red'});
+            }
+        }
     </script>
     
     {{codeBeforBody}}
