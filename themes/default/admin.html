@@ -96,6 +96,28 @@
             padding: 6px 12px;
             border-radius: 20px;
         }
+        
+        .badge-draft {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6b7280;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background: transparent;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .draft-row {
+            background-color: #fffbeb;
+        }
     </style>
     
     {{codeBeforHead}}
@@ -132,13 +154,49 @@
             <div class="col-md-9 col-lg-10 mt-3">
                 <div class="card">
                     <div class="card-header bg-white border-bottom-0 py-4">
-                        <h4 class="mb-0"><i class="bi bi-file-text me-2"></i> Published Articles</h4>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0"><i class="bi bi-file-text me-2"></i> Articles</h4>
+                            <a href="/admin/edit" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-1"></i> New Article
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div id="articles-list">
-                            <div class="text-center py-5">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs mb-4" id="articlesTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="published-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">
+                                    Published
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="drafts-tab" data-bs-toggle="tab" data-bs-target="#drafts" type="button" role="tab">
+                                    Drafts
+                                </button>
+                            </li>
+                        </ul>
+                        
+                        <!-- Tab Content -->
+                        <div class="tab-content" id="articlesTabContent">
+                            <!-- Published Articles -->
+                            <div class="tab-pane fade show active" id="published" role="tabpanel">
+                                <div id="published-list">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Drafts -->
+                            <div class="tab-pane fade" id="drafts" role="tabpanel">
+                                <div id="drafts-list">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -155,13 +213,13 @@
                 const response = await fetch('/api/articles');
                 if (!response.ok) throw new Error('Failed to load articles');
                 const articles = await response.json();
-                const container = document.getElementById('articles-list');
+                const container = document.getElementById('published-list');
                 
                 if (articles.length === 0) {
                     container.innerHTML = `
                         <div class="text-center py-5">
                             <i class="bi bi-inbox display-1 text-muted mb-3"></i>
-                            <h5 class="text-muted">No articles yet</h5>
+                            <h5 class="text-muted">No published articles yet</h5>
                             <p class="text-muted">Create your first article to get started</p>
                             <a href="/admin/edit" class="btn btn-primary">Create Article</a>
                         </div>
@@ -207,10 +265,84 @@
                 `;
             } catch (error) {
                 console.error('Error loading articles:', error);
+                const container = document.getElementById('published-list');
                 container.innerHTML = `
                     <div class="text-center py-5">
                         <i class="bi bi-exclamation-triangle display-1 text-danger mb-3"></i>
                         <h5 class="text-danger">Error loading articles</h5>
+                        <p class="text-muted">Please try again later</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadDrafts() {
+            try {
+                const response = await fetch('/api/articles?drafts=true');
+                if (!response.ok) throw new Error('Failed to load drafts');
+                const drafts = await response.json();
+                const container = document.getElementById('drafts-list');
+                
+                if (drafts.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-5">
+                            <i class="bi bi-file-earmark display-1 text-muted mb-3"></i>
+                            <h5 class="text-muted">No drafts yet</h5>
+                            <p class="text-muted">Create your first draft to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Label</th>
+                                    <th>Last Modified</th>
+                                    <th width="150">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${drafts.map(draft => `
+                                    <tr class="draft-row">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge badge-draft me-2">Draft</span>
+                                                <strong>${draft.title}</strong>
+                                            </div>
+                                            <br><small class="text-muted">/${draft.permalink}</small>
+                                        </td>
+                                        <td><span class="badge bg-primary">${draft.label}</span></td>
+                                        <td>${new Date(draft.createDate).toLocaleDateString()}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="/admin/edit?permalink=${draft.permalink}" class="btn btn-outline-primary">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button onclick="publishDraft('${draft.permalink}')" class="btn btn-outline-success">
+                                                    <i class="bi bi-send"></i>
+                                                </button>
+                                                <button onclick="deleteArticle('${draft.permalink}')" class="btn btn-outline-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading drafts:', error);
+                const container = document.getElementById('drafts-list');
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-exclamation-triangle display-1 text-danger mb-3"></i>
+                        <h5 class="text-danger">Error loading drafts</h5>
                         <p class="text-muted">Please try again later</p>
                     </div>
                 `;
@@ -227,6 +359,7 @@
                 
                 if (response.ok) {
                     loadArticles();
+                    loadDrafts();
                 } else {
                     alert('Error deleting article');
                 }
@@ -236,6 +369,41 @@
             }
         }
 
+        async function publishDraft(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) throw new Error('Draft not found');
+                
+                const draft = await response.json();
+                
+                draft.status = 'published';
+                
+                const updateResponse = await fetch('/api/articles/' + permalink, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(draft)
+                });
+                
+                if (updateResponse.ok) {
+                    alert('Draft published successfully!');
+                    loadDrafts();
+                    loadArticles();
+                } else {
+                    alert('Error publishing draft');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error publishing draft');
+            }
+        }
+
+        // Load articles when tab is shown
+        document.getElementById('published-tab').addEventListener('shown.bs.tab', loadArticles);
+        document.getElementById('drafts-tab').addEventListener('shown.bs.tab', loadDrafts);
+
+        // Load published articles by default
         loadArticles();
     </script>
     
