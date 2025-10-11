@@ -53,6 +53,76 @@ class Blog {
         await this.kv.delete(key);
     }
 
+    // Admin Management Methods
+    async getAdmins() {
+        return await this.get('SYSTEM_ADMINS', true) || [];
+    }
+
+    async saveAdmin(adminData) {
+        const admins = await this.getAdmins();
+        const existingIndex = admins.findIndex(admin => admin.id === adminData.id);
+        
+        if (existingIndex >= 0) {
+            admins[existingIndex] = adminData;
+        } else {
+            admins.push(adminData);
+        }
+        
+        await this.put('SYSTEM_ADMINS', admins);
+        return adminData.id;
+    }
+
+    async deleteAdmin(adminId) {
+        const admins = await this.getAdmins();
+        const filtered = admins.filter(admin => admin.id !== adminId);
+        await this.put('SYSTEM_ADMINS', filtered);
+    }
+
+    async getAdminByUsername(username) {
+        const admins = await this.getAdmins();
+        return admins.find(admin => admin.username === username);
+    }
+
+    async getAdminById(id) {
+        const admins = await this.getAdmins();
+        return admins.find(admin => admin.id === id);
+    }
+
+    async verifyAdmin(username, password) {
+        const admin = await this.getAdminByUsername(username);
+        if (!admin) return null;
+        
+        // For simplicity, we're storing plain text (not recommended for production)
+        if (admin.password === password && admin.status === 'active') {
+            return admin;
+        }
+        return null;
+    }
+
+    async initializeDefaultAdmin() {
+        const admins = await this.getAdmins();
+        if (admins.length === 0) {
+            const defaultAdmin = {
+                id: this.generateId(),
+                username: 'admin',
+                password: 'admin',
+                email: 'admin@example.com',
+                role: 'superadmin',
+                status: 'active',
+                createdAt: new Date().toISOString(),
+                lastLogin: null
+            };
+            await this.saveAdmin(defaultAdmin);
+            console.log('Default admin created:', defaultAdmin.username);
+        }
+    }
+
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // ... rest of your existing Blog methods (listArticles, getArticle, saveArticle, etc.)
+    // Keep all your existing article methods here
     async listArticles() {
         const articles = await this.get('SYSTEM_INDEX_LIST', true) || [];
         return articles.map(article => ({
@@ -150,7 +220,6 @@ class Blog {
         }
     }
 
-    // Export all articles for backup/migration
     async exportArticles() {
         const articles = await this.listArticles();
         const exportData = [];
@@ -165,14 +234,12 @@ class Blog {
         return exportData;
     }
 
-    // Import articles from backup/migration
     async importArticles(articlesData) {
         let imported = 0;
         let errors = [];
         
         for (const articleData of articlesData) {
             try {
-                // Preserve original ID if provided, otherwise generate new one
                 if (!articleData.id) {
                     const currentNum = parseInt(await this.get('SYSTEM_INDEX_NUM')) || 0;
                     articleData.id = (currentNum + 1).toString().padStart(6, '0');
@@ -192,7 +259,6 @@ class Blog {
         return { imported, errors };
     }
 
-    // Get all unique categories/labels
     async getCategories() {
         const articles = await this.listPublishedArticles();
         const categories = {};
@@ -202,13 +268,6 @@ class Blog {
         });
         
         return categories;
-    }
-
-    // Calculate reading time for articles
-    calculateReadingTime(content) {
-        const wordsPerMinute = 200;
-        const words = content.split(/\s+/).length;
-        return Math.ceil(words / wordsPerMinute);
     }
 
     async fetchThemeTemplate(templateName) {
@@ -296,46 +355,48 @@ class Blog {
 
 const blog = new Blog();
 
+// Simple authentication function
 function authenticate(request) {
-    const url = new URL(request.url);
-    
-    if (url.pathname.startsWith('/admin')) {
-        const authHeader = request.headers.get('Authorization');
-        if (!authHeader || !authHeader.startsWith('Basic ')) {
-            return false;
-        }
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+        return null;
+    }
 
+    try {
         const base64 = authHeader.substring(6);
         const credentials = atob(base64).split(':');
-        
-        return credentials[0] === OPT.user && credentials[1] === OPT.password;
+        return credentials;
+    } catch (error) {
+        return null;
     }
-    
-    return true;
 }
 
-function isAdminRequest(request) {
-    const url = new URL(request.url);
+// Check if user is authenticated
+async function isAuthenticated(request) {
+    const credentials = authenticate(request);
+    if (!credentials) return false;
     
-    if (authenticate(request)) {
-        return true;
-    }
+    const [username, password] = credentials;
+    const admin = await blog.verifyAdmin(username, password);
+    return !!admin;
+}
+
+// Check if user is superadmin
+async function isSuperAdmin(request) {
+    const credentials = authenticate(request);
+    if (!credentials) return false;
     
-    const referer = request.headers.get('Referer');
-    if (referer && referer.includes('/admin')) {
-        return true;
-    }
-    
-    if (url.pathname.startsWith('/admin')) {
-        return true;
-    }
-    
-    return false;
+    const [username, password] = credentials;
+    const admin = await blog.verifyAdmin(username, password);
+    return admin && admin.role === 'superadmin';
 }
 
 export default {
     async fetch(request, env, ctx) {
         blog.setKV(env.BLOG_STORE);
+        
+        // Initialize default admin if none exists
+        await blog.initializeDefaultAdmin();
         
         const url = new URL(request.url);
         const path = url.pathname;
@@ -345,12 +406,15 @@ export default {
             OPT.themeURL = `https://raw.githubusercontent.com/OshekharO/CF-BLOG/main/themes/${themeParam}/`;
         }
 
-        if (path.startsWith('/admin')) {
-            if (!authenticate(request)) {
+        // Check authentication for admin routes
+        if (path.startsWith('/admin') || path.startsWith('/api/admins')) {
+            const authenticated = await isAuthenticated(request);
+            if (!authenticated) {
                 return new Response('Authentication required', {
                     status: 401,
                     headers: {
-                        'WWW-Authenticate': 'Basic realm="Blog Admin", charset="UTF-8"'
+                        'WWW-Authenticate': 'Basic realm="Blog Admin", charset="UTF-8"',
+                        'Content-Type': 'text/plain'
                     }
                 });
             }
@@ -369,6 +433,9 @@ export default {
             
             case '/admin/edit':
                 return renderEdit(url);
+
+            case '/admin/users':
+                return renderAdminUsers();
 
             case '/bookmarks':
                 return renderBookmarks();
@@ -395,7 +462,119 @@ export default {
             const method = request.method;
 
             try {
-                // Articles listing
+                // Admin Management API
+                if (path === '/api/admins' && method === 'GET') {
+                    const isSuper = await isSuperAdmin(request);
+                    if (!isSuper) {
+                        return jsonResponse({ error: 'Access denied. Superadmin required.' }, 403);
+                    }
+                    
+                    const admins = await blog.getAdmins();
+                    // Don't return passwords
+                    const safeAdmins = admins.map(admin => ({
+                        id: admin.id,
+                        username: admin.username,
+                        email: admin.email,
+                        role: admin.role,
+                        status: admin.status,
+                        createdAt: admin.createdAt,
+                        lastLogin: admin.lastLogin
+                    }));
+                    
+                    return jsonResponse(safeAdmins);
+                }
+
+                if (path === '/api/admins' && method === 'POST') {
+                    const isSuper = await isSuperAdmin(request);
+                    if (!isSuper) {
+                        return jsonResponse({ error: 'Access denied. Superadmin required.' }, 403);
+                    }
+                    
+                    const adminData = await request.json();
+                    
+                    // Validate required fields
+                    if (!adminData.username || !adminData.password || !adminData.email) {
+                        return jsonResponse({ error: 'Username, password, and email are required' }, 400);
+                    }
+                    
+                    // Check if username already exists
+                    const existingAdmin = await blog.getAdminByUsername(adminData.username);
+                    if (existingAdmin) {
+                        return jsonResponse({ error: 'Username already exists' }, 400);
+                    }
+                    
+                    const newAdmin = {
+                        id: blog.generateId(),
+                        username: adminData.username,
+                        password: adminData.password,
+                        email: adminData.email,
+                        role: adminData.role || 'admin',
+                        status: 'active',
+                        createdAt: new Date().toISOString(),
+                        lastLogin: null
+                    };
+                    
+                    await blog.saveAdmin(newAdmin);
+                    
+                    // Return without password
+                    const { password: _, ...safeAdmin } = newAdmin;
+                    return jsonResponse({ success: true, admin: safeAdmin });
+                }
+
+                if (path.match(/^\/api\/admins\/[^\/]+$/) && method === 'PUT') {
+                    const isSuper = await isSuperAdmin(request);
+                    if (!isSuper) {
+                        return jsonResponse({ error: 'Access denied. Superadmin required.' }, 403);
+                    }
+                    
+                    const adminId = path.split('/').pop();
+                    const updateData = await request.json();
+                    
+                    const existingAdmin = await blog.getAdminById(adminId);
+                    if (!existingAdmin) {
+                        return jsonResponse({ error: 'Admin not found' }, 404);
+                    }
+                    
+                    const updatedAdmin = {
+                        ...existingAdmin,
+                        ...updateData,
+                        id: existingAdmin.id
+                    };
+                    
+                    await blog.saveAdmin(updatedAdmin);
+                    
+                    const { password: _, ...safeAdmin } = updatedAdmin;
+                    return jsonResponse({ success: true, admin: safeAdmin });
+                }
+
+                if (path.match(/^\/api\/admins\/[^\/]+$/) && method === 'DELETE') {
+                    const isSuper = await isSuperAdmin(request);
+                    if (!isSuper) {
+                        return jsonResponse({ error: 'Access denied. Superadmin required.' }, 403);
+                    }
+                    
+                    const adminId = path.split('/').pop();
+                    
+                    const existingAdmin = await blog.getAdminById(adminId);
+                    if (!existingAdmin) {
+                        return jsonResponse({ error: 'Admin not found' }, 404);
+                    }
+                    
+                    // Get current admin to prevent self-deletion
+                    const credentials = authenticate(request);
+                    if (credentials) {
+                        const [username, password] = credentials;
+                        const currentAdmin = await blog.verifyAdmin(username, password);
+                        if (currentAdmin && currentAdmin.id === adminId) {
+                            return jsonResponse({ error: 'Cannot delete your own account' }, 400);
+                        }
+                    }
+                    
+                    await blog.deleteAdmin(adminId);
+                    return jsonResponse({ success: true });
+                }
+
+                // Articles API (existing endpoints)
                 if (path === '/api/articles' && method === 'GET') {
                     const showDrafts = url.searchParams.get('drafts') === 'true';
                     
@@ -409,29 +588,22 @@ export default {
                     return jsonResponse(articles);
                 }
 
-                // Create article
                 if (path === '/api/articles' && method === 'POST') {
-                    if (!authenticate(request)) {
-                        return new Response('Authentication required', { status: 401 });
-                    }
-                    
                     const article = await request.json();
                     const id = await blog.saveArticle(article);
                     return jsonResponse({ success: true, id: id });
                 }
 
-                // Get single article
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'GET') {
                     const permalink = path.split('/').pop();
-                    
                     const article = await blog.getArticleByPermalink(permalink);
                     
                     if (!article) {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    const isAdmin = isAdminRequest(request);
-                    
+                    // Check if user is authenticated for draft access
+                    const isAdmin = await isAuthenticated(request);
                     if (!isAdmin && article.status === 'draft') {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
@@ -439,12 +611,7 @@ export default {
                     return jsonResponse(article);
                 }
 
-                // Update article
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'PUT') {
-                    if (!authenticate(request)) {
-                        return new Response('Authentication required', { status: 401 });
-                    }
-                    
                     const permalink = path.split('/').pop();
                     const articleData = await request.json();
                     
@@ -464,12 +631,7 @@ export default {
                     return jsonResponse({ success: true });
                 }
 
-                // Delete article
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'DELETE') {
-                    if (!authenticate(request)) {
-                        return new Response('Authentication required', { status: 401 });
-                    }
-                    
                     const permalink = path.split('/').pop();
                     const article = await blog.getArticleByPermalink(permalink);
                     
@@ -481,15 +643,9 @@ export default {
                     return jsonResponse({ success: true });
                 }
 
-                // Export articles
+                // Export/Import and other existing APIs...
                 if (path === '/api/export' && method === 'GET') {
-                    if (!authenticate(request)) {
-                        return new Response('Authentication required', { status: 401 });
-                    }
-                    
                     const articles = await blog.exportArticles();
-                    
-                    // Return as downloadable JSON file
                     const exportData = JSON.stringify(articles, null, 2);
                     return new Response(exportData, {
                         headers: {
@@ -499,12 +655,7 @@ export default {
                     });
                 }
 
-                // Import articles
                 if (path === '/api/import' && method === 'POST') {
-                    if (!authenticate(request)) {
-                        return new Response('Authentication required', { status: 401 });
-                    }
-                    
                     const articlesData = await request.json();
                     
                     if (!Array.isArray(articlesData)) {
@@ -521,13 +672,11 @@ export default {
                     });
                 }
 
-                // Get categories
                 if (path === '/api/categories' && method === 'GET') {
                     const categories = await blog.getCategories();
                     return jsonResponse(categories);
                 }
 
-                // Debug endpoint
                 if (path === '/api/debug' && method === 'GET') {
                     const index = await blog.listArticles();
                     const allArticles = [];
@@ -546,42 +695,6 @@ export default {
                         allArticles: allArticles,
                         total: index.length,
                         systemIndexNum: await blog.get('SYSTEM_INDEX_NUM')
-                    });
-                }
-
-                // Fix missing articles
-                if (path === '/api/fix-missing-articles' && method === 'POST') {
-                    if (!authenticate(request)) {
-                        return new Response('Authentication required', { status: 401 });
-                    }
-                    
-                    const index = await blog.listArticles();
-                    let fixedCount = 0;
-                    
-                    for (const item of index) {
-                        const fullArticle = await blog.getArticle(item.id);
-                        if (!fullArticle) {
-                            const recreatedArticle = {
-                                id: item.id,
-                                title: item.title,
-                                img: item.img || '',
-                                permalink: item.permalink,
-                                createDate: item.createDate,
-                                label: item.label,
-                                content: '[Content was lost, please edit this article to restore content]',
-                                contentMarkdown: '[Content was lost, please edit this article to restore content]',
-                                excerpt: item.excerpt || 'Content was lost',
-                                status: item.status || 'draft'
-                            };
-                            await blog.put(item.id, recreatedArticle);
-                            fixedCount++;
-                        }
-                    }
-                    
-                    return jsonResponse({ 
-                        success: true, 
-                        fixedCount: fixedCount,
-                        message: `Fixed ${fixedCount} missing articles` 
                     });
                 }
 
@@ -678,7 +791,6 @@ export default {
             }
         }
 
-        // Helper function to escape XML content
         function escapeXml(unsafe) {
             if (!unsafe) return '';
             return unsafe
@@ -689,7 +801,6 @@ export default {
                 .replace(/'/g, "&apos;");
         }
 
-        // ... rest of the render functions (index, admin, edit, bookmarks, article, 404) remain the same
         async function renderIndex() {
             try {
                 const template = await blog.fetchThemeTemplate('index');
@@ -727,6 +838,25 @@ export default {
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
+            }
+        }
+
+        async function renderAdminUsers() {
+            try {
+                const template = await blog.fetchThemeTemplate('admin-users');
+                const data = {
+                    siteName: OPT.siteName,
+                    copyRight: OPT.copyRight,
+                    codeBeforHead: OPT.codeBeforHead || '',
+                    codeBeforBody: OPT.codeBeforBody || ''
+                };
+                
+                const html = blog.renderTemplate(template, data);
+                return new Response(html, {
+                    headers: { 'Content-Type': 'text/html' }
+                });
+            } catch (error) {
+                return new Response('Error loading admin users template', { status: 500 });
             }
         }
 
