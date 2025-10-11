@@ -175,7 +175,10 @@
         async function loadArticle(permalink) {
             try {
                 const response = await fetch('/api/articles/' + permalink);
-                if (!response.ok) throw new Error('Article not found');
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
                 
                 const article = await response.json();
                 
@@ -193,7 +196,7 @@
                 easyMDE.value(article.content);
             } catch (error) {
                 console.error('Error loading article:', error);
-                alert('Error loading article');
+                alert('Error loading article: ' + error.message);
                 window.location.href = '/admin/';
             }
         }
