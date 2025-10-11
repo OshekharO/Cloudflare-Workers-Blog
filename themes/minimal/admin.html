@@ -41,17 +41,29 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="border-b border-gray-200 px-6 py-4">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-lg font-semibold text-gray-900">
-                        <i class="ri-article-line mr-2"></i>Published
-                    </h2>
+                    <div class="flex space-x-4">
+                        <button id="published-tab" class="tab-button px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600">
+                            Published
+                        </button>
+                        <button id="drafts-tab" class="tab-button px-4 py-2 font-medium text-gray-500 border-b-2 border-transparent">
+                            Drafts
+                        </button>
+                    </div>
                     <a href="/admin/edit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
                         <i class="ri-add-line mr-1"></i>New
                     </a>
                 </div>
             </div>
             
-            <div id="articles-list" class="p-6">
+            <div id="published-list" class="p-6">
                 <!-- Loading State -->
+                <div class="flex justify-center items-center py-12">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+            </div>
+
+            <div id="drafts-list" class="p-6 hidden">
+                <!-- Drafts loading state -->
                 <div class="flex justify-center items-center py-12">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 </div>
@@ -60,12 +72,41 @@
     </div>
 
     <script>
+        // Tab functionality
+        document.getElementById('published-tab').addEventListener('click', () => {
+            switchTab('published');
+        });
+
+        document.getElementById('drafts-tab').addEventListener('click', () => {
+            switchTab('drafts');
+        });
+
+        function switchTab(tab) {
+            // Update active tab
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'border-blue-600');
+                btn.classList.add('text-gray-500', 'border-transparent');
+            });
+            
+            document.getElementById(`${tab}-tab`).classList.add('text-blue-600', 'border-blue-600');
+            document.getElementById(`${tab}-tab`).classList.remove('text-gray-500', 'border-transparent');
+            
+            // Show/hide content
+            document.getElementById('published-list').classList.toggle('hidden', tab !== 'published');
+            document.getElementById('drafts-list').classList.toggle('hidden', tab !== 'drafts');
+            
+            // Load content if needed
+            if (tab === 'drafts') {
+                loadDrafts();
+            }
+        }
+
         async function loadArticles() {
             try {
                 const response = await fetch('/api/articles');
                 if (!response.ok) throw new Error('Failed to load articles');
                 const articles = await response.json();
-                const container = document.getElementById('articles-list');
+                const container = document.getElementById('published-list');
                 
                 if (articles.length === 0) {
                     container.innerHTML = `
@@ -121,11 +162,86 @@
                 `;
             } catch (error) {
                 console.error('Error loading articles:', error);
-                const container = document.getElementById('articles-list');
+                const container = document.getElementById('published-list');
                 container.innerHTML = `
                     <div class="text-center py-12">
                         <i class="ri-error-warning-line text-6xl text-red-300 mb-4"></i>
                         <h3 class="text-lg font-semibold text-red-600 mb-2">Error loading articles</h3>
+                        <p class="text-gray-500">Please try again later</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadDrafts() {
+            try {
+                const response = await fetch('/api/articles?drafts=true');
+                if (!response.ok) throw new Error('Failed to load drafts');
+                const drafts = await response.json();
+                const container = document.getElementById('drafts-list');
+                
+                if (drafts.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12">
+                            <i class="ri-draft-line text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-600 mb-2">No drafts yet</h3>
+                            <p class="text-gray-500">Create your first draft to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200">
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Label</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Modified</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                ${drafts.map(draft => `
+                                    <tr class="hover:bg-gray-50 transition-colors bg-yellow-50">
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900 flex items-center">
+                                                <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded mr-2">Draft</span>
+                                                ${draft.title}
+                                            </div>
+                                            <div class="text-sm text-gray-500">/${draft.permalink}</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${draft.label}</span>
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-gray-500">${new Date(draft.createDate).toLocaleDateString()}</td>
+                                        <td class="px-4 py-4">
+                                            <div class="flex space-x-2">
+                                                <a href="/admin/edit?permalink=${draft.permalink}" class="bg-blue-100 text-blue-700 p-2 rounded-lg hover:bg-blue-200 transition-colors" title="Edit">
+                                                    <i class="ri-edit-line"></i>
+                                                </a>
+                                                <button onclick="publishDraft('${draft.permalink}')" class="bg-green-100 text-green-700 p-2 rounded-lg hover:bg-green-200 transition-colors" title="Publish">
+                                                    <i class="ri-send-plane-line"></i>
+                                                </button>
+                                                <button onclick="deleteArticle('${draft.permalink}')" class="bg-red-100 text-red-700 p-2 rounded-lg hover:bg-red-200 transition-colors" title="Delete">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading drafts:', error);
+                const container = document.getElementById('drafts-list');
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="ri-error-warning-line text-6xl text-red-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-red-600 mb-2">Error loading drafts</h3>
                         <p class="text-gray-500">Please try again later</p>
                     </div>
                 `;
@@ -143,12 +259,42 @@
                 if (response.ok) {
                     alert('Article deleted successfully');
                     loadArticles();
+                    loadDrafts();
                 } else {
                     alert('Error deleting article');
                 }
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error deleting article');
+            }
+        }
+
+        async function publishDraft(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) throw new Error('Draft not found');
+                const draft = await response.json();
+                
+                draft.status = 'published';
+                
+                const updateResponse = await fetch('/api/articles/' + permalink, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(draft)
+                });
+                
+                if (updateResponse.ok) {
+                    alert('Draft published successfully!');
+                    loadDrafts();
+                    loadArticles();
+                } else {
+                    alert('Error publishing draft');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error publishing draft');
             }
         }
 
