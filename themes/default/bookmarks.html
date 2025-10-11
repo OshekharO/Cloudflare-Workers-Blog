@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks - {{siteName}}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06b6d4;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-glass {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .article-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .featured-img {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .article-card:hover .featured-img {
+            transform: scale(1.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 12px 30px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            color: white;
+        }
+        
+        .tag-badge {
+            background: linear-gradient(135deg, var(--accent-color), #3b82f6);
+            color: white;
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        
+        .hero-section {
+            padding: 100px 0 60px;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content-section {
+            padding: 60px 0;
+        }
+        
+        .footer {
+            background: rgba(30, 41, 59, 0.95);
+            color: white;
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+        
+        .bookmark-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold gradient-text" href="/">{{siteName}}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a href="/" class="btn btn-outline-primary btn-sm me-2">
+                        <i class="bi bi-house me-1"></i> Home
+                    </a>
+                    <a href="/admin/" class="btn btn-gradient btn-sm">Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">My Bookmarks</h1>
+            <p class="hero-subtitle">Articles you've saved for later reading</p>
+        </div>
+    </section>
+
+    <!-- Bookmarks Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="glass-card p-5 mb-5">
+                <div class="row align-items-center mb-4">
+                    <div class="col">
+                        <h2 class="mb-0">
+                            <i class="bi bi-bookmark-fill text-warning me-2"></i>
+                            Saved Articles
+                        </h2>
+                    </div>
+                    <div class="col-auto">
+                        <span class="badge bookmark-badge" id="bookmarks-count">0 bookmarks</span>
+                    </div>
+                </div>
+                
+                <div class="row g-4" id="bookmarks-container">
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="text-muted">{{copyRight}}</div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function getBookmarks() {
+            return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+        }
+
+        function loadBookmarks() {
+            const bookmarks = getBookmarks();
+            const container = document.getElementById('bookmarks-container');
+            const countElement = document.getElementById('bookmarks-count');
+            
+            countElement.textContent = `${bookmarks.length} bookmark${bookmarks.length !== 1 ? 's' : ''}`;
+            
+            if (bookmarks.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-bookmark display-1 text-muted mb-3"></i>
+                        <h3 class="text-muted">No bookmarks yet</h3>
+                        <p class="text-muted mb-4">Start bookmarking articles to see them here!</p>
+                        <a href="/" class="btn btn-gradient">Browse Articles</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = bookmarks.map(bookmark => {
+                const imgHtml = bookmark.img ? 
+                    `<img src="${bookmark.img}" class="featured-img w-100" alt="${bookmark.title}">` : 
+                    `<div class="featured-img bg-warning bg-gradient d-flex align-items-center justify-content-center">
+                        <i class="bi bi-bookmark-fill display-4 text-white"></i>
+                     </div>`;
+                
+                return `
+                <div class="col-md-6 col-lg-4">
+                    <div class="article-card glass-card h-100">
+                        ${imgHtml}
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bookmark-badge me-2">
+                                    <i class="bi bi-bookmark-fill me-1"></i>Bookmarked
+                                </span>
+                                <span class="tag-badge">${bookmark.label}</span>
+                            </div>
+                            <h5 class="card-title fw-bold text-dark">${bookmark.title}</h5>
+                            <p class="card-text text-muted small mb-3">
+                                <i class="bi bi-calendar me-1"></i> ${new Date(bookmark.bookmarkedAt).toLocaleDateString()}
+                            </p>
+                            <div class="d-flex gap-2 mt-auto">
+                                <a href="/article/${bookmark.permalink}" class="btn btn-gradient flex-grow-1">Read Article</a>
+                                <button onclick="removeBookmark('${bookmark.permalink}')" class="btn btn-outline-danger" title="Remove bookmark">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function removeBookmark(permalink) {
+            const bookmarks = getBookmarks();
+            const filtered = bookmarks.filter(bookmark => bookmark.permalink !== permalink);
+            localStorage.setItem('blog_bookmarks', JSON.stringify(filtered));
+            loadBookmarks();
+            showNotification('Bookmark removed', 'warning');
+        }
+
+        function showNotification(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} border-0`;
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', () => {
+                document.body.removeChild(container);
+            });
+        }
+
+        loadBookmarks();
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
