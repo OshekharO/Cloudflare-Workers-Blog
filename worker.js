@@ -150,6 +150,67 @@ class Blog {
         }
     }
 
+    // Export all articles for backup/migration
+    async exportArticles() {
+        const articles = await this.listArticles();
+        const exportData = [];
+        
+        for (const article of articles) {
+            const fullArticle = await this.getArticle(article.id);
+            if (fullArticle) {
+                exportData.push(fullArticle);
+            }
+        }
+        
+        return exportData;
+    }
+
+    // Import articles from backup/migration
+    async importArticles(articlesData) {
+        let imported = 0;
+        let errors = [];
+        
+        for (const articleData of articlesData) {
+            try {
+                // Preserve original ID if provided, otherwise generate new one
+                if (!articleData.id) {
+                    const currentNum = parseInt(await this.get('SYSTEM_INDEX_NUM')) || 0;
+                    articleData.id = (currentNum + 1).toString().padStart(6, '0');
+                    await this.put('SYSTEM_INDEX_NUM', (currentNum + 1).toString());
+                }
+                
+                await this.saveArticle(articleData);
+                imported++;
+            } catch (error) {
+                errors.push({
+                    title: articleData.title,
+                    error: error.message
+                });
+            }
+        }
+        
+        return { imported, errors };
+    }
+
+    // Get all unique categories/labels
+    async getCategories() {
+        const articles = await this.listPublishedArticles();
+        const categories = {};
+        
+        articles.forEach(article => {
+            categories[article.label] = (categories[article.label] || 0) + 1;
+        });
+        
+        return categories;
+    }
+
+    // Calculate reading time for articles
+    calculateReadingTime(content) {
+        const wordsPerMinute = 200;
+        const words = content.split(/\s+/).length;
+        return Math.ceil(words / wordsPerMinute);
+    }
+
     async fetchThemeTemplate(templateName) {
         const cacheKey = `${OPT.themeURL}${templateName}`;
         
@@ -253,22 +314,18 @@ function authenticate(request) {
     return true;
 }
 
-// Helper function to check if request is from admin
 function isAdminRequest(request) {
     const url = new URL(request.url);
     
-    // Check if the request has admin authentication
     if (authenticate(request)) {
         return true;
     }
     
-    // Check if the request is coming from admin pages
     const referer = request.headers.get('Referer');
     if (referer && referer.includes('/admin')) {
         return true;
     }
     
-    // Check if the path itself is an admin path
     if (url.pathname.startsWith('/admin')) {
         return true;
     }
@@ -316,6 +373,12 @@ export default {
             case '/bookmarks':
                 return renderBookmarks();
 
+            case '/rss.xml':
+                return generateRSSFeed();
+
+            case '/sitemap.xml':
+                return generateSitemap();
+
             case '/robots.txt':
                 return new Response(OPT.robots, {
                     headers: { 'Content-Type': 'text/plain' }
@@ -332,6 +395,7 @@ export default {
             const method = request.method;
 
             try {
+                // Articles listing
                 if (path === '/api/articles' && method === 'GET') {
                     const showDrafts = url.searchParams.get('drafts') === 'true';
                     
@@ -345,6 +409,7 @@ export default {
                     return jsonResponse(articles);
                 }
 
+                // Create article
                 if (path === '/api/articles' && method === 'POST') {
                     if (!authenticate(request)) {
                         return new Response('Authentication required', { status: 401 });
@@ -355,33 +420,26 @@ export default {
                     return jsonResponse({ success: true, id: id });
                 }
 
+                // Get single article
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'GET') {
                     const permalink = path.split('/').pop();
-                    
-                    console.log('🔍 API GET ARTICLE:', permalink);
                     
                     const article = await blog.getArticleByPermalink(permalink);
                     
                     if (!article) {
-                        console.log('❌ Article not found:', permalink);
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    console.log('✅ Found article:', article.title, 'Status:', article.status);
-                    
-                    // Use the improved admin detection
                     const isAdmin = isAdminRequest(request);
-                    console.log('🔐 Is admin request:', isAdmin);
                     
                     if (!isAdmin && article.status === 'draft') {
-                        console.log('🚫 Blocking draft article access for public');
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    console.log('✅ Serving article to requestor');
                     return jsonResponse(article);
                 }
 
+                // Update article
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'PUT') {
                     if (!authenticate(request)) {
                         return new Response('Authentication required', { status: 401 });
@@ -390,16 +448,11 @@ export default {
                     const permalink = path.split('/').pop();
                     const articleData = await request.json();
                     
-                    console.log('✏️ API UPDATE ARTICLE:', permalink);
-                    
                     const existingArticle = await blog.getArticleByPermalink(permalink);
                     
                     if (!existingArticle) {
-                        console.log('❌ Article not found for update:', permalink);
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
-                    
-                    console.log('✅ Found existing article for update:', existingArticle.title);
                     
                     const updatedArticle = {
                         ...existingArticle,
@@ -408,10 +461,10 @@ export default {
                     };
                     
                     await blog.saveArticle(updatedArticle);
-                    console.log('✅ Article updated successfully');
                     return jsonResponse({ success: true });
                 }
 
+                // Delete article
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'DELETE') {
                     if (!authenticate(request)) {
                         return new Response('Authentication required', { status: 401 });
@@ -428,7 +481,53 @@ export default {
                     return jsonResponse({ success: true });
                 }
 
-                // Add debug endpoint
+                // Export articles
+                if (path === '/api/export' && method === 'GET') {
+                    if (!authenticate(request)) {
+                        return new Response('Authentication required', { status: 401 });
+                    }
+                    
+                    const articles = await blog.exportArticles();
+                    
+                    // Return as downloadable JSON file
+                    const exportData = JSON.stringify(articles, null, 2);
+                    return new Response(exportData, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Content-Disposition': `attachment; filename="blog-export-${new Date().toISOString().split('T')[0]}.json"`
+                        }
+                    });
+                }
+
+                // Import articles
+                if (path === '/api/import' && method === 'POST') {
+                    if (!authenticate(request)) {
+                        return new Response('Authentication required', { status: 401 });
+                    }
+                    
+                    const articlesData = await request.json();
+                    
+                    if (!Array.isArray(articlesData)) {
+                        return jsonResponse({ error: 'Invalid import data. Expected array of articles.' }, 400);
+                    }
+                    
+                    const result = await blog.importArticles(articlesData);
+                    
+                    return jsonResponse({
+                        success: true,
+                        imported: result.imported,
+                        errors: result.errors,
+                        message: `Successfully imported ${result.imported} articles${result.errors.length > 0 ? ` with ${result.errors.length} errors` : ''}`
+                    });
+                }
+
+                // Get categories
+                if (path === '/api/categories' && method === 'GET') {
+                    const categories = await blog.getCategories();
+                    return jsonResponse(categories);
+                }
+
+                // Debug endpoint
                 if (path === '/api/debug' && method === 'GET') {
                     const index = await blog.listArticles();
                     const allArticles = [];
@@ -450,7 +549,7 @@ export default {
                     });
                 }
 
-                // Add fix endpoint to recreate missing articles
+                // Fix missing articles
                 if (path === '/api/fix-missing-articles' && method === 'POST') {
                     if (!authenticate(request)) {
                         return new Response('Authentication required', { status: 401 });
@@ -462,7 +561,6 @@ export default {
                     for (const item of index) {
                         const fullArticle = await blog.getArticle(item.id);
                         if (!fullArticle) {
-                            console.log('🔄 Fixing missing article:', item.id, item.title);
                             const recreatedArticle = {
                                 id: item.id,
                                 title: item.title,
@@ -489,12 +587,109 @@ export default {
 
                 return jsonResponse({ error: 'Not found' }, 404);
             } catch (error) {
-                console.error('❌ API Error:', error);
+                console.error('API Error:', error);
                 return jsonResponse({ error: error.message }, 500);
             }
         }
 
-        // ... rest of the render functions remain the same
+        async function generateRSSFeed() {
+            try {
+                const articles = await blog.listPublishedArticles();
+                const siteUrl = `https://${OPT.siteDomain}`;
+                
+                const rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>${escapeXml(OPT.siteName)}</title>
+        <description>${escapeXml(OPT.siteDescription)}</description>
+        <link>${siteUrl}</link>
+        <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
+        <language>en-us</language>
+        <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+        <generator>CF Workers Blog</generator>
+        ${articles.map(article => `
+        <item>
+            <title>${escapeXml(article.title)}</title>
+            <description>${escapeXml(article.excerpt || '')}</description>
+            <link>${siteUrl}/article/${article.permalink}</link>
+            <guid isPermaLink="true">${siteUrl}/article/${article.permalink}</guid>
+            <pubDate>${new Date(article.createDate).toUTCString()}</pubDate>
+            <category>${escapeXml(article.label)}</category>
+            ${article.img ? `<enclosure url="${escapeXml(article.img)}" type="image/jpeg" />` : ''}
+        </item>
+        `).join('')}
+    </channel>
+</rss>`;
+                
+                return new Response(rss, {
+                    headers: { 
+                        'Content-Type': 'application/rss+xml; charset=utf-8',
+                        'Cache-Control': 'public, max-age=3600'
+                    }
+                });
+            } catch (error) {
+                console.error('Error generating RSS feed:', error);
+                return new Response('Error generating RSS feed', { status: 500 });
+            }
+        }
+
+        async function generateSitemap() {
+            try {
+                const articles = await blog.listPublishedArticles();
+                const siteUrl = `https://${OPT.siteDomain}`;
+                
+                const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    <url>
+        <loc>${siteUrl}</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    ${articles.map(article => `
+    <url>
+        <loc>${siteUrl}/article/${article.permalink}</loc>
+        <lastmod>${new Date(article.createDate).toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        ${article.img ? `
+        <image:image>
+            <image:loc>${escapeXml(article.img)}</image:loc>
+            <image:title>${escapeXml(article.title)}</image:title>
+        </image:image>
+        ` : ''}
+    </url>
+    `).join('')}
+</urlset>`;
+                
+                return new Response(sitemap, {
+                    headers: { 
+                        'Content-Type': 'application/xml; charset=utf-8',
+                        'Cache-Control': 'public, max-age=3600'
+                    }
+                });
+            } catch (error) {
+                console.error('Error generating sitemap:', error);
+                return new Response('Error generating sitemap', { status: 500 });
+            }
+        }
+
+        // Helper function to escape XML content
+        function escapeXml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&apos;");
+        }
+
+        // ... rest of the render functions (index, admin, edit, bookmarks, article, 404) remain the same
         async function renderIndex() {
             try {
                 const template = await blog.fetchThemeTemplate('index');
