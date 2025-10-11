@@ -96,7 +96,9 @@
             document.getElementById('drafts-list').classList.toggle('hidden', tab !== 'drafts');
             
             // Load content if needed
-            if (tab === 'drafts') {
+            if (tab === 'published') {
+                loadArticles();
+            } else if (tab === 'drafts') {
                 loadDrafts();
             }
         }
@@ -261,26 +263,34 @@
                     loadArticles();
                     loadDrafts();
                 } else {
-                    alert('Error deleting article');
+                    const error = await response.text();
+                    alert('Error deleting article: ' + error);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error deleting article');
+                alert('Error deleting article: ' + error.message);
             }
         }
 
         async function publishDraft(permalink) {
             try {
+                // First, get the draft article
                 const response = await fetch('/api/articles/' + permalink);
-                if (!response.ok) throw new Error('Draft not found');
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+                
                 const draft = await response.json();
                 
+                // Update status to published
                 draft.status = 'published';
                 
                 const updateResponse = await fetch('/api/articles/' + permalink, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('admin:admin') // Add auth header
                     },
                     body: JSON.stringify(draft)
                 });
@@ -290,14 +300,16 @@
                     loadDrafts();
                     loadArticles();
                 } else {
-                    alert('Error publishing draft');
+                    const error = await updateResponse.text();
+                    throw new Error(error);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error publishing draft');
+                alert('Error publishing draft: ' + error.message);
             }
         }
 
+        // Load published articles by default
         loadArticles();
     </script>
     
