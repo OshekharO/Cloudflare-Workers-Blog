@@ -128,6 +128,43 @@
             margin-top: 80px;
         }
         
+        .bookmark-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .bookmark-btn:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+        
+        .bookmark-btn.bookmarked {
+            color: #f59e0b;
+        }
+        
+        .share-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 2.5rem;
@@ -151,6 +188,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
+                    <a href="/bookmarks" class="btn btn-outline-primary btn-sm me-2">
+                        <i class="bi bi-bookmark me-1"></i> Bookmarks
+                    </a>
                     <a href="/admin/" class="btn btn-gradient btn-sm">Admin</a>
                 </div>
             </div>
@@ -178,6 +218,39 @@
         </div>
     </section>
 
+    <!-- Share Modal -->
+    <div class="modal fade" id="shareModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title">Share Article</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="share-article-title" class="text-muted mb-4"></p>
+                    <div class="d-flex justify-content-around">
+                        <button onclick="shareOnPlatform('twitter')" class="btn btn-outline-primary d-flex flex-column align-items-center">
+                            <i class="bi bi-twitter fs-4"></i>
+                            <small>Twitter</small>
+                        </button>
+                        <button onclick="shareOnPlatform('facebook')" class="btn btn-outline-primary d-flex flex-column align-items-center">
+                            <i class="bi bi-facebook fs-4"></i>
+                            <small>Facebook</small>
+                        </button>
+                        <button onclick="shareOnPlatform('linkedin')" class="btn btn-outline-primary d-flex flex-column align-items-center">
+                            <i class="bi bi-linkedin fs-4"></i>
+                            <small>LinkedIn</small>
+                        </button>
+                        <button onclick="copyArticleLink()" class="btn btn-outline-primary d-flex flex-column align-items-center">
+                            <i class="bi bi-link-45deg fs-4"></i>
+                            <small>Copy Link</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container text-center">
@@ -189,6 +262,106 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        let currentSharePermalink = '';
+        let currentShareTitle = '';
+
+        function getBookmarks() {
+            return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+        }
+
+        function saveBookmarks(bookmarks) {
+            localStorage.setItem('blog_bookmarks', JSON.stringify(bookmarks));
+        }
+
+        function isArticleBookmarked(permalink) {
+            const bookmarks = getBookmarks();
+            return bookmarks.some(bookmark => bookmark.permalink === permalink);
+        }
+
+        function toggleBookmark(permalink, title, img, label) {
+            const bookmarks = getBookmarks();
+            const existingIndex = bookmarks.findIndex(bookmark => bookmark.permalink === permalink);
+            
+            if (existingIndex > -1) {
+                bookmarks.splice(existingIndex, 1);
+                saveBookmarks(bookmarks);
+                showNotification('Bookmark removed', 'warning');
+            } else {
+                bookmarks.push({
+                    permalink,
+                    title,
+                    img,
+                    label,
+                    bookmarkedAt: new Date().toISOString()
+                });
+                saveBookmarks(bookmarks);
+                showNotification('Article bookmarked!', 'success');
+            }
+            
+            loadArticles();
+        }
+
+        function shareArticle(permalink, title) {
+            currentSharePermalink = permalink;
+            currentShareTitle = title;
+            document.getElementById('share-article-title').textContent = title;
+            new bootstrap.Modal(document.getElementById('shareModal')).show();
+        }
+
+        function shareOnPlatform(platform) {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            
+            const shareUrls = {
+                twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareTitle)}&url=${encodeURIComponent(url)}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+            };
+            
+            window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        async function copyArticleLink() {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            try {
+                await navigator.clipboard.writeText(url);
+                showNotification('Link copied to clipboard!', 'success');
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('Link copied to clipboard!', 'success');
+            }
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} border-0`;
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', () => {
+                document.body.removeChild(container);
+            });
+        }
+
         async function loadArticles() {
             try {
                 const response = await fetch('/api/articles');
@@ -210,6 +383,7 @@
                 }
 
                 container.innerHTML = articles.map(article => {
+                    const isBookmarked = isArticleBookmarked(article.permalink);
                     const imgHtml = article.img ? 
                         `<img src="${article.img}" class="featured-img w-100" alt="${article.title}">` : 
                         `<div class="featured-img bg-gradient d-flex align-items-center justify-content-center">
@@ -218,7 +392,12 @@
                     
                     return `
                     <div class="col-md-6 col-lg-4">
-                        <div class="article-card glass-card h-100">
+                        <div class="article-card glass-card h-100 position-relative">
+                            <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
+                                    onclick="toggleBookmark('${article.permalink}', '${article.title.replace(/'/g, "\\'")}', '${article.img || ''}', '${article.label}')"
+                                    title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
+                                <i class="bi bi-bookmark${isBookmarked ? '-fill' : ''}"></i>
+                            </button>
                             ${imgHtml}
                             <div class="card-body p-4 d-flex flex-column">
                                 <h5 class="card-title fw-bold text-dark">${article.title}</h5>
@@ -227,7 +406,12 @@
                                     <span class="tag-badge ms-2">${article.label}</span>
                                 </p>
                                 <p class="card-text text-muted flex-grow-1">${article.excerpt || ''}</p>
-                                <a href="/article/${article.permalink}" class="btn btn-gradient mt-auto">Read More</a>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="/article/${article.permalink}" class="btn btn-gradient">Read More</a>
+                                    <button class="share-btn" onclick="shareArticle('${article.permalink}', '${article.title.replace(/'/g, "\\'")}')" title="Share article">
+                                        <i class="bi bi-share"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
