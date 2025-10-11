@@ -18,7 +18,8 @@ const OPT = {
     "commentCode": ``,
     "widgetOther": ``,
     "copyRight": `Powered by CF Workers`,
-    "robots": `User-agent: *\nDisallow: /admin`
+    "robots": `User-agent: *\nDisallow: /admin`,
+    "draftPrefix": "DRAFT_"
 };
 
 class Blog {
@@ -67,6 +68,8 @@ class Blog {
             await this.put('SYSTEM_INDEX_NUM', (currentNum + 1).toString());
         }
 
+        // Add status field with default 'published'
+        article.status = article.status || 'published';
         article.contentMarkdown = article.content;
         
         const plainText = this.stripMarkdown(article.content);
@@ -74,6 +77,7 @@ class Blog {
 
         await this.put(article.id, article);
 
+        // Only add to main index if published
         const index = await this.listArticles();
         const existingIndex = index.findIndex(item => item.id === article.id);
         
@@ -84,17 +88,20 @@ class Blog {
             permalink: article.permalink,
             createDate: article.createDate,
             label: article.label,
-            excerpt: article.excerpt
+            excerpt: article.excerpt,
+            status: article.status
         };
 
         if (existingIndex >= 0) {
             index[existingIndex] = indexItem;
-        } else {
+        } else if (article.status === 'published') {
             index.unshift(indexItem);
         }
 
-        index.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
-        await this.put('SYSTEM_INDEX_LIST', index);
+        // Remove drafts from main index
+        const filteredIndex = index.filter(item => item.status !== 'draft');
+        filteredIndex.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+        await this.put('SYSTEM_INDEX_LIST', filteredIndex);
 
         return article.id;
     }
@@ -246,6 +253,9 @@ export default {
             case '/admin/edit':
                 return renderEdit(url);
 
+            case '/bookmarks':
+                return renderBookmarks();
+
             case '/robots.txt':
                 return new Response(OPT.robots, {
                     headers: { 'Content-Type': 'text/plain' }
@@ -263,7 +273,25 @@ export default {
 
             try {
                 if (path === '/api/articles' && method === 'GET') {
-                    const articles = await blog.listArticles();
+                    const showDrafts = url.searchParams.get('drafts') === 'true';
+                    let articles = await blog.listArticles();
+                    
+                    if (showDrafts) {
+                        // For drafts, we need to get all articles and filter
+                        const allArticles = [];
+                        const index = await blog.listArticles();
+                        
+                        for (const item of index) {
+                            if (item.status === 'draft') {
+                                allArticles.push(item);
+                            }
+                        }
+                        articles = allArticles;
+                    } else {
+                        // For published articles, filter out drafts
+                        articles = articles.filter(article => article.status !== 'draft');
+                    }
+                    
                     return jsonResponse(articles);
                 }
 
@@ -394,6 +422,25 @@ export default {
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
+            }
+        }
+
+        async function renderBookmarks() {
+            try {
+                const template = await blog.fetchThemeTemplate('bookmarks');
+                const data = {
+                    siteName: OPT.siteName,
+                    copyRight: OPT.copyRight,
+                    codeBeforHead: OPT.codeBeforHead || '',
+                    codeBeforBody: OPT.codeBeforBody || ''
+                };
+                
+                const html = blog.renderTemplate(template, data);
+                return new Response(html, {
+                    headers: { 'Content-Type': 'text/html' }
+                });
+            } catch (error) {
+                return new Response('Error loading bookmarks page', { status: 500 });
             }
         }
 
