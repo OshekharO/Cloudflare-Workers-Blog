@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks - {{siteName}}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+    {{codeBeforHead}}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-sm border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="text-xl font-bold gradient-text">{{siteName}}</a>
+                <div class="flex space-x-3">
+                    <a href="/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                        <i class="ri-home-line mr-1"></i>Home
+                    </a>
+                    <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200">
+                        <i class="ri-admin-line mr-1"></i>Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    <i class="ri-bookmark-line mr-2 text-yellow-500"></i>My Bookmarks
+                </h1>
+                <p class="text-gray-600">Articles you've saved for later</p>
+            </div>
+
+            <div id="bookmarks-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Loading State -->
+                <div class="col-span-full flex justify-center items-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-600">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <script>
+        function getBookmarks() {
+            return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+        }
+
+        function loadBookmarks() {
+            const bookmarks = getBookmarks();
+            const container = document.getElementById('bookmarks-container');
+            
+            if (bookmarks.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="ri-bookmark-line text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">No bookmarks yet</h3>
+                        <p class="text-gray-500 mb-4">Start bookmarking articles to see them here!</p>
+                        <a href="/" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Browse Articles
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = bookmarks.map(bookmark => {
+                const imgHtml = bookmark.img ? 
+                    `<img src="${bookmark.img}" class="w-full h-48 object-cover rounded-t-xl" alt="${bookmark.title}">` : 
+                    `<div class="w-full h-48 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-t-xl flex items-center justify-center">
+                        <i class="ri-bookmark-line text-4xl text-white"></i>
+                     </div>`;
+                
+                return `
+                <article class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition-shadow">
+                    ${imgHtml}
+                    <div class="p-6">
+                        <h3 class="font-bold text-lg text-gray-900 mb-2 line-clamp-2">${bookmark.title}</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">${bookmark.label}</span>
+                            <span class="mx-2">•</span>
+                            <i class="ri-bookmark-fill text-yellow-500"></i>
+                            <span class="ml-1">Bookmarked</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <a href="/article/${bookmark.permalink}" class="flex-1 bg-blue-600 text-white text-center px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                Read Article
+                            </a>
+                            <button onclick="removeBookmark('${bookmark.permalink}')" class="bg-red-100 text-red-700 p-2 rounded-lg hover:bg-red-200 transition-colors" title="Remove bookmark">
+                                <i class="ri-bookmark-2-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                `;
+            }).join('');
+        }
+
+        function removeBookmark(permalink) {
+            const bookmarks = getBookmarks();
+            const filtered = bookmarks.filter(bookmark => bookmark.permalink !== permalink);
+            localStorage.setItem('blog_bookmarks', JSON.stringify(filtered));
+            loadBookmarks();
+            showNotification('Bookmark removed');
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg bg-yellow-500 text-white font-medium z-50';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        loadBookmarks();
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
