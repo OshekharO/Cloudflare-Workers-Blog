@@ -35,16 +35,19 @@
         .admin-container {
             margin: 20px auto;
             max-width: 1200px;
+            padding: 0 15px;
         }
         
         .admin-card {
             border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 20px;
         }
         
         .admin-table {
             border-radius: 4px;
             overflow: hidden;
+            width: 100%;
         }
         
         .admin-table th {
@@ -52,11 +55,13 @@
             color: white;
             font-weight: 500;
             padding: 15px 12px;
+            white-space: nowrap;
         }
         
         .admin-table td {
             padding: 12px;
             vertical-align: middle;
+            word-break: break-word;
         }
         
         .badge {
@@ -66,6 +71,7 @@
             border-radius: 12px;
             font-size: 0.8rem;
             font-weight: 500;
+            display: inline-block;
         }
         
         .draft-badge {
@@ -80,7 +86,18 @@
         
         .btn-small {
             border-radius: 16px;
-            margin: 0 2px;
+            margin: 2px;
+            height: 36px;
+            line-height: 36px;
+            padding: 0 12px;
+        }
+        
+        .btn-tiny {
+            height: 28px;
+            line-height: 28px;
+            padding: 0 8px;
+            font-size: 0.8rem;
+            margin: 1px;
         }
         
         .no-articles {
@@ -126,6 +143,109 @@
         .draft-row:hover {
             background-color: #ffecb3 !important;
         }
+        
+        .tool-card {
+            margin-bottom: 15px;
+        }
+        
+        .tool-card .card-content {
+            padding: 20px;
+        }
+        
+        .debug-info {
+            background: #f5f5f5;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        /* Mobile optimizations */
+        @media only screen and (max-width: 768px) {
+            .admin-container {
+                margin: 10px auto;
+                padding: 0 10px;
+            }
+            
+            .admin-table {
+                font-size: 0.9rem;
+            }
+            
+            .admin-table th,
+            .admin-table td {
+                padding: 8px 6px;
+            }
+            
+            .btn-small {
+                height: 32px;
+                line-height: 32px;
+                padding: 0 8px;
+                min-width: 32px;
+            }
+            
+            .btn-small i {
+                font-size: 1.1rem;
+            }
+            
+            .badge, .draft-badge {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+            
+            .card-title {
+                font-size: 1.2rem;
+            }
+            
+            .card-title .btn {
+                margin-top: 10px;
+                width: 100%;
+            }
+        }
+        
+        @media only screen and (max-width: 480px) {
+            .admin-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .btn-small {
+                height: 28px;
+                line-height: 28px;
+                padding: 0 6px;
+                min-width: 28px;
+            }
+            
+            .btn-small i {
+                font-size: 1rem;
+            }
+            
+            .tabs .tab a {
+                padding: 0 8px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Action buttons container */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        
+        /* Table responsive fixes */
+        .responsive-table td:last-child {
+            min-width: 120px;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .responsive-table td:last-child {
+                min-width: 100px;
+            }
+        }
     </style>
     
     {{codeBeforHead}}
@@ -142,7 +262,7 @@
                 <ul class="right">
                     <li><a href="/" class="waves-effect waves-light">
                         <i class="material-icons left">home</i>
-                        View Blog
+                        <span class="hide-on-small-only">View Blog</span>
                     </a></li>
                 </ul>
             </div>
@@ -152,6 +272,64 @@
     <!-- Main Content -->
     <main>
         <div class="container admin-container">
+            <!-- Tools Section -->
+            <div class="row">
+                <div class="col s12">
+                    <div class="card admin-card">
+                        <div class="card-content">
+                            <div class="card-title">
+                                <i class="material-icons left">build</i>
+                                Tools & Utilities
+                            </div>
+                            <div class="row">
+                                <div class="col s12 m6 l4 tool-card">
+                                    <div class="card blue lighten-5">
+                                        <div class="card-content">
+                                            <span class="card-title">Export Articles</span>
+                                            <p>Download all articles as JSON backup</p>
+                                        </div>
+                                        <div class="card-action">
+                                            <button onclick="exportArticles()" class="btn blue waves-effect waves-light">
+                                                <i class="material-icons left">file_download</i>Export
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col s12 m6 l4 tool-card">
+                                    <div class="card green lighten-5">
+                                        <div class="card-content">
+                                            <span class="card-title">Fix Articles</span>
+                                            <p>Repair missing article data</p>
+                                        </div>
+                                        <div class="card-action">
+                                            <button onclick="fixMissingArticles()" class="btn green waves-effect waves-light">
+                                                <i class="material-icons left">build</i>Fix Data
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col s12 m6 l4 tool-card">
+                                    <div class="card orange lighten-5">
+                                        <div class="card-content">
+                                            <span class="card-title">Debug Info</span>
+                                            <p>View system information</p>
+                                        </div>
+                                        <div class="card-action">
+                                            <button onclick="showDebugInfo()" class="btn orange waves-effect waves-light">
+                                                <i class="material-icons left">bug_report</i>Debug
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles Management -->
             <div class="row">
                 <div class="col s12">
                     <div class="card admin-card">
@@ -159,9 +337,12 @@
                             <div class="card-title">
                                 <i class="material-icons left">article</i>
                                 Article Management
-                                <a href="/admin/edit" class="btn blue waves-effect waves-light right">
+                                <a href="/admin/edit" class="btn blue waves-effect waves-light right hide-on-small-only">
                                     <i class="material-icons left">add</i>
                                     New Article
+                                </a>
+                                <a href="/admin/edit" class="btn-floating blue waves-effect waves-light right hide-on-med-and-up">
+                                    <i class="material-icons">add</i>
                                 </a>
                             </div>
                             
@@ -281,36 +462,44 @@
                 }
 
                 container.innerHTML = `
-                    <table class="striped admin-table responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Label</th>
-                                <th>Date</th>
-                                <th width="140">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${articles.map(article => `
+                    <div class="responsive-table-container">
+                        <table class="striped admin-table responsive-table">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <strong>${article.title}</strong>
-                                        <br><small class="grey-text">/${article.permalink}</small>
-                                    </td>
-                                    <td><span class="badge">${article.label}</span></td>
-                                    <td>${new Date(article.createDate).toLocaleDateString()}</td>
-                                    <td>
-                                        <a href="/admin/edit?permalink=${article.permalink}" class="btn-small blue waves-effect waves-light" title="Edit">
-                                            <i class="material-icons">edit</i>
-                                        </a>
-                                        <button onclick="deleteArticle('${article.permalink}')" class="btn-small red waves-effect waves-light" title="Delete">
-                                            <i class="material-icons">delete</i>
-                                        </button>
-                                    </td>
+                                    <th>Title</th>
+                                    <th class="hide-on-small-only">Label</th>
+                                    <th class="hide-on-med-and-down">Date</th>
+                                    <th width="140">Actions</th>
                                 </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                ${articles.map(article => `
+                                    <tr>
+                                        <td>
+                                            <strong>${article.title}</strong>
+                                            <br><small class="grey-text">/${article.permalink}</small>
+                                            <div class="show-on-small hide-on-med-and-up">
+                                                <span class="badge">${article.label}</span>
+                                                <small class="grey-text">${new Date(article.createDate).toLocaleDateString()}</small>
+                                            </div>
+                                        </td>
+                                        <td class="hide-on-small-only"><span class="badge">${article.label}</span></td>
+                                        <td class="hide-on-med-and-down">${new Date(article.createDate).toLocaleDateString()}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="/admin/edit?permalink=${article.permalink}" class="btn-small blue waves-effect waves-light" title="Edit">
+                                                    <i class="material-icons">edit</i>
+                                                </a>
+                                                <button onclick="deleteArticle('${article.permalink}')" class="btn-small red waves-effect waves-light" title="Delete">
+                                                    <i class="material-icons">delete</i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
                 `;
             } catch (error) {
                 console.error('Error loading articles:', error);
@@ -344,40 +533,48 @@
                 }
 
                 container.innerHTML = `
-                    <table class="striped admin-table responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Label</th>
-                                <th>Last Modified</th>
-                                <th width="180">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${drafts.map(draft => `
-                                <tr class="draft-row">
-                                    <td>
-                                        <span class="draft-badge">Draft</span>
-                                        <strong>${draft.title}</strong>
-                                        <br><small class="grey-text">/${draft.permalink}</small>
-                                    </td>
-                                    <td><span class="badge">${draft.label}</span></td>
-                                    <td>${new Date(draft.createDate).toLocaleDateString()}</td>
-                                    <td>
-                                        <a href="/admin/edit?permalink=${draft.permalink}" class="btn-small blue waves-effect waves-light" title="Edit">
-                                            <i class="material-icons">edit</i>
-                                        </a>
-                                        <button onclick="publishDraft('${draft.permalink}')" class="btn-small green waves-effect waves-light" title="Publish">
-                                            <i class="material-icons">publish</i>
-                                        </button>
-                                        <button onclick="deleteArticle('${draft.permalink}')" class="btn-small red waves-effect waves-light" title="Delete">
-                                            <i class="material-icons">delete</i>
-                                        </button>
-                                    </td>
+                    <div class="responsive-table-container">
+                        <table class="striped admin-table responsive-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th class="hide-on-small-only">Label</th>
+                                    <th class="hide-on-med-and-down">Last Modified</th>
+                                    <th width="180">Actions</th>
                                 </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                ${drafts.map(draft => `
+                                    <tr class="draft-row">
+                                        <td>
+                                            <span class="draft-badge">Draft</span>
+                                            <strong>${draft.title}</strong>
+                                            <br><small class="grey-text">/${draft.permalink}</small>
+                                            <div class="show-on-small hide-on-med-and-up">
+                                                <span class="badge">${draft.label}</span>
+                                                <small class="grey-text">${new Date(draft.createDate).toLocaleDateString()}</small>
+                                            </div>
+                                        </td>
+                                        <td class="hide-on-small-only"><span class="badge">${draft.label}</span></td>
+                                        <td class="hide-on-med-and-down">${new Date(draft.createDate).toLocaleDateString()}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="/admin/edit?permalink=${draft.permalink}" class="btn-small blue waves-effect waves-light" title="Edit">
+                                                    <i class="material-icons">edit</i>
+                                                </a>
+                                                <button onclick="publishDraft('${draft.permalink}')" class="btn-small green waves-effect waves-light" title="Publish">
+                                                    <i class="material-icons">publish</i>
+                                                </button>
+                                                <button onclick="deleteArticle('${draft.permalink}')" class="btn-small red waves-effect waves-light" title="Delete">
+                                                    <i class="material-icons">delete</i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
                 `;
             } catch (error) {
                 console.error('Error loading drafts:', error);
@@ -442,6 +639,87 @@
             } catch (error) {
                 console.error('Error:', error);
                 M.toast({html: 'Error publishing draft', classes: 'red'});
+            }
+        }
+
+        // Tools functions
+        async function exportArticles() {
+            try {
+                const response = await fetch('/api/export');
+                if (!response.ok) throw new Error('Export failed');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `blog-export-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                M.toast({html: 'Articles exported successfully!', classes: 'green'});
+            } catch (error) {
+                console.error('Export error:', error);
+                M.toast({html: 'Error exporting articles', classes: 'red'});
+            }
+        }
+
+        async function fixMissingArticles() {
+            if (!confirm('This will attempt to fix any missing article data. Continue?')) return;
+            
+            try {
+                const response = await fetch('/api/fix-missing-articles', { method: 'POST' });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    M.toast({html: `Fixed ${result.fixedCount} articles`, classes: 'green'});
+                    loadPublishedArticles();
+                    loadDrafts();
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('Fix error:', error);
+                M.toast({html: 'Error fixing articles: ' + error.message, classes: 'red'});
+            }
+        }
+
+        async function showDebugInfo() {
+            try {
+                const response = await fetch('/api/debug');
+                const data = await response.json();
+                
+                const debugInfo = `
+Total Articles: ${data.total}
+System Index: ${data.systemIndexNum}
+
+Articles in Index:
+${data.index.map(article => `- ${article.title} (${article.id}) - ${article.status}`).join('\n')}
+
+Missing Articles: ${data.allArticles.filter(a => !a.exists).length}
+                `.trim();
+
+                // Create modal for debug info
+                const modal = document.createElement('div');
+                modal.id = 'debug-modal';
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h4>Debug Information</h4>
+                        <div class="debug-info">${debugInfo}</div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                M.Modal.init(modal).open();
+                
+            } catch (error) {
+                console.error('Debug error:', error);
+                M.toast({html: 'Error loading debug info', classes: 'red'});
             }
         }
     </script>
