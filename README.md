@@ -1,6 +1,6 @@
 # CF Workers Blog
 
-A modern, serverless blog platform built with Cloudflare Workers and KV storage. Features remote theme support, Markdown editing, and a clean admin interface.
+A modern, serverless blog platform built with Cloudflare Workers and KV storage. Features remote theme support, Markdown editing, multi-admin support, and a clean Material Design interface.
 
 ## Features
 
@@ -8,9 +8,16 @@ A modern, serverless blog platform built with Cloudflare Workers and KV storage.
 - 💾 **KV Storage** - Articles stored in Cloudflare KV
 - 🎨 **Remote Themes** - Fetch themes from GitHub repositories
 - 📝 **Markdown Support** - Easy content creation with Markdown
-- 🔐 **Admin Panel** - Secure content management
-- 📱 **Responsive** - Modern Bootstrap 5 design
+- 🔐 **Multi-Admin Support** - Role-based admin management
+- 📱 **Responsive** - Modern Material Design interface
 - ⚡ **Fast** - Edge computing with global CDN
+- 📊 **Export/Import** - Backup and migrate your content
+- 📡 **RSS Feed** - Automatic RSS feed generation
+- 🗺️ **Sitemap** - SEO-friendly XML sitemap
+- 📚 **Draft Posts** - Save articles as drafts
+- 🔖 **Bookmarks** - Client-side article bookmarking
+- 📤 **Social Sharing** - Share articles on social media
+- 🔍 **Search Ready** - API endpoints for search functionality
 
 ## Setup Instructions
 
@@ -59,8 +66,8 @@ Update the `OPT` object in `worker.js` with your settings:
 
 ```javascript
 const OPT = {
-    "user": "admin",                    // Admin username
-    "password": "your-secure-password", // Admin password
+    "user": "admin",                    // Default admin username
+    "password": "admin",                // Default admin password
     "siteDomain": "your-domain.workers.dev",
     "siteName": "Your Blog Name",
     "siteDescription": "Your blog description",
@@ -75,26 +82,51 @@ const OPT = {
 your-repo/
 ├── themes/
 │   ├── default/
-│   │   ├── index.html      # Homepage template
-│   │   ├── article.html    # Article page template
-│   │   ├── admin.html      # Admin dashboard template
-│   │   ├── edit.html       # Article editor template
-│   │   └── 404.html        # 404 error page template
-│   └── theme1/             # Additional themes
-├── worker.js               # Main worker script
-└── wrangler.toml          # Wrangler configuration
+│   │   ├── index.html          # Homepage template
+│   │   ├── article.html        # Article page template
+│   │   ├── admin.html          # Admin dashboard template
+│   │   ├── edit.html           # Article editor template
+│   │   ├── admin-users.html    # Admin management template
+│   │   ├── bookmarks.html      # Bookmarks page template
+│   │   └── 404.html            # 404 error page template
+│   └── theme1/                 # Additional themes
+├── worker.js                   # Main worker script
+└── wrangler.toml              # Wrangler configuration
 ```
 
 ## API Endpoints
 
+### Article Management
 - `GET /` - Blog homepage
 - `GET /article/{permalink}` - Individual article page
-- `GET /admin/` - Admin dashboard (password protected)
+- `GET /admin/` - Admin dashboard
 - `GET /admin/edit` - Article editor
+- `GET /admin/users` - Admin user management (superadmin only)
 - `GET /api/articles` - Get all articles (JSON)
+- `GET /api/articles?drafts=true` - Get draft articles
 - `POST /api/articles` - Create new article
 - `PUT /api/articles/{permalink}` - Update article
 - `DELETE /api/articles/{permalink}` - Delete article
+
+### Export/Import
+- `GET /api/export` - Export all articles as JSON (admin only)
+- `POST /api/import` - Import articles from JSON (admin only)
+
+### Admin Management
+- `GET /api/admins` - List all admins (superadmin only)
+- `POST /api/admins` - Create new admin (superadmin only)
+- `PUT /api/admins/{id}` - Update admin (superadmin only)
+- `DELETE /api/admins/{id}` - Delete admin (superadmin only)
+
+### SEO & Syndication
+- `GET /rss.xml` - RSS feed for subscribers
+- `GET /sitemap.xml` - XML sitemap for search engines
+- `GET /api/categories` - Get all categories with counts
+
+### Utilities
+- `GET /bookmarks` - User bookmarks page
+- `GET /api/debug` - Debug information
+- `POST /api/fix-missing-articles` - Fix corrupted articles (admin only)
 
 ## Theme System
 
@@ -104,6 +136,8 @@ The blog supports remote themes from GitHub repositories. Create theme folders w
 - `article.html` - Article page  
 - `admin.html` - Admin dashboard
 - `edit.html` - Article editor
+- `admin-users.html` - Admin management
+- `bookmarks.html` - Bookmarks page
 - `404.html` - Error page
 
 Switch themes using URL parameter: `?theme=theme-name`
@@ -122,14 +156,89 @@ Available variables for theme templates:
 - `{{copyRight}}` - Copyright text
 - `{{codeBeforHead}}` - Custom head code
 - `{{codeBeforBody}}` - Custom body code
+- `{{action}}` - Editor action ("New" or "Edit")
+
+## Multi-Admin System
+
+### Admin Roles
+- **Super Admin**: Full access including user management
+- **Admin**: Content management only (create, edit, delete articles)
+
+### Default Admin Account
+- **Username**: `admin`
+- **Password**: `admin`
+- **Role**: `superadmin`
+
+### Managing Admins
+1. Log in as a superadmin
+2. Visit `/admin/users`
+3. Click "Add Admin" to create new admin accounts
+4. Set appropriate roles and permissions
 
 ## Managing Articles
 
+### Creating Articles
 1. Visit `/admin/` and enter credentials
 2. Click "New Article" to create content
 3. Use the Markdown editor for content
 4. Set permalink, title, label, and publish date
-5. Save to publish immediately
+5. Choose status: "Published" or "Draft"
+6. Save to publish or save as draft
+
+### Draft Management
+- Drafts are only visible in admin area
+- Use the publish button to convert drafts to published articles
+- Drafts are excluded from public site and RSS feeds
+
+## Export/Import Features
+
+### Export Articles
+```bash
+curl -u admin:password https://your-blog.com/api/export > backup.json
+```
+
+### Import Articles
+```bash
+curl -X POST -u admin:password -H "Content-Type: application/json" -d @backup.json https://your-blog.com/api/import
+```
+
+## SEO Features
+
+### RSS Feed
+- Available at `/rss.xml`
+- Includes all published articles
+- Proper RSS 2.0 format with enclosures
+
+### Sitemap
+- Available at `/sitemap.xml`
+- Includes homepage and all published articles
+- Image sitemap support for featured images
+
+## User Features
+
+### Bookmarks
+- Client-side bookmarking using localStorage
+- Access bookmarks at `/bookmarks`
+- Bookmarks persist across browser sessions
+
+### Social Sharing
+- Share buttons on article pages
+- Support for Twitter, Facebook, LinkedIn
+- Copy link functionality
+
+## Security Features
+
+- Basic authentication for admin areas
+- Role-based access control
+- Safe admin operations (cannot delete self)
+- Draft article protection
+- Input sanitization and validation
+
+## Browser Support
+
+- Modern browsers with ES6+ support
+- LocalStorage for bookmark functionality
+- Clipboard API for social sharing
 
 ## Credits
 
@@ -138,8 +247,9 @@ This project is based on initial code from [gdtool/cloudflare-workers-blog](http
 Special thanks to:
 - [gdtool](https://github.com/gdtool) for the original implementation
 - [Cloudflare](https://cloudflare.com) for Workers and KV storage
-- [Bootstrap](https://getbootstrap.com) for UI components
+- [Materialize CSS](https://materializecss.com) for UI components
 - [Marked.js](https://marked.js.org) for Markdown parsing
+- [EasyMDE](https://github.com/Ionaru/easy-markdown-editor) for Markdown editor
 
 ## License
 
