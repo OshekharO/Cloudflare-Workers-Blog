@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - {{siteName}}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .pulse-slow {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="text-xl font-bold gradient-text">{{siteName}}</a>
+                <div class="flex space-x-3">
+                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                        <i class="ri-bookmark-line mr-1"></i>Bookmarks
+                    </a>
+                    <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200">
+                        <i class="ri-admin-line mr-1"></i>Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center py-12">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <!-- Animated 404 Illustration -->
+            <div class="relative mb-8">
+                <div class="floating text-9xl font-bold text-gray-300 mb-4">404</div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="ri-search-eye-line text-6xl text-blue-500 pulse-slow"></i>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-4">Page Not Found</h1>
+                <p class="text-lg text-gray-600 mb-6 max-w-md mx-auto">
+                    Oops! The page you're looking for seems to have wandered off into the digital void. 
+                    It might have been moved, deleted, or perhaps it never existed in the first place.
+                </p>
+                
+                <!-- Search Suggestion -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                    <div class="flex items-start">
+                        <i class="ri-lightbulb-flash-line text-blue-500 text-xl mr-3 mt-1"></i>
+                        <div class="text-left">
+                            <h3 class="font-semibold text-blue-800 mb-1">Looking for something specific?</h3>
+                            <p class="text-blue-700 text-sm">Try browsing our articles or use the search to find what you need.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="/" class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all duration-200 flex items-center justify-center">
+                        <i class="ri-home-line mr-2"></i>
+                        Back to Homepage
+                    </a>
+                    <button onclick="window.history.back()" class="w-full sm:w-auto bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                        <i class="ri-arrow-left-line mr-2"></i>
+                        Go Back
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto">
+                <a href="/admin/edit" class="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow group">
+                    <i class="ri-edit-line text-2xl text-blue-500 mb-2 group-hover:text-blue-600 transition-colors"></i>
+                    <h3 class="font-semibold text-gray-900 text-sm">Write Article</h3>
+                    <p class="text-gray-500 text-xs mt-1">Create new content</p>
+                </a>
+                
+                <a href="/admin/" class="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow group">
+                    <i class="ri-article-line text-2xl text-green-500 mb-2 group-hover:text-green-600 transition-colors"></i>
+                    <h3 class="font-semibold text-gray-900 text-sm">Manage Articles</h3>
+                    <p class="text-gray-500 text-xs mt-1">View all posts</p>
+                </a>
+                
+                <a href="/bookmarks" class="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow group">
+                    <i class="ri-bookmark-line text-2xl text-yellow-500 mb-2 group-hover:text-yellow-600 transition-colors"></i>
+                    <h3 class="font-semibold text-gray-900 text-sm">Bookmarks</h3>
+                    <p class="text-gray-500 text-xs mt-1">Saved articles</p>
+                </a>
+            </div>
+
+            <!-- Fun Message -->
+            <div class="mt-8 text-center">
+                <div class="inline-flex items-center bg-orange-50 border border-orange-200 rounded-full px-4 py-2">
+                    <i class="ri-emotion-happy-line text-orange-500 mr-2"></i>
+                    <span class="text-orange-700 text-sm">Don't worry, even the best websites get lost sometimes!</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-600">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <script>
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click animation to buttons
+            const buttons = document.querySelectorAll('button, a[href]');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') !== '#' && !this.getAttribute('href').startsWith('javascript:')) {
+                        const ripple = document.createElement('span');
+                        const rect = this.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        const x = e.clientX - rect.left - size / 2;
+                        const y = e.clientY - rect.top - size / 2;
+                        
+                        ripple.style.cssText = `
+                            position: absolute;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.6);
+                            transform: scale(0);
+                            animation: ripple 600ms linear;
+                            width: ${size}px;
+                            height: ${size}px;
+                            left: ${x}px;
+                            top: ${y}px;
+                        `;
+                        
+                        this.style.position = 'relative';
+                        this.style.overflow = 'hidden';
+                        this.appendChild(ripple);
+                        
+                        setTimeout(() => {
+                            ripple.remove();
+                        }, 600);
+                    }
+                });
+            });
+
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    window.history.back();
+                }
+                if (e.key === 'h' || e.key === 'H') {
+                    window.location.href = '/';
+                }
+            });
+
+            // Add some console fun
+            console.log(
+                `%c🚨 404 Alert! %c\nLooks like someone took a wrong turn...\nDon't worry, even developers get lost sometimes! 😄`,
+                'color: #ef4444; font-weight: bold; font-size: 16px;',
+                'color: #6b7280; font-size: 14px;'
+            );
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
