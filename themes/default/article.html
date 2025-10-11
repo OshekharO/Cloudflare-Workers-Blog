@@ -211,6 +211,32 @@
         #raw-content {
             display: none;
         }
+        
+        .share-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .share-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-twitter { background: #1da1f2; color: white; }
+        .btn-facebook { background: #1877f2; color: white; }
+        .btn-linkedin { background: #0a66c2; color: white; }
+        .btn-copy { background: #6b7280; color: white; }
     </style>
     
     {{codeBeforHead}}
@@ -221,6 +247,9 @@
         <div class="container">
             <a class="navbar-brand fw-bold gradient-text" href="/">{{siteName}}</a>
             <div class="navbar-nav ms-auto">
+                <a href="/bookmarks" class="btn btn-outline-primary btn-sm me-2">
+                    <i class="bi bi-bookmark me-1"></i> Bookmarks
+                </a>
                 <a href="/" class="btn btn-outline-primary btn-sm">Home</a>
             </div>
         </div>
@@ -252,10 +281,32 @@
                         </div>
                     </div>
                     
-                    <div class="mt-5 pt-4 border-top text-center">
-                        <a href="/" class="btn btn-gradient">
-                            <i class="bi bi-arrow-left me-2"></i> Back to Home
-                        </a>
+                    <!-- Social Sharing -->
+                    <div class="mt-5 pt-4 border-top">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <a href="/" class="btn btn-gradient">
+                                    <i class="bi bi-arrow-left me-2"></i> Back to Home
+                                </a>
+                            </div>
+                            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                                <div class="share-buttons">
+                                    <span class="text-muted me-3">Share:</span>
+                                    <button onclick="shareOnTwitter()" class="share-btn btn-twitter" title="Share on Twitter">
+                                        <i class="bi bi-twitter"></i>
+                                    </button>
+                                    <button onclick="shareOnFacebook()" class="share-btn btn-facebook" title="Share on Facebook">
+                                        <i class="bi bi-facebook"></i>
+                                    </button>
+                                    <button onclick="shareOnLinkedIn()" class="share-btn btn-linkedin" title="Share on LinkedIn">
+                                        <i class="bi bi-linkedin"></i>
+                                    </button>
+                                    <button onclick="copyShareLink()" class="share-btn btn-copy" title="Copy link">
+                                        <i class="bi bi-link-45deg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </article>
             </div>
@@ -273,6 +324,67 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        function getShareUrl() {
+            return window.location.href;
+        }
+
+        function getShareTitle() {
+            return document.title.replace(` - ${'{{siteName}}'}`, '');
+        }
+
+        function shareOnTwitter() {
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareTitle())}&url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        async function copyShareLink() {
+            try {
+                await navigator.clipboard.writeText(getShareUrl());
+                showNotification('Link copied to clipboard!', 'success');
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = getShareUrl();
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('Link copied to clipboard!', 'success');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-bg-${type} border-0`;
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', () => {
+                document.body.removeChild(container);
+            });
+        }
+
         // Parse and render markdown content
         function renderMarkdown() {
             const contentElement = document.getElementById('article-content');
