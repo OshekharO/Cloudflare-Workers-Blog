@@ -172,9 +172,19 @@
                                        placeholder="https://example.com/image.jpg">
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="createDate" class="form-label fw-semibold">Publish Date *</label>
-                                <input type="datetime-local" class="form-control" id="createDate" required>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="createDate" class="form-label fw-semibold">Publish Date *</label>
+                                    <input type="datetime-local" class="form-control" id="createDate" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="status" class="form-label fw-semibold">Status</label>
+                                    <select class="form-select" id="status">
+                                        <option value="published">Published</option>
+                                        <option value="draft">Draft</option>
+                                    </select>
+                                </div>
                             </div>
                             
                             <div class="mb-4">
@@ -250,6 +260,10 @@
                 document.getElementById('label').value = article.label;
                 document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
                 
+                if (article.status) {
+                    document.getElementById('status').value = article.status;
+                }
+                
                 easyMDE.value(article.content);
             } catch (error) {
                 console.error('Error loading article:', error);
@@ -277,7 +291,8 @@
                 img: document.getElementById('img').value,
                 label: document.getElementById('label').value,
                 createDate: document.getElementById('createDate').value,
-                content: easyMDE.value()
+                content: easyMDE.value(),
+                status: document.getElementById('status').value
             };
 
             try {
@@ -293,7 +308,12 @@
                 });
 
                 if (response.ok) {
-                    alert(isEditing ? 'Article updated successfully!' : 'Article created successfully!');
+                    const message = isEditing ? 'Article updated successfully!' : 'Article created successfully!';
+                    if (formData.status === 'draft') {
+                        alert(message + ' (Saved as draft)');
+                    } else {
+                        alert(message);
+                    }
                     window.location.href = '/admin/';
                 } else {
                     const error = await response.text();
