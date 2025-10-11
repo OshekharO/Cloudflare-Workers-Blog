@@ -36,9 +36,9 @@ class Blog {
         const value = await this.kv.get(key);
         if (!parse) return value;
         try {
-            return value ? JSON.parse(value) : [];
+            return value ? JSON.parse(value) : null;
         } catch {
-            return [];
+            return null;
         }
     }
 
@@ -54,7 +54,11 @@ class Blog {
     }
 
     async listArticles() {
-        return await this.get('SYSTEM_INDEX_LIST', true);
+        const articles = await this.get('SYSTEM_INDEX_LIST', true) || [];
+        return articles.map(article => ({
+            status: 'published',
+            ...article
+        }));
     }
 
     async getArticle(id) {
@@ -68,26 +72,24 @@ class Blog {
             await this.put('SYSTEM_INDEX_NUM', (currentNum + 1).toString());
         }
 
-        // Add status field with default 'published' for existing articles
         if (!article.status) {
             article.status = 'published';
         }
         
-        article.contentMarkdown = article.content;
+        article.contentMarkdown = article.contentMarkdown || article.content || '';
         
-        const plainText = this.stripMarkdown(article.content);
+        const plainText = this.stripMarkdown(article.contentMarkdown);
         article.excerpt = plainText.substring(0, OPT.readMoreLength) + (plainText.length > OPT.readMoreLength ? '...' : '');
 
         await this.put(article.id, article);
 
-        // Handle index updates
         const index = await this.listArticles();
         const existingIndex = index.findIndex(item => item.id === article.id);
         
         const indexItem = {
             id: article.id,
             title: article.title,
-            img: article.img,
+            img: article.img || '',
             permalink: article.permalink,
             createDate: article.createDate,
             label: article.label,
@@ -96,14 +98,11 @@ class Blog {
         };
 
         if (existingIndex >= 0) {
-            // Update existing article
             index[existingIndex] = indexItem;
         } else {
-            // Add new article to index
             index.unshift(indexItem);
         }
 
-        // Save the complete index (including drafts)
         index.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
         await this.put('SYSTEM_INDEX_LIST', index);
 
@@ -117,28 +116,38 @@ class Blog {
         await this.put('SYSTEM_INDEX_LIST', filtered);
     }
 
-    // Method to get only published articles
     async listPublishedArticles() {
         const articles = await this.listArticles();
         return articles.filter(article => article.status !== 'draft');
     }
 
-    // Method to get only drafts
     async listDraftArticles() {
         const articles = await this.listArticles();
         return articles.filter(article => article.status === 'draft');
     }
 
-    // Method to get article by permalink (searches all articles)
     async getArticleByPermalink(permalink) {
-        const articles = await this.listArticles();
-        const article = articles.find(a => a.permalink === permalink);
-        
-        if (!article) {
+        try {
+            const articles = await this.listArticles();
+            const articleIndex = articles.find(a => a.permalink === permalink);
+            
+            if (!articleIndex) {
+                return null;
+            }
+            
+            const fullArticle = await this.getArticle(articleIndex.id);
+            if (!fullArticle) {
+                return null;
+            }
+            
+            return {
+                ...fullArticle,
+                status: articleIndex.status || fullArticle.status || 'published'
+            };
+        } catch (error) {
+            console.error('Error getting article by permalink:', error);
             return null;
         }
-        
-        return await this.getArticle(article.id);
     }
 
     async fetchThemeTemplate(templateName) {
@@ -244,6 +253,29 @@ function authenticate(request) {
     return true;
 }
 
+// Helper function to check if request is from admin
+function isAdminRequest(request) {
+    const url = new URL(request.url);
+    
+    // Check if the request has admin authentication
+    if (authenticate(request)) {
+        return true;
+    }
+    
+    // Check if the request is coming from admin pages
+    const referer = request.headers.get('Referer');
+    if (referer && referer.includes('/admin')) {
+        return true;
+    }
+    
+    // Check if the path itself is an admin path
+    if (url.pathname.startsWith('/admin')) {
+        return true;
+    }
+    
+    return false;
+}
+
 export default {
     async fetch(request, env, ctx) {
         blog.setKV(env.BLOG_STORE);
@@ -305,10 +337,8 @@ export default {
                     
                     let articles;
                     if (showDrafts) {
-                        // Get only drafts for admin drafts tab
                         articles = await blog.listDraftArticles();
                     } else {
-                        // Get published articles for public site and admin published tab
                         articles = await blog.listPublishedArticles();
                     }
                     
@@ -328,19 +358,27 @@ export default {
                 if (path.match(/^\/api\/articles\/[^\/]+$/) && method === 'GET') {
                     const permalink = path.split('/').pop();
                     
-                    // Use the new method that searches all articles (including drafts)
+                    console.log('🔍 API GET ARTICLE:', permalink);
+                    
                     const article = await blog.getArticleByPermalink(permalink);
                     
                     if (!article) {
+                        console.log('❌ Article not found:', permalink);
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    // Don't serve draft articles to public
-                    const isAdminRequest = request.headers.get('Authorization') || path.includes('/admin');
-                    if (!isAdminRequest && article.status === 'draft') {
+                    console.log('✅ Found article:', article.title, 'Status:', article.status);
+                    
+                    // Use the improved admin detection
+                    const isAdmin = isAdminRequest(request);
+                    console.log('🔐 Is admin request:', isAdmin);
+                    
+                    if (!isAdmin && article.status === 'draft') {
+                        console.log('🚫 Blocking draft article access for public');
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
+                    console.log('✅ Serving article to requestor');
                     return jsonResponse(article);
                 }
 
@@ -352,21 +390,25 @@ export default {
                     const permalink = path.split('/').pop();
                     const articleData = await request.json();
                     
-                    // Use the new method that searches all articles (including drafts)
+                    console.log('✏️ API UPDATE ARTICLE:', permalink);
+                    
                     const existingArticle = await blog.getArticleByPermalink(permalink);
                     
                     if (!existingArticle) {
+                        console.log('❌ Article not found for update:', permalink);
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    // Merge the existing article with the updated data
+                    console.log('✅ Found existing article for update:', existingArticle.title);
+                    
                     const updatedArticle = {
                         ...existingArticle,
                         ...articleData,
-                        id: existingArticle.id // Ensure ID is preserved
+                        id: existingArticle.id
                     };
                     
                     await blog.saveArticle(updatedArticle);
+                    console.log('✅ Article updated successfully');
                     return jsonResponse({ success: true });
                 }
 
@@ -386,13 +428,73 @@ export default {
                     return jsonResponse({ success: true });
                 }
 
+                // Add debug endpoint
+                if (path === '/api/debug' && method === 'GET') {
+                    const index = await blog.listArticles();
+                    const allArticles = [];
+                    
+                    for (const item of index) {
+                        const fullArticle = await blog.getArticle(item.id);
+                        allArticles.push({
+                            index: item,
+                            full: fullArticle,
+                            exists: !!fullArticle
+                        });
+                    }
+                    
+                    return jsonResponse({
+                        index: index,
+                        allArticles: allArticles,
+                        total: index.length,
+                        systemIndexNum: await blog.get('SYSTEM_INDEX_NUM')
+                    });
+                }
+
+                // Add fix endpoint to recreate missing articles
+                if (path === '/api/fix-missing-articles' && method === 'POST') {
+                    if (!authenticate(request)) {
+                        return new Response('Authentication required', { status: 401 });
+                    }
+                    
+                    const index = await blog.listArticles();
+                    let fixedCount = 0;
+                    
+                    for (const item of index) {
+                        const fullArticle = await blog.getArticle(item.id);
+                        if (!fullArticle) {
+                            console.log('🔄 Fixing missing article:', item.id, item.title);
+                            const recreatedArticle = {
+                                id: item.id,
+                                title: item.title,
+                                img: item.img || '',
+                                permalink: item.permalink,
+                                createDate: item.createDate,
+                                label: item.label,
+                                content: '[Content was lost, please edit this article to restore content]',
+                                contentMarkdown: '[Content was lost, please edit this article to restore content]',
+                                excerpt: item.excerpt || 'Content was lost',
+                                status: item.status || 'draft'
+                            };
+                            await blog.put(item.id, recreatedArticle);
+                            fixedCount++;
+                        }
+                    }
+                    
+                    return jsonResponse({ 
+                        success: true, 
+                        fixedCount: fixedCount,
+                        message: `Fixed ${fixedCount} missing articles` 
+                    });
+                }
+
                 return jsonResponse({ error: 'Not found' }, 404);
             } catch (error) {
-                console.error('API Error:', error);
+                console.error('❌ API Error:', error);
                 return jsonResponse({ error: error.message }, 500);
             }
         }
 
+        // ... rest of the render functions remain the same
         async function renderIndex() {
             try {
                 const template = await blog.fetchThemeTemplate('index');
@@ -480,7 +582,7 @@ export default {
             try {
                 const template = await blog.fetchThemeTemplate('article');
                 const permalink = path.split('/').pop();
-                const articles = await blog.listPublishedArticles(); // Only published articles for public
+                const articles = await blog.listPublishedArticles();
                 const article = articles.find(a => a.permalink === permalink);
                 
                 if (!article) {
