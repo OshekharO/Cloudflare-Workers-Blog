@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}} Article - Admin</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .EasyMDEContainer .CodeMirror {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+        }
+        
+        .EasyMDEContainer .editor-toolbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .EasyMDEContainer .editor-toolbar button {
+            color: white;
+        }
+        
+        .EasyMDEContainer .editor-toolbar button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .EasyMDEContainer .editor-toolbar button.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        input, select, textarea {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            outline: none;
+        }
+        
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="ri-edit-line text-2xl text-white mr-3"></i>
+                    <h1 class="text-xl font-bold text-white">{{action}} Article</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="/admin/" class="glass-card text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-white/20 transition-all duration-300">
+                        <i class="ri-arrow-left-line mr-1"></i>Back
+                    </a>
+                    <a href="/" class="glass-card text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-white/20 transition-all duration-300">
+                        <i class="ri-eye-line mr-1"></i>View
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="border-b border-white/20 px-6 py-4">
+                <h2 class="text-lg font-semibold text-white">
+                    <i class="ri-article-line mr-2"></i>{{action}} Article
+                </h2>
+            </div>
+            
+            <form id="article-form" class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="permalink" class="block text-sm font-medium text-white mb-2">Permalink *</label>
+                        <input type="text" id="permalink" required pattern="[a-z0-9-]+" 
+                               class="w-full px-3 py-2 rounded-xl focus:ring-2 focus:ring-white/50 placeholder-white/60">
+                        <p class="mt-1 text-sm text-white/60">URL-friendly identifier (e.g., "my-article-title")</p>
+                    </div>
+                    
+                    <div>
+                        <label for="label" class="block text-sm font-medium text-white mb-2">Label *</label>
+                        <select id="label" required class="w-full px-3 py-2 rounded-xl focus:ring-2 focus:ring-white/50">
+                            <option value="" class="text-gray-800">Choose a label...</option>
+                            <option value="Technology" class="text-gray-800">Technology</option>
+                            <option value="Lifestyle" class="text-gray-800">Lifestyle</option>
+                            <option value="Travel" class="text-gray-800">Travel</option>
+                            <option value="Food" class="text-gray-800">Food</option>
+                            <option value="Business" class="text-gray-800">Business</option>
+                            <option value="Science" class="text-gray-800">Science</option>
+                            <option value="Health" class="text-gray-800">Health</option>
+                            <option value="Other" class="text-gray-800">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="title" class="block text-sm font-medium text-white mb-2">Title *</label>
+                    <input type="text" id="title" required 
+                           class="w-full px-3 py-2 rounded-xl focus:ring-2 focus:ring-white/50 placeholder-white/60">
+                </div>
+                
+                <div class="mb-6">
+                    <label for="img" class="block text-sm font-medium text-white mb-2">Featured Image URL</label>
+                    <input type="url" id="img" 
+                           class="w-full px-3 py-2 rounded-xl focus:ring-2 focus:ring-white/50 placeholder-white/60"
+                           placeholder="https://example.com/image.jpg">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="createDate" class="block text-sm font-medium text-white mb-2">Publish Date *</label>
+                        <input type="datetime-local" id="createDate" required 
+                               class="w-full px-3 py-2 rounded-xl focus:ring-2 focus:ring-white/50">
+                    </div>
+                    
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-white mb-2">Status</label>
+                        <select id="status" class="w-full px-3 py-2 rounded-xl focus:ring-2 focus:ring-white/50">
+                            <option value="published" class="text-gray-800">Published</option>
+                            <option value="draft" class="text-gray-800">Draft</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="content" class="block text-sm font-medium text-white mb-2">Content *</label>
+                    <textarea id="content"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-6 border-t border-white/20">
+                    <button type="button" onclick="window.history.back()" 
+                            class="glass-card text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-300">
+                        <i class="ri-close-line mr-1"></i>Cancel
+                    </button>
+                    <button type="submit" 
+                            class="bg-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/30 transition-all duration-300">
+                        <i class="ri-check-line mr-1"></i>Save Article
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        let easyMDE;
+        let isEditing = false;
+        let currentPermalink = '';
+
+        // Initialize EasyMDE with glass theme
+        easyMDE = new EasyMDE({ 
+            element: document.getElementById('content'),
+            spellChecker: false,
+            status: false,
+            autosave: {
+                enabled: false
+            },
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ],
+            styleSelectedText: false,
+            indentWithTabs: false,
+            lineWrapping: true
+        });
+
+        // Update EasyMDE theme
+        const cm = document.querySelector('.CodeMirror');
+        if (cm) {
+            cm.style.color = 'white';
+        }
+
+        // Check if editing existing article
+        const urlParams = new URLSearchParams(window.location.search);
+        const permalink = urlParams.get('permalink');
+        
+        if (permalink) {
+            isEditing = true;
+            currentPermalink = permalink;
+            loadArticle(permalink);
+        }
+
+        // Set default date to now
+        document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+
+        async function loadArticle(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+                
+                const article = await response.json();
+                
+                document.getElementById('permalink').value = article.permalink;
+                document.getElementById('permalink').readOnly = true;
+                document.getElementById('title').value = article.title;
+                document.getElementById('img').value = article.img || '';
+                document.getElementById('label').value = article.label;
+                document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+                
+                if (article.status) {
+                    document.getElementById('status').value = article.status;
+                }
+                
+                easyMDE.value(article.content);
+            } catch (error) {
+                console.error('Error loading article:', error);
+                alert('Error loading article: ' + error.message);
+                window.location.href = '/admin/';
+            }
+        }
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-1"></i>Saving...';
+
+            const formData = {
+                permalink: document.getElementById('permalink').value,
+                title: document.getElementById('title').value,
+                img: document.getElementById('img').value,
+                label: document.getElementById('label').value,
+                createDate: document.getElementById('createDate').value,
+                content: easyMDE.value(),
+                status: document.getElementById('status').value
+            };
+
+            try {
+                const url = isEditing ? '/api/articles/' + currentPermalink : '/api/articles';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const message = isEditing ? 'Article updated successfully!' : 'Article created successfully!';
+                    if (formData.status === 'draft') {
+                        showNotification(message + ' (Saved as draft)');
+                    } else {
+                        showNotification(message);
+                    }
+                    window.location.href = '/admin/';
+                } else {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error saving article: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-red-400/20 text-red-300' : 
+                           type === 'warning' ? 'bg-yellow-400/20 text-yellow-300' : 
+                           'bg-green-400/20 text-green-300';
+            
+            notification.className = `fixed top-4 right-4 glass-card px-6 py-3 rounded-xl font-medium z-50 transform transition-transform duration-300 ${bgColor}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
