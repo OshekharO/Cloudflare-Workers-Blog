@@ -17,7 +17,13 @@ A modern, serverless blog platform built with Cloudflare Workers and KV storage.
 - 📚 **Draft Posts** - Save articles as drafts
 - 🔖 **Bookmarks** - Client-side article bookmarking
 - 📤 **Social Sharing** - Share articles on social media
-- 🔍 **Search Ready** - API endpoints for search functionality
+
+## Screenshot
+
+![Screenshot_2025-10-12-21-58-19-42_40deb401b9ffe8e1df2f1cc5ba480b12](https://github.com/user-attachments/assets/82fe91bf-2a51-41d3-a876-ead0725244f7)
+![Screenshot_2025-10-12-21-58-35-03_40deb401b9ffe8e1df2f1cc5ba480b12](https://github.com/user-attachments/assets/5260718c-bba7-4bc5-b79c-a96b24a47be9)
+![Screenshot_2025-10-12-21-59-00-15_40deb401b9ffe8e1df2f1cc5ba480b12](https://github.com/user-attachments/assets/a612caef-40f9-423a-9e1d-0b0dcf5594d4)
+![Screenshot_2025-10-12-21-59-29-20_40deb401b9ffe8e1df2f1cc5ba480b12](https://github.com/user-attachments/assets/22707b8e-a11b-4757-8217-a2dd5b6d92e0)
 
 ## Setup Instructions
 
