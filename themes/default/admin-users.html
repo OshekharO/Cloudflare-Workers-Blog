@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users - {{siteName}}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .sidebar {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            min-height: calc(100vh - 56px);
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            margin: 2px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .superadmin-avatar {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .admin-avatar {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+        
+        .badge-superadmin {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .badge-admin {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+        
+        .stats-card {
+            transition: transform 0.2s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+            }
+            
+            .btn-group-sm .btn {
+                padding: 0.25rem 0.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+        <div class="container-fluid">
+            <span class="navbar-brand">
+                <i class="bi bi-people-fill me-2"></i> Admin Users
+            </span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a href="/admin/" class="nav-link">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Admin
+                    </a>
+                    <a href="/" class="nav-link">
+                        <i class="bi bi-eye me-1"></i> View Blog
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-2 col-md-3 sidebar p-0">
+                <div class="p-3 p-lg-4">
+                    <h5 class="mb-3 d-none d-md-block">Admin Panel</h5>
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/">
+                                <i class="bi bi-list-ul me-2"></i> 
+                                <span class="d-md-inline">Articles</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/users">
+                                <i class="bi bi-people-fill me-2"></i>
+                                <span class="d-md-inline">Users</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/edit">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                <span class="d-md-inline">New Article</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9 mt-3">
+                <!-- Quick Stats -->
+                <div class="row g-3 mb-4">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card stats-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="user-avatar admin-avatar text-white">
+                                            <i class="bi bi-person-plus"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="card-title mb-1">Add Admin</h6>
+                                        <button onclick="openAddAdminModal()" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-plus-circle me-1"></i> Add User
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card stats-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="user-avatar admin-avatar text-white">
+                                            <i class="bi bi-people"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="card-title mb-0" id="total-admins">Loading...</h6>
+                                        <p class="text-muted small mb-0">Total Admins</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card stats-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="user-avatar superadmin-avatar text-white">
+                                            <i class="bi bi-shield-check"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="card-title mb-0" id="superadmin-count">Loading...</h6>
+                                        <p class="text-muted small mb-0">Super Admins</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card stats-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="user-avatar admin-avatar text-white">
+                                            <i class="bi bi-person-check"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="card-title mb-0" id="active-admins">Loading...</h6>
+                                        <p class="text-muted small mb-0">Active Users</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Management Card -->
+                <div class="card">
+                    <div class="card-header bg-white border-bottom-0 py-3 py-md-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                            <h4 class="mb-2 mb-md-0">
+                                <i class="bi bi-people-fill me-2"></i> Admin Users Management
+                            </h4>
+                            <div class="d-flex gap-2">
+                                <div class="input-group input-group-sm" style="width: 250px;">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" id="search-admins" class="form-control" placeholder="Search admins...">
+                                </div>
+                                <button onclick="loadAdmins()" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="admins-list">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Guide -->
+                <div class="card mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-info-circle me-2"></i> Admin Roles Guide
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center p-3 border rounded">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge badge-superadmin text-white p-2">
+                                            <i class="bi bi-shield-check me-1"></i> Super Admin
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <p class="mb-0 small text-muted">Full system access, can manage other admins and all content</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center p-3 border rounded">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge badge-admin text-white p-2">
+                                            <i class="bi bi-person-check me-1"></i> Admin
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <p class="mb-0 small text-muted">Content management only, cannot manage users or system settings</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Admin Modal -->
+    <div class="modal fade" id="addAdminModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-admin-form">
+                        <div class="mb-3">
+                            <label class="form-label">Username *</label>
+                            <input type="text" id="username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password *</label>
+                            <input type="password" id="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role *</label>
+                            <select id="role" class="form-select" required>
+                                <option value="admin">Admin</option>
+                                <option value="superadmin">Super Admin</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addAdmin()">
+                        <i class="bi bi-person-plus me-1"></i> Add Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Admin Modal -->
+    <div class="modal fade" id="editAdminModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-admin-form">
+                        <input type="hidden" id="edit-admin-id">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" id="edit-username" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" id="edit-email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role *</label>
+                            <select id="edit-role" class="form-select" required>
+                                <option value="admin">Admin</option>
+                                <option value="superadmin">Super Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status *</label>
+                            <select id="edit-status" class="form-select" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAdmin()">
+                        <i class="bi bi-check-lg me-1"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentAdmins = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdmins();
+            
+            // Search functionality
+            document.getElementById('search-admins').addEventListener('input', function(e) {
+                filterAdmins(e.target.value);
+            });
+        });
+
+        async function loadAdmins() {
+            try {
+                const response = await fetch('/api/admins');
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showAlert('Authentication required. Please log in again.', 'danger');
+                        return;
+                    }
+                    if (response.status === 403) {
+                        showAlert('Access denied. Only superadmins can manage users.', 'danger');
+                        return;
+                    }
+                    throw new Error('Failed to load admins');
+                }
+                
+                currentAdmins = await response.json();
+                displayAdmins(currentAdmins);
+                updateStats();
+            } catch (error) {
+                console.error('Error loading admins:', error);
+                showAlert('Error loading admins: ' + error.message, 'danger');
+            }
+        }
+
+        function displayAdmins(admins) {
+            const container = document.getElementById('admins-list');
+
+            if (admins.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-people display-1 text-muted mb-3"></i>
+                        <h5 class="text-muted">No Admin Users</h5>
+                        <p class="text-muted mb-4">Get started by adding your first admin user</p>
+                        <button onclick="openAddAdminModal()" class="btn btn-primary">
+                            <i class="bi bi-person-plus me-1"></i> Add Admin
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Last Login</th>
+                                <th width="100">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${admins.map(admin => `
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar ${admin.role === 'superadmin' ? 'superadmin-avatar' : 'admin-avatar'} text-white me-3">
+                                                ${admin.username.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <strong>${admin.username}</strong>
+                                                <br><small class="text-muted">${admin.email}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge ${admin.role === 'superadmin' ? 'badge-superadmin' : 'badge-admin'} text-white">
+                                            <i class="bi bi-${admin.role === 'superadmin' ? 'shield-check' : 'person-check'} me-1"></i>
+                                            ${admin.role}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge ${admin.status === 'active' ? 'bg-success' : 'bg-secondary'}">
+                                            <i class="bi bi-${admin.status === 'active' ? 'check-circle' : 'x-circle'} me-1"></i>
+                                            ${admin.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">${new Date(admin.createdAt).toLocaleDateString()}</small>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            ${admin.lastLogin ? new Date(admin.lastLogin).toLocaleDateString() : 'Never'}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button onclick="editAdmin('${admin.id}')" class="btn btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
+                                                    class="btn btn-outline-danger" 
+                                                    title="Delete"
+                                                    ${admin.role === 'superadmin' ? 'disabled' : ''}>
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function filterAdmins(searchTerm) {
+            const filteredAdmins = currentAdmins.filter(
+                admin => admin.username.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         admin.role.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            displayAdmins(filteredAdmins);
+        }
+
+        function updateStats() {
+            const totalAdmins = currentAdmins.length;
+            const superadminCount = currentAdmins.filter(admin => admin.role === 'superadmin').length;
+            const activeAdmins = currentAdmins.filter(admin => admin.status === 'active').length;
+
+            document.getElementById('total-admins').textContent = totalAdmins;
+            document.getElementById('superadmin-count').textContent = superadminCount;
+            document.getElementById('active-admins').textContent = activeAdmins;
+        }
+
+        // Modal functions
+        function openAddAdminModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addAdminModal'));
+            document.getElementById('add-admin-form').reset();
+            modal.show();
+        }
+
+        function openEditAdminModal() {
+            const modal = new bootstrap.Modal(document.getElementById('editAdminModal'));
+            modal.show();
+        }
+
+        // Admin management functions
+        async function addAdmin() {
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                email: document.getElementById('email').value,
+                role: document.getElementById('role').value,
+            };
+
+            try {
+                const response = await fetch('/api/admins', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (response.ok) {
+                    showAlert('Admin created successfully', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
+                    loadAdmins();
+                } else {
+                    if (response.status === 401) {
+                        showAlert('Authentication required. Please log in again.', 'danger');
+                        return;
+                    }
+                    if (response.status === 403) {
+                        showAlert('Access denied. Only superadmins can manage users.', 'danger');
+                        return;
+                    }
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Error creating admin:', error);
+                showAlert('Error creating admin: ' + error.message, 'danger');
+            }
+        }
+
+        async function editAdmin(adminId) {
+            const admin = currentAdmins.find(a => a.id === adminId);
+            if (!admin) return;
+
+            document.getElementById('edit-admin-id').value = admin.id;
+            document.getElementById('edit-username').value = admin.username;
+            document.getElementById('edit-email').value = admin.email;
+            document.getElementById('edit-role').value = admin.role;
+            document.getElementById('edit-status').value = admin.status;
+
+            openEditAdminModal();
+        }
+
+        async function updateAdmin() {
+            const adminId = document.getElementById('edit-admin-id').value;
+            const updateData = {
+                email: document.getElementById('edit-email').value,
+                role: document.getElementById('edit-role').value,
+                status: document.getElementById('edit-status').value,
+            };
+
+            try {
+                const response = await fetch('/api/admins/' + adminId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData),
+                });
+
+                if (response.ok) {
+                    showAlert('Admin updated successfully', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide();
+                    loadAdmins();
+                } else {
+                    if (response.status === 401) {
+                        showAlert('Authentication required. Please log in again.', 'danger');
+                        return;
+                    }
+                    if (response.status === 403) {
+                        showAlert('Access denied. Only superadmins can manage users.', 'danger');
+                        return;
+                    }
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Error updating admin:', error);
+                showAlert('Error updating admin: ' + error.message, 'danger');
+            }
+        }
+
+        async function deleteAdmin(adminId, username) {
+            if (!confirm(`Are you sure you want to delete admin "${username}"? This action cannot be undone.`)) return;
+
+            try {
+                const response = await fetch('/api/admins/' + adminId, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    showAlert('Admin deleted successfully', 'success');
+                    loadAdmins();
+                } else {
+                    if (response.status === 401) {
+                        showAlert('Authentication required. Please log in again.', 'danger');
+                        return;
+                    }
+                    if (response.status === 403) {
+                        showAlert('Access denied. Only superadmins can manage users.', 'danger');
+                        return;
+                    }
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Error deleting admin:', error);
+                showAlert('Error deleting admin: ' + error.message, 'danger');
+            }
+        }
+
+        // Utility Functions
+        function showAlert(message, type) {
+            // Remove existing alerts
+            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+            alert.style.zIndex = '1060';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
