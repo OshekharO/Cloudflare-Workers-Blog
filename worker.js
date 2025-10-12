@@ -11,13 +11,13 @@ const OPT = {
     "recentlySize": 6,
     "readMoreLength": 150,
     "cacheTime": 60 * 60 * 24 * 0.5,
-    "themeURL": "https://raw.githubusercontent.com/OshekharO/CF-BLOG/main/themes/default/",
+    "themeURL": "https://raw.githubusercontent.com/OshekharO/CF-BLOG/main/themes/minimal/",
     "html404": ``,
     "codeBeforHead": ``,
     "codeBeforBody": ``,
     "commentCode": ``,
     "widgetOther": ``,
-    "copyRight": `Powered by CF Workers`,
+    "copyRight": `Powered by OshekharO`,
     "robots": `User-agent: *\nDisallow: /admin`,
     "draftPrefix": "DRAFT_"
 };
