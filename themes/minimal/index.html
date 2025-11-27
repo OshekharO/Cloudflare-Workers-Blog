@@ -9,63 +9,14 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Poppins Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.875rem;
-        }
-        
-        /* Animation keyframes */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .animate-fadeInUp {
-            animation: fadeInUp 0.5s ease-out forwards;
-        }
-        
-        .animate-slideDown {
-            animation: slideDown 0.4s ease-out;
-        }
-        
-        .animate-scaleIn {
-            animation: scaleIn 0.3s ease-out;
+            font-family: 'Inter', sans-serif;
         }
         
         .gradient-text {
@@ -79,50 +30,17 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
-        /* Stylish Navbar */
-        .navbar-stylish {
-            border-bottom: 2px solid rgba(99, 102, 241, 0.1);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .nav-link-hover {
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link-hover::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-        
-        .nav-link-hover:hover::after {
-            width: 100%;
-        }
-        
-        .nav-link-hover:hover {
-            color: #6366f1;
-        }
-        
         .article-card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .article-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.12), 0 8px 16px -5px rgba(0, 0, 0, 0.06);
-            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
         
         .bookmark-btn {
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         
         .bookmark-btn.bookmarked {
@@ -130,7 +48,7 @@
         }
         
         .bookmark-btn:hover {
-            transform: scale(1.15) rotate(5deg);
+            transform: scale(1.1);
         }
 
         .line-clamp-2 {
@@ -146,52 +64,24 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        
-        .btn-gradient {
-            transition: all 0.3s ease;
-        }
-        
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-        }
-        
-        .card-animation {
-            opacity: 0;
-            animation: fadeInUp 0.5s ease-out forwards;
-        }
-        
-        .card-animation:nth-child(1) { animation-delay: 0.1s; }
-        .card-animation:nth-child(2) { animation-delay: 0.15s; }
-        .card-animation:nth-child(3) { animation-delay: 0.2s; }
-        .card-animation:nth-child(4) { animation-delay: 0.25s; }
-        .card-animation:nth-child(5) { animation-delay: 0.3s; }
-        .card-animation:nth-child(6) { animation-delay: 0.35s; }
     </style>
     
     {{codeBeforHead}}
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm navbar-stylish sticky top-0 z-40 animate-slideDown">
+    <nav class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-14">
-                <a href="/" class="text-base font-bold gradient-text truncate flex items-center">
-                    <i class="fas fa-feather mr-2"></i>{{siteName}}
-                </a>
-                <div class="flex items-center space-x-4">
-                    <a href="/" class="nav-link-hover text-gray-600 text-xs font-medium hidden sm:flex items-center py-2">
-                        <i class="fas fa-home mr-1"></i>Home
-                    </a>
-                    <a href="/bookmarks" class="nav-link-hover text-gray-600 text-xs font-medium flex items-center py-2">
-                        <i class="fas fa-bookmark mr-1"></i>
+                <a href="/" class="text-lg font-bold gradient-text truncate">{{siteName}}</a>
+                <div class="flex space-x-2">
+                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors flex items-center whitespace-nowrap">
+                        <i class="ri-bookmark-line mr-1"></i>
                         <span class="hidden xs:inline">Favorites</span>
+                        <span class="xs:hidden">Fav</span>
                     </a>
-                    <a href="/rss.xml" class="nav-link-hover text-gray-600 text-xs font-medium hidden sm:flex items-center py-2" target="_blank">
-                        <i class="fas fa-rss mr-1"></i>RSS
-                    </a>
-                    <a href="/admin/" class="btn-gradient bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center whitespace-nowrap">
-                        <i class="fas fa-cog mr-1"></i>
+                    <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:shadow-lg transition-all duration-200 flex items-center whitespace-nowrap">
+                        <i class="ri-admin-line mr-1"></i>
                         <span class="hidden sm:inline">Admin</span>
                     </a>
                 </div>
@@ -200,10 +90,10 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="gradient-bg text-white py-8 sm:py-10 animate-fadeInUp">
+    <section class="gradient-bg text-white py-10 sm:py-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-lg sm:text-xl md:text-2xl font-bold mb-2 leading-tight">{{siteName}}</h1>
-            <p class="text-xs sm:text-sm text-blue-100 max-w-2xl mx-auto leading-relaxed">{{siteDescription}}</p>
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold mb-2 leading-tight">{{siteName}}</h1>
+            <p class="text-sm sm:text-base text-blue-100 max-w-2xl mx-auto leading-relaxed">{{siteDescription}}</p>
         </div>
     </section>
 
@@ -222,30 +112,30 @@
     </main>
 
     <!-- Share Modal -->
-    <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4 animate-scaleIn">
-        <div class="bg-white rounded-lg p-4 w-full max-w-xs mx-auto border border-purple-100 shadow-xl">
+    <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-lg p-4 w-full max-w-xs mx-auto">
             <div class="flex justify-between items-center mb-3">
-                <h3 class="text-sm font-semibold flex items-center"><i class="fas fa-share-alt mr-2 text-purple-500"></i>Share Article</h3>
-                <button onclick="closeShareModal()" class="text-gray-400 hover:text-gray-600 p-1 transition-colors">
-                    <i class="fas fa-times text-lg"></i>
+                <h3 class="text-sm font-semibold">Share Article</h3>
+                <button onclick="closeShareModal()" class="text-gray-400 hover:text-gray-600 p-1">
+                    <i class="ri-close-line text-lg"></i>
                 </button>
             </div>
             <p id="share-article-title" class="text-gray-600 mb-3 text-xs line-clamp-2"></p>
             <div class="flex justify-around">
-                <button onclick="shareOnPlatform('twitter')" class="flex flex-col items-center text-blue-400 hover:text-blue-500 transition-all hover:scale-110 p-1.5">
-                    <i class="fab fa-twitter text-lg mb-0.5"></i>
+                <button onclick="shareOnPlatform('twitter')" class="flex flex-col items-center text-blue-400 hover:text-blue-500 transition-colors p-1.5">
+                    <i class="ri-twitter-fill text-lg mb-0.5"></i>
                     <span class="text-xs">Twitter</span>
                 </button>
-                <button onclick="shareOnPlatform('facebook')" class="flex flex-col items-center text-blue-600 hover:text-blue-700 transition-all hover:scale-110 p-1.5">
-                    <i class="fab fa-facebook text-lg mb-0.5"></i>
+                <button onclick="shareOnPlatform('facebook')" class="flex flex-col items-center text-blue-600 hover:text-blue-700 transition-colors p-1.5">
+                    <i class="ri-facebook-fill text-lg mb-0.5"></i>
                     <span class="text-xs">Facebook</span>
                 </button>
-                <button onclick="shareOnPlatform('linkedin')" class="flex flex-col items-center text-blue-800 hover:text-blue-900 transition-all hover:scale-110 p-1.5">
-                    <i class="fab fa-linkedin text-lg mb-0.5"></i>
+                <button onclick="shareOnPlatform('linkedin')" class="flex flex-col items-center text-blue-800 hover:text-blue-900 transition-colors p-1.5">
+                    <i class="ri-linkedin-fill text-lg mb-0.5"></i>
                     <span class="text-xs">LinkedIn</span>
                 </button>
-                <button onclick="copyArticleLink()" class="flex flex-col items-center text-gray-600 hover:text-gray-700 transition-all hover:scale-110 p-1.5">
-                    <i class="fas fa-link text-lg mb-0.5"></i>
+                <button onclick="copyArticleLink()" class="flex flex-col items-center text-gray-600 hover:text-gray-700 transition-colors p-1.5">
+                    <i class="ri-links-line text-lg mb-0.5"></i>
                     <span class="text-xs">Copy</span>
                 </button>
             </div>
@@ -253,11 +143,9 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t-2 border-purple-100 py-4">
+    <footer class="bg-white border-t border-gray-200 py-4">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-600 text-xs flex items-center justify-center">
-                <i class="fas fa-heart text-purple-500 mr-2"></i>{{copyRight}}
-            </p>
+            <p class="text-gray-600 text-xs">{{copyRight}}</p>
         </div>
     </footer>
 
@@ -312,41 +200,41 @@
                     const safeExcerpt = escapeHtml(article.excerpt);
 
                     const imgHtml = article.img ? 
-                        `<img src="${safeImg}" class="w-full h-28 object-cover rounded-t-lg" alt="${safeTitle}" loading="lazy">` : 
-                        `<div class="w-full h-28 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-lg flex items-center justify-center">
-                            <i class="fas fa-newspaper text-xl text-white"></i>
+                        `<img src="${safeImg}" class="w-full h-32 object-cover rounded-t-lg" alt="${safeTitle}" loading="lazy">` : 
+                        `<div class="w-full h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-lg flex items-center justify-center">
+                            <i class="ri-article-line text-xl text-white"></i>
                          </div>`;
                     
                     return `
-                    <article class="article-card card-animation bg-white rounded-lg shadow-sm overflow-hidden flex flex-col h-full">
+                    <article class="article-card bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
                         <div class="relative flex-shrink-0">
                             ${imgHtml}
-                            <button class="bookmark-btn absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm ${isBookmarked ? 'bookmarked' : 'text-gray-500'}" 
+                            <button class="bookmark-btn absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1 rounded-full ${isBookmarked ? 'bookmarked' : 'text-gray-500'}" 
                                     onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                <i class="${isBookmarked ? 'fas' : 'far'} fa-bookmark text-xs"></i>
+                                <i class="ri-bookmark-${isBookmarked ? 'fill' : 'line'} text-xs"></i>
                             </button>
                         </div>
                         <div class="p-3 flex flex-col flex-grow">
-                            <h3 class="font-semibold text-xs text-gray-900 mb-1.5 line-clamp-2 leading-snug">${safeTitle}</h3>
+                            <h3 class="font-bold text-xs text-gray-900 mb-1.5 line-clamp-2 leading-snug">${safeTitle}</h3>
                             <div class="flex items-center text-xs text-gray-500 mb-2 flex-wrap gap-1">
                                 <div class="flex items-center">
-                                    <i class="far fa-calendar-alt mr-1"></i>
+                                    <i class="ri-calendar-line mr-1"></i>
                                     <span class="whitespace-nowrap">${new Date(article.createDate).toLocaleDateString()}</span>
                                 </div>
                                 <span class="text-gray-300">•</span>
-                                <span class="bg-gradient-to-r from-blue-100 to-purple-100 text-purple-800 text-xs px-1.5 py-0.5 rounded-full whitespace-nowrap font-medium">${safeLabel}</span>
+                                <span class="bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5 rounded-full whitespace-nowrap">${safeLabel}</span>
                             </div>
                             <p class="text-gray-600 text-xs mb-2 line-clamp-3 flex-grow leading-relaxed">${safeExcerpt}</p>
-                            <div class="flex justify-between items-center pt-2 border-t border-purple-50 mt-auto">
-                                <a href="/article/${safePermalink}" class="inline-flex items-center text-blue-600 font-medium hover:text-purple-600 transition-colors text-xs whitespace-nowrap group">
+                            <div class="flex justify-between items-center pt-2 border-t border-gray-100 mt-auto">
+                                <a href="/article/${safePermalink}" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors text-xs whitespace-nowrap">
                                     Read More
-                                    <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                                    <i class="ri-arrow-right-line ml-1"></i>
                                 </a>
                                 <button onclick="shareArticle('${safePermalink}', '${safeTitle}')" 
-                                        class="text-gray-400 hover:text-purple-500 transition-all hover:scale-110 p-1"
+                                        class="text-gray-400 hover:text-blue-500 transition-colors p-1"
                                         title="Share article">
-                                    <i class="fas fa-share-alt text-sm"></i>
+                                    <i class="ri-share-forward-line text-sm"></i>
                                 </button>
                             </div>
                         </div>
