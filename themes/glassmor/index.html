@@ -132,6 +132,8 @@
                     </div>
                 </div>
             </div>
+            <!-- Pagination -->
+            <div id="pagination-container" class="mt-8"></div>
         </div>
     </main>
 
@@ -143,11 +145,20 @@
     </footer>
 
     <script>
-        async function loadArticles() {
+        let currentPage = 1;
+        let totalPages = 1;
+        const pageSize = 10;
+
+        async function loadArticles(page = 1) {
             try {
-                const response = await fetch('/api/articles');
+                currentPage = page;
+                const response = await fetch(`/api/articles?paginate=true&page=${page}&pageSize=${pageSize}`);
                 if (!response.ok) throw new Error('Failed to load articles');
-                const articles = await response.json();
+                const data = await response.json();
+                const articles = data.articles || [];
+                const pagination = data.pagination || {};
+                totalPages = pagination.totalPages || 1;
+                
                 const container = document.getElementById('articles-container');
                 
                 if (articles.length === 0) {
@@ -163,13 +174,31 @@
                             </div>
                         </div>
                     `;
+                    updatePaginationUI(pagination);
                     return;
                 }
 
+                // Escape HTML to prevent XSS
+                const escapeHtml = (str) => {
+                    if (!str) return '';
+                    return String(str)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                };
+
                 container.innerHTML = articles.map(article => {
                     const isBookmarked = isArticleBookmarked(article.permalink);
+                    const safeTitle = escapeHtml(article.title);
+                    const safeImg = escapeHtml(article.img);
+                    const safePermalink = escapeHtml(article.permalink);
+                    const safeLabel = escapeHtml(article.label);
+                    const safeExcerpt = escapeHtml(article.excerpt);
+
                     const imgHtml = article.img ? 
-                        `<img src="${article.img}" class="w-full h-48 object-cover rounded-t-2xl" alt="${article.title}" loading="lazy">` : 
+                        `<img src="${safeImg}" class="w-full h-48 object-cover rounded-t-2xl" alt="${safeTitle}" loading="lazy">` : 
                         `<div class="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-t-2xl flex items-center justify-center">
                             <i class="ri-article-line text-4xl text-white/80"></i>
                          </div>`;
@@ -179,28 +208,28 @@
                         <div class="relative overflow-hidden">
                             ${imgHtml}
                             <button class="bookmark-btn absolute top-4 right-4 bg-black/20 backdrop-blur-sm p-2 rounded-full ${isBookmarked ? 'text-yellow-400' : 'text-white/70'} hover:bg-black/30 transition-all duration-300" 
-                                    onclick="toggleBookmark('${article.permalink}', '${article.title.replace(/'/g, "\\'")}', '${article.img || ''}', '${article.label}')"
+                                    onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
                                 <i class="ri-bookmark-${isBookmarked ? 'fill' : 'line'} text-lg"></i>
                             </button>
                         </div>
                         <div class="p-6">
-                            <h3 class="font-bold text-lg text-white mb-3 line-clamp-2 leading-tight group-hover:text-blue-100 transition-colors">${article.title}</h3>
+                            <h3 class="font-bold text-lg text-white mb-3 line-clamp-2 leading-tight group-hover:text-blue-100 transition-colors">${safeTitle}</h3>
                             <div class="flex items-center text-sm text-white/70 mb-4 flex-wrap gap-2">
                                 <div class="flex items-center">
                                     <i class="ri-calendar-line mr-1"></i>
                                     <span class="whitespace-nowrap">${new Date(article.createDate).toLocaleDateString()}</span>
                                 </div>
                                 <span class="text-white/30">•</span>
-                                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm">${article.label}</span>
+                                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm">${safeLabel}</span>
                             </div>
-                            <p class="text-white/80 text-sm mb-4 line-clamp-3">${article.excerpt || ''}</p>
+                            <p class="text-white/80 text-sm mb-4 line-clamp-3">${safeExcerpt}</p>
                             <div class="flex justify-between items-center pt-4 border-t border-white/10">
-                                <a href="/article/${article.permalink}" class="inline-flex items-center text-white font-medium hover:text-blue-200 transition-colors text-sm group">
+                                <a href="/article/${safePermalink}" class="inline-flex items-center text-white font-medium hover:text-blue-200 transition-colors text-sm group">
                                     Read More
                                     <i class="ri-arrow-right-line ml-1 group-hover:translate-x-1 transition-transform"></i>
                                 </a>
-                                <button onclick="shareArticle('${article.permalink}', '${article.title.replace(/'/g, "\\'")}')" 
+                                <button onclick="shareArticle('${safePermalink}', '${safeTitle}')" 
                                         class="text-white/70 hover:text-white transition-colors p-1"
                                         title="Share article">
                                     <i class="ri-share-forward-line text-lg"></i>
@@ -210,6 +239,8 @@
                     </article>
                     `;
                 }).join('');
+
+                updatePaginationUI(pagination);
             } catch (error) {
                 console.error('Error loading articles:', error);
                 const container = document.getElementById('articles-container');
@@ -226,6 +257,50 @@
                     </div>
                 `;
             }
+        }
+
+        function updatePaginationUI(pagination) {
+            const container = document.getElementById('pagination-container');
+            if (!container) return;
+            
+            if (pagination.totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="flex flex-col items-center gap-4">';
+            html += '<div class="flex items-center gap-2">';
+            
+            // Previous button
+            html += `<button onclick="loadArticles(${pagination.page - 1})" 
+                class="px-4 py-2 rounded-xl glass-card ${pagination.hasPrevPage ? 'text-white hover:bg-white/20' : 'text-white/40 cursor-not-allowed'} transition-colors"
+                ${!pagination.hasPrevPage ? 'disabled' : ''}>
+                <i class="ri-arrow-left-line"></i> Prev
+            </button>`;
+
+            // Page numbers
+            const startPage = Math.max(1, pagination.page - 2);
+            const endPage = Math.min(pagination.totalPages, pagination.page + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button onclick="loadArticles(${i})" 
+                    class="w-10 h-10 rounded-xl ${i === pagination.page ? 'bg-white text-blue-600' : 'glass-card text-white hover:bg-white/20'} transition-colors">
+                    ${i}
+                </button>`;
+            }
+
+            // Next button
+            html += `<button onclick="loadArticles(${pagination.page + 1})" 
+                class="px-4 py-2 rounded-xl glass-card ${pagination.hasNextPage ? 'text-white hover:bg-white/20' : 'text-white/40 cursor-not-allowed'} transition-colors"
+                ${!pagination.hasNextPage ? 'disabled' : ''}>
+                Next <i class="ri-arrow-right-line"></i>
+            </button>`;
+
+            html += '</div>';
+            html += `<p class="text-sm text-white/70">Page ${pagination.page} of ${pagination.totalPages} (${pagination.totalArticles} articles)</p>`;
+            html += '</div>';
+
+            container.innerHTML = html;
         }
 
         function getBookmarks() {
