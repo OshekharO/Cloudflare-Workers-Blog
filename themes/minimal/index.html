@@ -106,6 +106,8 @@
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                 </div>
             </div>
+            <!-- Pagination -->
+            <div id="pagination-container" class="mt-8"></div>
         </div>
     </main>
 
@@ -150,12 +152,20 @@
     <script>
         let currentSharePermalink = '';
         let currentShareTitle = '';
+        let currentPage = 1;
+        let totalPages = 1;
+        const pageSize = 10;
 
-        async function loadArticles() {
+        async function loadArticles(page = 1) {
             try {
-                const response = await fetch('/api/articles');
+                currentPage = page;
+                const response = await fetch(`/api/articles?paginate=true&page=${page}&pageSize=${pageSize}`);
                 if (!response.ok) throw new Error('Failed to load articles');
-                const articles = await response.json();
+                const data = await response.json();
+                const articles = data.articles || [];
+                const pagination = data.pagination || {};
+                totalPages = pagination.totalPages || 1;
+                
                 const container = document.getElementById('articles-container');
                 
                 if (articles.length === 0) {
@@ -166,6 +176,7 @@
                             <p class="text-gray-500 max-w-md mx-auto">Check back later for new content!</p>
                         </div>
                     `;
+                    updatePaginationUI(pagination);
                     return;
                 }
 
@@ -213,6 +224,8 @@
                     </article>
                     `;
                 }).join('');
+
+                updatePaginationUI(pagination);
             } catch (error) {
                 console.error('Error loading articles:', error);
                 const container = document.getElementById('articles-container');
@@ -227,6 +240,50 @@
                     </div>
                 `;
             }
+        }
+
+        function updatePaginationUI(pagination) {
+            const container = document.getElementById('pagination-container');
+            if (!container) return;
+            
+            if (pagination.totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="flex flex-col items-center gap-4">';
+            html += '<div class="flex items-center gap-2">';
+            
+            // Previous button
+            html += `<button onclick="loadArticles(${pagination.page - 1})" 
+                class="px-4 py-2 rounded-lg ${pagination.hasPrevPage ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-400 cursor-not-allowed'} transition-colors"
+                ${!pagination.hasPrevPage ? 'disabled' : ''}>
+                <i class="ri-arrow-left-line"></i> Prev
+            </button>`;
+
+            // Page numbers
+            const startPage = Math.max(1, pagination.page - 2);
+            const endPage = Math.min(pagination.totalPages, pagination.page + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button onclick="loadArticles(${i})" 
+                    class="w-10 h-10 rounded-lg ${i === pagination.page ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} transition-colors">
+                    ${i}
+                </button>`;
+            }
+
+            // Next button
+            html += `<button onclick="loadArticles(${pagination.page + 1})" 
+                class="px-4 py-2 rounded-lg ${pagination.hasNextPage ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-400 cursor-not-allowed'} transition-colors"
+                ${!pagination.hasNextPage ? 'disabled' : ''}>
+                Next <i class="ri-arrow-right-line"></i>
+            </button>`;
+
+            html += '</div>';
+            html += `<p class="text-sm text-gray-500">Page ${pagination.page} of ${pagination.totalPages} (${pagination.totalArticles} articles)</p>`;
+            html += '</div>';
+
+            container.innerHTML = html;
         }
 
         function getBookmarks() {

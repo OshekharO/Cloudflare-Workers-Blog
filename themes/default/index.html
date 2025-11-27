@@ -199,6 +199,8 @@
                     </div>
                 </div>
             </div>
+            <!-- Pagination -->
+            <div id="pagination-container" class="mt-5"></div>
         </div>
     </section>
 
@@ -346,11 +348,20 @@
             });
         }
 
-        async function loadArticles() {
+        let currentPage = 1;
+        let totalPages = 1;
+        const pageSize = 10;
+
+        async function loadArticles(page = 1) {
             try {
-                const response = await fetch('/api/articles');
+                currentPage = page;
+                const response = await fetch(`/api/articles?paginate=true&page=${page}&pageSize=${pageSize}`);
                 if (!response.ok) throw new Error('Failed to load articles');
-                const articles = await response.json();
+                const data = await response.json();
+                const articles = data.articles || [];
+                const pagination = data.pagination || {};
+                totalPages = pagination.totalPages || 1;
+                
                 const container = document.getElementById('articles-container');
                 
                 if (articles.length === 0) {
@@ -363,6 +374,7 @@
                             </div>
                         </div>
                     `;
+                    updatePaginationUI(pagination);
                     return;
                 }
 
@@ -401,6 +413,8 @@
                     </div>
                     `;
                 }).join('');
+
+                updatePaginationUI(pagination);
             } catch (error) {
                 console.error('Error loading articles:', error);
                 const container = document.getElementById('articles-container');
@@ -415,6 +429,62 @@
                 `;
             }
         }
+
+        function updatePaginationUI(pagination) {
+            const paginationContainer = document.getElementById('pagination-container');
+            if (!paginationContainer) return;
+            
+            if (pagination.totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let paginationHtml = '<nav aria-label="Article pagination"><ul class="pagination justify-content-center">';
+            
+            // Previous button
+            paginationHtml += `<li class="page-item ${!pagination.hasPrevPage ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadArticles(${pagination.page - 1}); return false;" ${!pagination.hasPrevPage ? 'tabindex="-1"' : ''}>
+                    <i class="bi bi-chevron-left"></i> Previous
+                </a>
+            </li>`;
+
+            // Page numbers
+            const startPage = Math.max(1, pagination.page - 2);
+            const endPage = Math.min(pagination.totalPages, pagination.page + 2);
+
+            if (startPage > 1) {
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="loadArticles(1); return false;">1</a></li>`;
+                if (startPage > 2) {
+                    paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `<li class="page-item ${i === pagination.page ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadArticles(${i}); return false;">${i}</a>
+                </li>`;
+            }
+
+            if (endPage < pagination.totalPages) {
+                if (endPage < pagination.totalPages - 1) {
+                    paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="loadArticles(${pagination.totalPages}); return false;">${pagination.totalPages}</a></li>`;
+            }
+
+            // Next button
+            paginationHtml += `<li class="page-item ${!pagination.hasNextPage ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadArticles(${pagination.page + 1}); return false;" ${!pagination.hasNextPage ? 'tabindex="-1"' : ''}>
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>`;
+
+            paginationHtml += '</ul></nav>';
+            paginationHtml += `<p class="text-center text-white-50 mt-2">Page ${pagination.page} of ${pagination.totalPages} (${pagination.totalArticles} articles)</p>`;
+
+            paginationContainer.innerHTML = paginationHtml;
+        }
+
         loadArticles();
     </script>
     

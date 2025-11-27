@@ -113,9 +113,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label for="permalink" class="block text-sm font-medium text-white mb-2">Permalink *</label>
-                        <input type="text" id="permalink" required pattern="[a-z0-9-]+" 
-                               class="w-full px-3 py-2 rounded-xl focus:ring-2 focus:ring-white/50 placeholder-white/60">
-                        <p class="mt-1 text-sm text-white/60">URL-friendly identifier (e.g., "my-article-title")</p>
+                        <div class="flex">
+                            <input type="text" id="permalink" required pattern="[a-z0-9-]+" 
+                                   class="flex-1 px-3 py-2 rounded-l-xl focus:ring-2 focus:ring-white/50 placeholder-white/60">
+                            <button type="button" id="generate-slug-btn" title="Generate from title"
+                                    class="px-3 py-2 bg-white/20 rounded-r-xl hover:bg-white/30 transition-colors text-white">
+                                <i class="ri-magic-line"></i>
+                            </button>
+                        </div>
+                        <p class="mt-1 text-sm text-white/60">URL-friendly identifier - Click magic wand to auto-generate</p>
                     </div>
                     
                     <div>
@@ -325,6 +331,63 @@
                 }, 300);
             }, 3000);
         }
+
+        // Auto-generate slug from title
+        function generateSlugLocal(title) {
+            if (!title) return '';
+            return title
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Generate slug button click handler
+        document.getElementById('generate-slug-btn').addEventListener('click', async () => {
+            const title = document.getElementById('title').value;
+            if (!title) {
+                showNotification('Please enter a title first', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('generate-slug-btn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
+
+            try {
+                const response = await fetch('/api/generate-slug', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('permalink').value = data.slug;
+                    showNotification('Slug generated!');
+                } else {
+                    document.getElementById('permalink').value = generateSlugLocal(title);
+                }
+            } catch (error) {
+                document.getElementById('permalink').value = generateSlugLocal(title);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        });
+
+        // Auto-generate slug on title blur if permalink is empty
+        document.getElementById('title').addEventListener('blur', () => {
+            const permalinkField = document.getElementById('permalink');
+            if (!permalinkField.value && !isEditing) {
+                const title = document.getElementById('title').value;
+                if (title) {
+                    permalinkField.value = generateSlugLocal(title);
+                }
+            }
+        });
     </script>
     
     {{codeBeforBody}}

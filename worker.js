@@ -7,7 +7,7 @@ const OPT = {
     "siteName": "CF Workers Blog",
     "siteDescription": "A Blog Powered By Cloudflare Workers and KV",
     "keyWords": "cloudflare,KV,workers,blog",
-    "pageSize": 5,
+    "pageSize": 10,
     "recentlySize": 6,
     "readMoreLength": 150,
     "cacheTime": 60 * 60 * 24 * 0.5,
@@ -22,35 +22,135 @@ const OPT = {
     "draftPrefix": "DRAFT_"
 };
 
+/**
+ * Generate URL-friendly slug from title
+ * @param {string} title - The title to convert to slug
+ * @returns {string} - URL-friendly slug
+ */
+function generateSlug(title) {
+    if (!title) return '';
+    
+    return title
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '') // Remove special characters
+        .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+        .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
 class Blog {
     constructor() {
         this.kv = null;
         this.themeCache = new Map();
+        this.articleCache = new Map();
+        this.indexCache = null;
+        this.indexCacheTime = 0;
+        this.cacheTimeout = 60000; // 1 minute cache
     }
 
     setKV(kv) {
         this.kv = kv;
     }
 
+    /**
+     * Get value from KV with optional parsing and error handling
+     * @param {string} key - KV key
+     * @param {boolean} parse - Whether to parse JSON
+     * @returns {Promise<any>} - Value or null
+     */
     async get(key, parse = false) {
-        const value = await this.kv.get(key);
-        if (!parse) return value;
         try {
-            return value ? JSON.parse(value) : null;
-        } catch {
+            const value = await this.kv.get(key);
+            if (!parse) return value;
+            if (!value) return null;
+            return JSON.parse(value);
+        } catch (error) {
+            console.error(`Error getting key ${key}:`, error);
             return null;
         }
     }
 
-    async put(key, value) {
-        if (typeof value === 'object') {
-            value = JSON.stringify(value);
+    /**
+     * Batch get multiple keys from KV (optimized)
+     * @param {string[]} keys - Array of keys to fetch
+     * @param {boolean} parse - Whether to parse JSON
+     * @returns {Promise<Map<string, any>>} - Map of key-value pairs
+     */
+    async getMultiple(keys, parse = false) {
+        const results = new Map();
+        if (!keys || keys.length === 0) return results;
+
+        try {
+            // Fetch all keys in parallel for better performance
+            const promises = keys.map(async (key) => {
+                const value = await this.get(key, parse);
+                return { key, value };
+            });
+
+            const resolved = await Promise.all(promises);
+            resolved.forEach(({ key, value }) => {
+                if (value !== null) {
+                    results.set(key, value);
+                }
+            });
+        } catch (error) {
+            console.error('Error in batch get:', error);
         }
-        await this.kv.put(key, value);
+
+        return results;
     }
 
+    /**
+     * Put value to KV with error handling
+     * @param {string} key - KV key
+     * @param {any} value - Value to store
+     */
+    async put(key, value) {
+        try {
+            if (typeof value === 'object') {
+                value = JSON.stringify(value);
+            }
+            await this.kv.put(key, value);
+            // Invalidate cache when data changes
+            this.invalidateCache(key);
+        } catch (error) {
+            console.error(`Error putting key ${key}:`, error);
+            throw new Error(`Failed to save data: ${error.message}`);
+        }
+    }
+
+    /**
+     * Delete key from KV with error handling
+     * @param {string} key - KV key
+     */
     async delete(key) {
-        await this.kv.delete(key);
+        try {
+            await this.kv.delete(key);
+            this.invalidateCache(key);
+        } catch (error) {
+            console.error(`Error deleting key ${key}:`, error);
+            throw new Error(`Failed to delete data: ${error.message}`);
+        }
+    }
+
+    /**
+     * Invalidate cache for a specific key
+     * @param {string} key - Key to invalidate
+     */
+    invalidateCache(key) {
+        this.articleCache.delete(key);
+        if (key === 'SYSTEM_INDEX_LIST') {
+            this.indexCache = null;
+        }
+    }
+
+    /**
+     * Clear all caches
+     */
+    clearCache() {
+        this.articleCache.clear();
+        this.indexCache = null;
+        this.indexCacheTime = 0;
     }
 
     // Admin Management Methods
@@ -123,77 +223,230 @@ class Blog {
 
     // ... rest of your existing Blog methods (listArticles, getArticle, saveArticle, etc.)
     // Keep all your existing article methods here
+    
+    /**
+     * List all articles with caching
+     * @returns {Promise<Array>} - Array of articles
+     */
     async listArticles() {
-        const articles = await this.get('SYSTEM_INDEX_LIST', true) || [];
-        return articles.map(article => ({
-            status: 'published',
-            ...article
-        }));
+        try {
+            // Check cache first
+            const now = Date.now();
+            if (this.indexCache && (now - this.indexCacheTime) < this.cacheTimeout) {
+                return this.indexCache;
+            }
+
+            const articles = await this.get('SYSTEM_INDEX_LIST', true) || [];
+            const result = articles.map(article => ({
+                status: 'published',
+                ...article
+            }));
+
+            // Update cache
+            this.indexCache = result;
+            this.indexCacheTime = now;
+
+            return result;
+        } catch (error) {
+            console.error('Error listing articles:', error);
+            return [];
+        }
     }
 
+    /**
+     * List articles with pagination
+     * @param {number} page - Page number (1-based)
+     * @param {number} pageSize - Number of articles per page
+     * @param {string} status - Filter by status ('published', 'draft', or 'all')
+     * @returns {Promise<Object>} - Paginated result with articles and metadata
+     */
+    async listArticlesPaginated(page = 1, pageSize = OPT.pageSize, status = 'published') {
+        try {
+            let articles = await this.listArticles();
+
+            // Filter by status
+            if (status === 'published') {
+                articles = articles.filter(a => a.status !== 'draft');
+            } else if (status === 'draft') {
+                articles = articles.filter(a => a.status === 'draft');
+            }
+
+            const totalArticles = articles.length;
+            const totalPages = Math.ceil(totalArticles / pageSize);
+            const validPage = Math.max(1, Math.min(page, totalPages || 1));
+            const startIndex = (validPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const paginatedArticles = articles.slice(startIndex, endIndex);
+
+            return {
+                articles: paginatedArticles,
+                pagination: {
+                    page: validPage,
+                    pageSize,
+                    totalArticles,
+                    totalPages,
+                    hasNextPage: validPage < totalPages,
+                    hasPrevPage: validPage > 1
+                }
+            };
+        } catch (error) {
+            console.error('Error in paginated listing:', error);
+            return {
+                articles: [],
+                pagination: {
+                    page: 1,
+                    pageSize,
+                    totalArticles: 0,
+                    totalPages: 0,
+                    hasNextPage: false,
+                    hasPrevPage: false
+                }
+            };
+        }
+    }
+
+    /**
+     * Get article with caching
+     * @param {string} id - Article ID
+     * @returns {Promise<Object|null>} - Article or null
+     */
     async getArticle(id) {
-        return await this.get(id, true);
+        try {
+            // Check cache first
+            if (this.articleCache.has(id)) {
+                return this.articleCache.get(id);
+            }
+
+            const article = await this.get(id, true);
+            
+            if (article) {
+                this.articleCache.set(id, article);
+            }
+
+            return article;
+        } catch (error) {
+            console.error(`Error getting article ${id}:`, error);
+            return null;
+        }
+    }
+
+    /**
+     * Get multiple articles by IDs (optimized batch fetch)
+     * @param {string[]} ids - Array of article IDs
+     * @returns {Promise<Array>} - Array of articles
+     */
+    async getArticlesBatch(ids) {
+        try {
+            const uncachedIds = ids.filter(id => !this.articleCache.has(id));
+            
+            if (uncachedIds.length > 0) {
+                const fetched = await this.getMultiple(uncachedIds, true);
+                fetched.forEach((article, id) => {
+                    this.articleCache.set(id, article);
+                });
+            }
+
+            return ids
+                .map(id => this.articleCache.get(id))
+                .filter(article => article !== undefined);
+        } catch (error) {
+            console.error('Error in batch fetch:', error);
+            return [];
+        }
     }
 
     async saveArticle(article) {
-        if (!article.id) {
-            const currentNum = parseInt(await this.get('SYSTEM_INDEX_NUM')) || 0;
-            article.id = (currentNum + 1).toString().padStart(6, '0');
-            await this.put('SYSTEM_INDEX_NUM', (currentNum + 1).toString());
-        }
+        try {
+            if (!article.id) {
+                const currentNum = parseInt(await this.get('SYSTEM_INDEX_NUM')) || 0;
+                article.id = (currentNum + 1).toString().padStart(6, '0');
+                await this.put('SYSTEM_INDEX_NUM', (currentNum + 1).toString());
+            }
 
-        if (!article.status) {
-            article.status = 'published';
-        }
+            // Auto-generate slug from title if permalink is empty
+            if (!article.permalink && article.title) {
+                article.permalink = generateSlug(article.title);
+                // Ensure uniqueness by checking existing articles
+                const existing = await this.listArticles();
+                let basePermalink = article.permalink;
+                let counter = 1;
+                while (existing.some(a => a.permalink === article.permalink && a.id !== article.id)) {
+                    article.permalink = `${basePermalink}-${counter}`;
+                    counter++;
+                }
+            }
+
+            if (!article.status) {
+                article.status = 'published';
+            }
+            
+            article.contentMarkdown = article.contentMarkdown || article.content || '';
         
-        article.contentMarkdown = article.contentMarkdown || article.content || '';
-        
-        const plainText = this.stripMarkdown(article.contentMarkdown);
-        article.excerpt = plainText.substring(0, OPT.readMoreLength) + (plainText.length > OPT.readMoreLength ? '...' : '');
+            const plainText = this.stripMarkdown(article.contentMarkdown);
+            article.excerpt = plainText.substring(0, OPT.readMoreLength) + (plainText.length > OPT.readMoreLength ? '...' : '');
 
-        await this.put(article.id, article);
+            await this.put(article.id, article);
 
-        const index = await this.listArticles();
-        const existingIndex = index.findIndex(item => item.id === article.id);
-        
-        const indexItem = {
-            id: article.id,
-            title: article.title,
-            img: article.img || '',
-            permalink: article.permalink,
-            createDate: article.createDate,
-            label: article.label,
-            excerpt: article.excerpt,
-            status: article.status
-        };
+            const index = await this.listArticles();
+            const existingIndex = index.findIndex(item => item.id === article.id);
+            
+            const indexItem = {
+                id: article.id,
+                title: article.title,
+                img: article.img || '',
+                permalink: article.permalink,
+                createDate: article.createDate,
+                label: article.label,
+                excerpt: article.excerpt,
+                status: article.status
+            };
 
-        if (existingIndex >= 0) {
-            index[existingIndex] = indexItem;
-        } else {
-            index.unshift(indexItem);
+            if (existingIndex >= 0) {
+                index[existingIndex] = indexItem;
+            } else {
+                index.unshift(indexItem);
+            }
+
+            index.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+            await this.put('SYSTEM_INDEX_LIST', index);
+
+            return article.id;
+        } catch (error) {
+            console.error('Error saving article:', error);
+            throw new Error(`Failed to save article: ${error.message}`);
         }
-
-        index.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
-        await this.put('SYSTEM_INDEX_LIST', index);
-
-        return article.id;
     }
 
     async deleteArticle(id) {
-        await this.delete(id);
-        const index = await this.listArticles();
-        const filtered = index.filter(item => item.id !== id);
-        await this.put('SYSTEM_INDEX_LIST', filtered);
+        try {
+            await this.delete(id);
+            const index = await this.listArticles();
+            const filtered = index.filter(item => item.id !== id);
+            await this.put('SYSTEM_INDEX_LIST', filtered);
+        } catch (error) {
+            console.error('Error deleting article:', error);
+            throw new Error(`Failed to delete article: ${error.message}`);
+        }
     }
 
     async listPublishedArticles() {
-        const articles = await this.listArticles();
-        return articles.filter(article => article.status !== 'draft');
+        try {
+            const articles = await this.listArticles();
+            return articles.filter(article => article.status !== 'draft');
+        } catch (error) {
+            console.error('Error listing published articles:', error);
+            return [];
+        }
     }
 
     async listDraftArticles() {
-        const articles = await this.listArticles();
-        return articles.filter(article => article.status === 'draft');
+        try {
+            const articles = await this.listArticles();
+            return articles.filter(article => article.status === 'draft');
+        } catch (error) {
+            console.error('Error listing draft articles:', error);
+            return [];
+        }
     }
 
     async getArticleByPermalink(permalink) {
@@ -220,20 +473,26 @@ class Blog {
         }
     }
 
+    /**
+     * Export all articles with optimized batch fetching
+     * @returns {Promise<Array>} - Array of full articles
+     */
     async exportArticles() {
-        const articles = await this.listArticles();
-        const exportData = [];
-        
-        for (const article of articles) {
-            const fullArticle = await this.getArticle(article.id);
-            if (fullArticle) {
-                exportData.push(fullArticle);
-            }
+        try {
+            const articles = await this.listArticles();
+            const ids = articles.map(a => a.id);
+            return await this.getArticlesBatch(ids);
+        } catch (error) {
+            console.error('Error exporting articles:', error);
+            return [];
         }
-        
-        return exportData;
     }
 
+    /**
+     * Import articles from exported data
+     * @param {Array} articlesData - Array of article data
+     * @returns {Promise<Object>} - Import results
+     */
     async importArticles(articlesData) {
         let imported = 0;
         let errors = [];
@@ -250,7 +509,7 @@ class Blog {
                 imported++;
             } catch (error) {
                 errors.push({
-                    title: articleData.title,
+                    title: articleData.title || 'Unknown',
                     error: error.message
                 });
             }
@@ -259,17 +518,33 @@ class Blog {
         return { imported, errors };
     }
 
+    /**
+     * Get all categories with counts
+     * @returns {Promise<Object>} - Object with category names as keys and counts as values
+     */
     async getCategories() {
-        const articles = await this.listPublishedArticles();
-        const categories = {};
-        
-        articles.forEach(article => {
-            categories[article.label] = (categories[article.label] || 0) + 1;
-        });
-        
-        return categories;
+        try {
+            const articles = await this.listPublishedArticles();
+            const categories = {};
+            
+            articles.forEach(article => {
+                if (article.label) {
+                    categories[article.label] = (categories[article.label] || 0) + 1;
+                }
+            });
+            
+            return categories;
+        } catch (error) {
+            console.error('Error getting categories:', error);
+            return {};
+        }
     }
 
+    /**
+     * Fetch theme template with caching and error handling
+     * @param {string} templateName - Template name
+     * @returns {Promise<string>} - Template HTML
+     */
     async fetchThemeTemplate(templateName) {
         const cacheKey = `${OPT.themeURL}${templateName}`;
         
@@ -277,21 +552,26 @@ class Blog {
             return this.themeCache.get(cacheKey);
         }
 
-        const response = await fetch(`${OPT.themeURL}${templateName}.html`, {
-            cf: {
-                cacheTtl: 300
+        try {
+            const response = await fetch(`${OPT.themeURL}${templateName}.html`, {
+                cf: {
+                    cacheTtl: 300
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: Failed to fetch template`);
             }
-        });
-        
-        if (!response.ok) {
+            
+            const template = await response.text();
+            
+            this.themeCache.set(cacheKey, template);
+            
+            return template;
+        } catch (error) {
+            console.error(`Error fetching template ${templateName}:`, error);
             throw new Error(`Failed to fetch template: ${templateName}`);
         }
-        
-        const template = await response.text();
-        
-        this.themeCache.set(cacheKey, template);
-        
-        return template;
     }
 
     stripMarkdown(markdown) {
@@ -577,15 +857,49 @@ export default {
                 // Articles API (existing endpoints)
                 if (path === '/api/articles' && method === 'GET') {
                     const showDrafts = url.searchParams.get('drafts') === 'true';
+                    const page = parseInt(url.searchParams.get('page')) || 1;
+                    const pageSize = parseInt(url.searchParams.get('pageSize')) || OPT.pageSize;
+                    const paginate = url.searchParams.get('paginate') === 'true';
                     
-                    let articles;
-                    if (showDrafts) {
-                        articles = await blog.listDraftArticles();
+                    let result;
+                    if (paginate) {
+                        // Return paginated results
+                        const status = showDrafts ? 'draft' : 'published';
+                        result = await blog.listArticlesPaginated(page, pageSize, status);
+                        return jsonResponse(result);
                     } else {
-                        articles = await blog.listPublishedArticles();
+                        // Return all results (backward compatible)
+                        if (showDrafts) {
+                            result = await blog.listDraftArticles();
+                        } else {
+                            result = await blog.listPublishedArticles();
+                        }
+                        return jsonResponse(result);
                     }
-                    
-                    return jsonResponse(articles);
+                }
+
+                // Generate slug API endpoint
+                if (path === '/api/generate-slug' && method === 'POST') {
+                    try {
+                        const { title } = await request.json();
+                        if (!title) {
+                            return jsonResponse({ error: 'Title is required' }, 400);
+                        }
+                        const slug = generateSlug(title);
+                        
+                        // Check if slug already exists
+                        const articles = await blog.listArticles();
+                        let finalSlug = slug;
+                        let counter = 1;
+                        while (articles.some(a => a.permalink === finalSlug)) {
+                            finalSlug = `${slug}-${counter}`;
+                            counter++;
+                        }
+                        
+                        return jsonResponse({ slug: finalSlug });
+                    } catch (error) {
+                        return jsonResponse({ error: 'Failed to generate slug' }, 500);
+                    }
                 }
 
                 if (path === '/api/articles' && method === 'POST') {
@@ -705,30 +1019,37 @@ export default {
             }
         }
 
+        /**
+         * Generate RSS feed with CDATA tags for better content handling
+         * @returns {Promise<Response>} - RSS XML response
+         */
         async function generateRSSFeed() {
             try {
                 const articles = await blog.listPublishedArticles();
                 const siteUrl = `https://${OPT.siteDomain}`;
                 
                 const rss = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
-        <title>${escapeXml(OPT.siteName)}</title>
-        <description>${escapeXml(OPT.siteDescription)}</description>
+        <title><![CDATA[${OPT.siteName}]]></title>
+        <description><![CDATA[${OPT.siteDescription}]]></description>
         <link>${siteUrl}</link>
         <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
         <language>en-us</language>
         <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
         <generator>CF Workers Blog</generator>
+        <ttl>60</ttl>
         ${articles.map(article => `
         <item>
-            <title>${escapeXml(article.title)}</title>
-            <description>${escapeXml(article.excerpt || '')}</description>
-            <link>${siteUrl}/article/${article.permalink}</link>
-            <guid isPermaLink="true">${siteUrl}/article/${article.permalink}</guid>
+            <title><![CDATA[${article.title || ''}]]></title>
+            <description><![CDATA[${article.excerpt || ''}]]></description>
+            <content:encoded><![CDATA[${article.excerpt || ''}]]></content:encoded>
+            <link>${siteUrl}/article/${escapeXml(article.permalink)}</link>
+            <guid isPermaLink="true">${siteUrl}/article/${escapeXml(article.permalink)}</guid>
             <pubDate>${new Date(article.createDate).toUTCString()}</pubDate>
-            <category>${escapeXml(article.label)}</category>
-            ${article.img ? `<enclosure url="${escapeXml(article.img)}" type="image/jpeg" />` : ''}
+            <category><![CDATA[${article.label || ''}]]></category>
+            <dc:creator><![CDATA[${OPT.siteName}]]></dc:creator>
+            ${article.img ? `<enclosure url="${escapeXml(article.img)}" type="image/jpeg" length="0" />` : ''}
         </item>
         `).join('')}
     </channel>
@@ -742,7 +1063,10 @@ export default {
                 });
             } catch (error) {
                 console.error('Error generating RSS feed:', error);
-                return new Response('Error generating RSS feed', { status: 500 });
+                return new Response('<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Error</title><description>Error generating RSS feed</description></channel></rss>', { 
+                    status: 500,
+                    headers: { 'Content-Type': 'application/rss+xml; charset=utf-8' }
+                });
             }
         }
 

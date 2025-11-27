@@ -315,6 +315,8 @@
                     <p class="text-white mt-2">Loading articles...</p>
                 </div>
             </div>
+            <!-- Pagination -->
+            <div id="pagination-container" class="mt-5"></div>
         </div>
     </section>
 
@@ -326,14 +328,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        async function loadArticles() {
+        let currentPage = 1;
+        let totalPages = 1;
+        const pageSize = 10;
+
+        async function loadArticles(page = 1) {
             try {
-                const response = await fetch('/api/articles');
+                currentPage = page;
+                const response = await fetch(`/api/articles?paginate=true&page=${page}&pageSize=${pageSize}`);
                 if (!response.ok) throw new Error('Failed to load articles');
-                const articles = await response.json();
-                const container = document.getElementById('articles-container');
+                const data = await response.json();
+                const articles = data.articles || [];
+                const pagination = data.pagination || {};
+                totalPages = pagination.totalPages || 1;
                 
-                console.log('Articles loaded:', articles); // Debug log
+                const container = document.getElementById('articles-container');
                 
                 if (articles.length === 0) {
                     container.innerHTML = `
@@ -348,12 +357,11 @@
                             </div>
                         </div>
                     `;
+                    updatePaginationUI(pagination);
                     return;
                 }
 
                 container.innerHTML = articles.map(article => {
-                    console.log('Processing article:', article); // Debug log
-                    
                     const imgHtml = article.img ? 
                         `<img src="${article.img}" class="article-card-img" alt="${article.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"> 
                          <div class="img-placeholder" style="display:none;">
@@ -390,6 +398,8 @@
                     </div>
                     `;
                 }).join('');
+
+                updatePaginationUI(pagination);
             } catch (error) {
                 console.error('Error loading articles:', error);
                 const container = document.getElementById('articles-container');
@@ -408,24 +418,48 @@
             }
         }
 
-        // Add some debug styling to make links more visible
-        document.addEventListener('DOMContentLoaded', function() {
-            loadArticles();
+        function updatePaginationUI(pagination) {
+            const container = document.getElementById('pagination-container');
+            if (!container) return;
             
-            // Add debug border to help identify links
-            setTimeout(() => {
-                const links = document.querySelectorAll('a');
-                links.forEach(link => {
-                    link.style.border = '1px solid transparent';
-                    link.addEventListener('mouseenter', function() {
-                        this.style.border = '1px solid red';
-                    });
-                    link.addEventListener('mouseleave', function() {
-                        this.style.border = '1px solid transparent';
-                    });
-                });
-            }, 1000);
-        });
+            if (pagination.totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<nav aria-label="Article pagination"><ul class="pagination justify-content-center">';
+            
+            // Previous button
+            html += `<li class="page-item ${!pagination.hasPrevPage ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadArticles(${pagination.page - 1}); return false;">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            </li>`;
+
+            // Page numbers
+            const startPage = Math.max(1, pagination.page - 2);
+            const endPage = Math.min(pagination.totalPages, pagination.page + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<li class="page-item ${i === pagination.page ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadArticles(${i}); return false;">${i}</a>
+                </li>`;
+            }
+
+            // Next button
+            html += `<li class="page-item ${!pagination.hasNextPage ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadArticles(${pagination.page + 1}); return false;">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>`;
+
+            html += '</ul></nav>';
+            html += `<p class="text-center text-white-50 mt-2">Page ${pagination.page} of ${pagination.totalPages} (${pagination.totalArticles} articles)</p>`;
+
+            container.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadArticles);
     </script>
     {{codeBeforBody}}
 </body>

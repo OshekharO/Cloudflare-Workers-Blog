@@ -206,9 +206,14 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="permalink" class="form-label fw-semibold">Permalink *</label>
-                            <input type="text" class="form-control" id="permalink" required 
-                                   pattern="[a-z0-9-]+" title="Only lowercase letters, numbers, and hyphens allowed">
-                            <div class="form-text">URL-friendly identifier (e.g., "my-article-title")</div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="permalink" required 
+                                       pattern="[a-z0-9-]+" title="Only lowercase letters, numbers, and hyphens allowed">
+                                <button class="btn btn-outline-secondary" type="button" id="generate-slug-btn" title="Generate from title">
+                                    <i class="fas fa-magic"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">URL-friendly identifier - Click magic wand to auto-generate</div>
                         </div>
                         
                         <div class="col-md-6 mb-3">
@@ -238,9 +243,18 @@
                                placeholder="https://example.com/image.jpg">
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="createDate" class="form-label fw-semibold">Publish Date *</label>
-                        <input type="datetime-local" class="form-control" id="createDate" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="createDate" class="form-label fw-semibold">Publish Date *</label>
+                            <input type="datetime-local" class="form-control" id="createDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="status" class="form-label fw-semibold">Status</label>
+                            <select class="form-select" id="status">
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div class="mb-4">
@@ -310,6 +324,9 @@
                 document.getElementById('img').value = article.img || '';
                 document.getElementById('label').value = article.label;
                 document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+                if (article.status) {
+                    document.getElementById('status').value = article.status;
+                }
                 
                 easyMDE.value(article.content);
             } catch (error) {
@@ -338,7 +355,8 @@
                 img: document.getElementById('img').value,
                 label: document.getElementById('label').value,
                 createDate: document.getElementById('createDate').value,
-                content: easyMDE.value()
+                content: easyMDE.value(),
+                status: document.getElementById('status').value
             };
 
             try {
@@ -354,7 +372,12 @@
                 });
 
                 if (response.ok) {
-                    alert(isEditing ? 'Article updated successfully!' : 'Article created successfully!');
+                    const message = isEditing ? 'Article updated successfully!' : 'Article created successfully!';
+                    if (formData.status === 'draft') {
+                        alert(message + ' (Saved as draft)');
+                    } else {
+                        alert(message);
+                    }
                     window.location.href = '/admin/';
                 } else {
                     const error = await response.text();
@@ -370,6 +393,62 @@
         });
 
         document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+
+        // Auto-generate slug from title
+        function generateSlugLocal(title) {
+            if (!title) return '';
+            return title
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Generate slug button click handler
+        document.getElementById('generate-slug-btn').addEventListener('click', async () => {
+            const title = document.getElementById('title').value;
+            if (!title) {
+                alert('Please enter a title first');
+                return;
+            }
+
+            const btn = document.getElementById('generate-slug-btn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const response = await fetch('/api/generate-slug', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('permalink').value = data.slug;
+                } else {
+                    document.getElementById('permalink').value = generateSlugLocal(title);
+                }
+            } catch (error) {
+                document.getElementById('permalink').value = generateSlugLocal(title);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        });
+
+        // Auto-generate slug on title blur if permalink is empty
+        document.getElementById('title').addEventListener('blur', () => {
+            const permalinkField = document.getElementById('permalink');
+            if (!permalinkField.value && !isEditing) {
+                const title = document.getElementById('title').value;
+                if (title) {
+                    permalinkField.value = generateSlugLocal(title);
+                }
+            }
+        });
     </script>
     {{codeBeforBody}}
 </body>
