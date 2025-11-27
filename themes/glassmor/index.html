@@ -178,10 +178,27 @@
                     return;
                 }
 
+                // Escape HTML to prevent XSS
+                const escapeHtml = (str) => {
+                    if (!str) return '';
+                    return String(str)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                };
+
                 container.innerHTML = articles.map(article => {
                     const isBookmarked = isArticleBookmarked(article.permalink);
+                    const safeTitle = escapeHtml(article.title);
+                    const safeImg = escapeHtml(article.img);
+                    const safePermalink = escapeHtml(article.permalink);
+                    const safeLabel = escapeHtml(article.label);
+                    const safeExcerpt = escapeHtml(article.excerpt);
+
                     const imgHtml = article.img ? 
-                        `<img src="${article.img}" class="w-full h-48 object-cover rounded-t-2xl" alt="${article.title}" loading="lazy">` : 
+                        `<img src="${safeImg}" class="w-full h-48 object-cover rounded-t-2xl" alt="${safeTitle}" loading="lazy">` : 
                         `<div class="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-t-2xl flex items-center justify-center">
                             <i class="ri-article-line text-4xl text-white/80"></i>
                          </div>`;
@@ -191,28 +208,28 @@
                         <div class="relative overflow-hidden">
                             ${imgHtml}
                             <button class="bookmark-btn absolute top-4 right-4 bg-black/20 backdrop-blur-sm p-2 rounded-full ${isBookmarked ? 'text-yellow-400' : 'text-white/70'} hover:bg-black/30 transition-all duration-300" 
-                                    onclick="toggleBookmark('${article.permalink}', '${article.title.replace(/'/g, "\\'")}', '${article.img || ''}', '${article.label}')"
+                                    onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
                                 <i class="ri-bookmark-${isBookmarked ? 'fill' : 'line'} text-lg"></i>
                             </button>
                         </div>
                         <div class="p-6">
-                            <h3 class="font-bold text-lg text-white mb-3 line-clamp-2 leading-tight group-hover:text-blue-100 transition-colors">${article.title}</h3>
+                            <h3 class="font-bold text-lg text-white mb-3 line-clamp-2 leading-tight group-hover:text-blue-100 transition-colors">${safeTitle}</h3>
                             <div class="flex items-center text-sm text-white/70 mb-4 flex-wrap gap-2">
                                 <div class="flex items-center">
                                     <i class="ri-calendar-line mr-1"></i>
                                     <span class="whitespace-nowrap">${new Date(article.createDate).toLocaleDateString()}</span>
                                 </div>
                                 <span class="text-white/30">•</span>
-                                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm">${article.label}</span>
+                                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm">${safeLabel}</span>
                             </div>
-                            <p class="text-white/80 text-sm mb-4 line-clamp-3">${article.excerpt || ''}</p>
+                            <p class="text-white/80 text-sm mb-4 line-clamp-3">${safeExcerpt}</p>
                             <div class="flex justify-between items-center pt-4 border-t border-white/10">
-                                <a href="/article/${article.permalink}" class="inline-flex items-center text-white font-medium hover:text-blue-200 transition-colors text-sm group">
+                                <a href="/article/${safePermalink}" class="inline-flex items-center text-white font-medium hover:text-blue-200 transition-colors text-sm group">
                                     Read More
                                     <i class="ri-arrow-right-line ml-1 group-hover:translate-x-1 transition-transform"></i>
                                 </a>
-                                <button onclick="shareArticle('${article.permalink}', '${article.title.replace(/'/g, "\\'")}')" 
+                                <button onclick="shareArticle('${safePermalink}', '${safeTitle}')" 
                                         class="text-white/70 hover:text-white transition-colors p-1"
                                         title="Share article">
                                     <i class="ri-share-forward-line text-lg"></i>

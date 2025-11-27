@@ -24,8 +24,14 @@ const OPT = {
 
 /**
  * Generate URL-friendly slug from title
+ * Converts the title to lowercase, removes special characters,
+ * replaces spaces and underscores with hyphens, and removes leading/trailing hyphens.
+ * 
  * @param {string} title - The title to convert to slug
- * @returns {string} - URL-friendly slug
+ * @returns {string} - URL-friendly slug (lowercase, alphanumeric with hyphens)
+ * @example
+ * generateSlug("Hello World!") // Returns "hello-world"
+ * generateSlug("My Article Title 2024") // Returns "my-article-title-2024"
  */
 function generateSlug(title) {
     if (!title) return '';
@@ -33,8 +39,8 @@ function generateSlug(title) {
     return title
         .toLowerCase()
         .trim()
-        .replace(/[^\w\s-]/g, '') // Remove special characters
-        .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+        .replace(/[^\w\s-]/g, '') // Remove special characters except word chars, spaces, hyphens
+        .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with single hyphen
         .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }
 
@@ -1029,7 +1035,10 @@ export default {
                 const siteUrl = `https://${OPT.siteDomain}`;
                 
                 const rss = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rss version="2.0" 
+     xmlns:atom="http://www.w3.org/2005/Atom" 
+     xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
         <title><![CDATA[${OPT.siteName}]]></title>
         <description><![CDATA[${OPT.siteDescription}]]></description>
@@ -1049,7 +1058,7 @@ export default {
             <pubDate>${new Date(article.createDate).toUTCString()}</pubDate>
             <category><![CDATA[${article.label || ''}]]></category>
             <dc:creator><![CDATA[${OPT.siteName}]]></dc:creator>
-            ${article.img ? `<enclosure url="${escapeXml(article.img)}" type="image/jpeg" length="0" />` : ''}
+            ${article.img ? `<enclosure url="${escapeXml(article.img)}" type="image/jpeg" />` : ''}
         </item>
         `).join('')}
     </channel>

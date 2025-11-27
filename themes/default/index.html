@@ -378,10 +378,27 @@
                     return;
                 }
 
+                // Escape HTML to prevent XSS
+                const escapeHtml = (str) => {
+                    if (!str) return '';
+                    return String(str)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                };
+
                 container.innerHTML = articles.map(article => {
                     const isBookmarked = isArticleBookmarked(article.permalink);
+                    const safeTitle = escapeHtml(article.title);
+                    const safeImg = escapeHtml(article.img);
+                    const safePermalink = escapeHtml(article.permalink);
+                    const safeLabel = escapeHtml(article.label);
+                    const safeExcerpt = escapeHtml(article.excerpt);
+
                     const imgHtml = article.img ? 
-                        `<img src="${article.img}" class="featured-img w-100" alt="${article.title}">` : 
+                        `<img src="${safeImg}" class="featured-img w-100" alt="${safeTitle}">` : 
                         `<div class="featured-img bg-gradient d-flex align-items-center justify-content-center">
                             <i class="bi bi-file-text display-4 text-white"></i>
                          </div>`;
@@ -390,21 +407,21 @@
                     <div class="col-md-6 col-lg-4">
                         <div class="article-card glass-card h-100 position-relative">
                             <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
-                                    onclick="toggleBookmark('${article.permalink}', '${article.title.replace(/'/g, "\\'")}', '${article.img || ''}', '${article.label}')"
+                                    onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
                                 <i class="bi bi-bookmark${isBookmarked ? '-fill' : ''}"></i>
                             </button>
                             ${imgHtml}
                             <div class="card-body p-4 d-flex flex-column">
-                                <h5 class="card-title fw-bold text-dark">${article.title}</h5>
+                                <h5 class="card-title fw-bold text-dark">${safeTitle}</h5>
                                 <p class="card-text text-muted small mb-3 mt-2">
                                     <i class="bi bi-calendar me-1"></i> ${new Date(article.createDate).toLocaleDateString()} 
-                                    <span class="tag-badge ms-2">${article.label}</span>
+                                    <span class="tag-badge ms-2">${safeLabel}</span>
                                 </p>
-                                <p class="card-text text-muted flex-grow-1">${article.excerpt || ''}</p>
+                                <p class="card-text text-muted flex-grow-1">${safeExcerpt}</p>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <a href="/article/${article.permalink}" class="btn btn-outline-dark">Read More</a>
-                                    <button class="share-btn" onclick="shareArticle('${article.permalink}', '${article.title.replace(/'/g, "\\'")}')" title="Share article">
+                                    <a href="/article/${safePermalink}" class="btn btn-outline-dark">Read More</a>
+                                    <button class="share-btn" onclick="shareArticle('${safePermalink}', '${safeTitle}')" title="Share article">
                                         <i class="bi bi-share"></i>
                                     </button>
                                 </div>

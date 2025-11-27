@@ -362,8 +362,25 @@
                 }
 
                 container.innerHTML = articles.map(article => {
+                    // Escape HTML to prevent XSS
+                    const escapeHtml = (str) => {
+                        if (!str) return '';
+                        return String(str)
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#039;');
+                    };
+
+                    const safeTitle = escapeHtml(article.title);
+                    const safeImg = escapeHtml(article.img);
+                    const safePermalink = escapeHtml(article.permalink);
+                    const safeLabel = escapeHtml(article.label);
+                    const safeExcerpt = escapeHtml(article.excerpt);
+
                     const imgHtml = article.img ? 
-                        `<img src="${article.img}" class="article-card-img" alt="${article.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"> 
+                        `<img src="${safeImg}" class="article-card-img" alt="${safeTitle}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"> 
                          <div class="img-placeholder" style="display:none;">
                             <i class="fas fa-file-alt"></i>
                          </div>` : 
@@ -371,26 +388,26 @@
                             <i class="fas fa-file-alt"></i>
                          </div>`;
                     
-                    const excerpt = article.excerpt ? 
-                        `<p class="article-card-excerpt">${article.excerpt}</p>` : 
+                    const excerpt = safeExcerpt ? 
+                        `<p class="article-card-excerpt">${safeExcerpt}</p>` : 
                         `<p class="article-card-excerpt text-muted">No excerpt available. Click to read more.</p>`;
                     
                     return `
                     <div class="col-md-6 col-lg-4">
                         <div class="article-card h-100">
-                            <a href="/article/${article.permalink}" class="article-link">
+                            <a href="/article/${safePermalink}" class="article-link">
                                 ${imgHtml}
                                 <div class="article-card-body">
-                                    <h3 class="article-card-title">${article.title || 'Untitled'}</h3>
+                                    <h3 class="article-card-title">${safeTitle || 'Untitled'}</h3>
                                     <div class="article-card-meta">
                                         <span><i class="fas fa-calendar me-1"></i> ${article.createDate ? new Date(article.createDate).toLocaleDateString() : 'No date'}</span>
-                                        <span class="tag-badge">${article.label || 'Uncategorized'}</span>
+                                        <span class="tag-badge">${safeLabel || 'Uncategorized'}</span>
                                     </div>
                                     ${excerpt}
                                 </div>
                             </a>
                             <div class="article-card-body pt-0">
-                                <a href="/article/${article.permalink}" class="btn-primary-custom">
+                                <a href="/article/${safePermalink}" class="btn-primary-custom">
                                     Read More <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
