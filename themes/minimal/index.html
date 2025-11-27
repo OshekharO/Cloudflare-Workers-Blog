@@ -177,7 +177,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-14">
                 <a href="/" class="text-base font-bold gradient-text truncate flex items-center">
-                    <i class="fas fa-feather-alt mr-2"></i>{{siteName}}
+                    <i class="fas fa-feather mr-2"></i>{{siteName}}
                 </a>
                 <div class="flex items-center space-x-4">
                     <a href="/" class="nav-link-hover text-gray-600 text-xs font-medium hidden sm:flex items-center py-2">
@@ -324,7 +324,7 @@
                             <button class="bookmark-btn absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm ${isBookmarked ? 'bookmarked' : 'text-gray-500'}" 
                                     onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                <i class="fas fa-bookmark text-xs"></i>
+                                <i class="${isBookmarked ? 'fas' : 'far'} fa-bookmark text-xs"></i>
                             </button>
                         </div>
                         <div class="p-3 flex flex-col flex-grow">

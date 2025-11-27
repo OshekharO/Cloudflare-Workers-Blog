@@ -570,7 +570,7 @@
                             <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
                                     onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                <i class="fas fa-bookmark${isBookmarked ? '' : ''}"></i>
+                                <i class="${isBookmarked ? 'fas' : 'far'} fa-bookmark"></i>
                             </button>
                             ${imgHtml}
                             <div class="card-body d-flex flex-column">
