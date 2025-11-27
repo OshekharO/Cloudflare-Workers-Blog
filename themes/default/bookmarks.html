@@ -25,42 +25,48 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            font-size: 0.9rem;
         }
         
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         
         .navbar-glass {
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 0;
+        }
+        
+        .navbar-brand {
+            font-size: 1.1rem;
         }
         
         .article-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
         }
         
         .article-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
         }
         
         .featured-img {
-            height: 220px;
+            height: 140px;
             object-fit: cover;
             transition: transform 0.3s ease;
         }
         
         .article-card:hover .featured-img {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         
         .gradient-text {
@@ -73,55 +79,75 @@
         .tag-badge {
             background: linear-gradient(135deg, var(--accent-color), #3b82f6);
             color: white;
-            font-size: 0.75rem;
-            padding: 6px 12px;
-            border-radius: 20px;
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 12px;
         }
         
         .hero-section {
-            padding: 100px 0 60px;
+            padding: 70px 0 30px;
             text-align: center;
             color: white;
         }
         
         .hero-title {
-            font-size: 3.5rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         .hero-subtitle {
-            font-size: 1.3rem;
+            font-size: 0.95rem;
             font-weight: 300;
             opacity: 0.9;
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
         }
         
         .content-section {
-            padding: 60px 0;
+            padding: 30px 0;
         }
         
         .footer {
             background: rgba(30, 41, 59, 0.95);
             color: white;
-            padding: 40px 0;
-            margin-top: 80px;
+            padding: 20px 0;
+            margin-top: 40px;
+            font-size: 0.8rem;
         }
         
         .bookmark-badge {
             background: linear-gradient(135deg, #f59e0b, #d97706);
             color: white;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+        
+        .btn-gradient:hover {
+            color: white;
+            opacity: 0.9;
         }
         
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 2.5rem;
+                font-size: 1.5rem;
             }
             
             .hero-subtitle {
-                font-size: 1.1rem;
+                font-size: 0.875rem;
+            }
+            
+            .hero-section {
+                padding: 60px 0 20px;
             }
         }
     </style>
@@ -133,15 +159,15 @@
     <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold gradient-text" href="/">{{siteName}}</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <a href="/" class="btn btn-outline-primary btn-sm me-2 mt-2">
-                        <i class="bi bi-house me-1"></i> Home
+                <div class="navbar-nav ms-auto gap-2">
+                    <a href="/" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-house me-1"></i>Home
                     </a>
-                    <a href="/admin/" class="btn btn-outline-primary btn-sm me-2 mt-2">Admin</a>
+                    <a href="/admin/" class="btn btn-gradient btn-sm">Admin</a>
                 </div>
             </div>
         </div>
@@ -150,7 +176,7 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <h1 class="hero-title">My Bookmarks</h1>
+            <h1 class="hero-title"><i class="bi bi-bookmark-fill me-2"></i>My Bookmarks</h1>
             <p class="hero-subtitle">Articles you've saved for later reading</p>
         </div>
     </section>
@@ -158,10 +184,10 @@
     <!-- Bookmarks Section -->
     <section class="content-section">
         <div class="container">
-            <div class="glass-card p-5 mb-5">
-                <div class="row align-items-center mb-4">
+            <div class="glass-card p-4 mb-4">
+                <div class="row align-items-center mb-3">
                     <div class="col">
-                        <h2 class="mb-0">
+                        <h2 class="mb-0 h5">
                             <i class="bi bi-bookmark-fill text-warning me-2"></i>
                             Saved Articles
                         </h2>
@@ -171,9 +197,9 @@
                     </div>
                 </div>
                 
-                <div class="row g-4" id="bookmarks-container">
+                <div class="row g-3" id="bookmarks-container">
                     <div class="col-12 text-center">
-                        <div class="spinner-border text-primary" role="status">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
@@ -206,11 +232,11 @@
             
             if (bookmarks.length === 0) {
                 container.innerHTML = `
-                    <div class="col-12 text-center py-5">
-                        <i class="bi bi-bookmark display-1 text-muted mb-3"></i>
-                        <h3 class="text-muted">No bookmarks yet</h3>
-                        <p class="text-muted mb-4">Start bookmarking articles to see them here!</p>
-                        <a href="/" class="btn btn-gradient">Browse Articles</a>
+                    <div class="col-12 text-center py-4">
+                        <i class="bi bi-bookmark fs-1 text-muted mb-2 d-block"></i>
+                        <h5 class="text-muted">No bookmarks yet</h5>
+                        <p class="text-muted small mb-3">Start bookmarking articles to see them here!</p>
+                        <a href="/" class="btn btn-gradient btn-sm">Browse Articles</a>
                     </div>
                 `;
                 return;
@@ -220,27 +246,27 @@
                 const imgHtml = bookmark.img ? 
                     `<img src="${bookmark.img}" class="featured-img w-100" alt="${bookmark.title}">` : 
                     `<div class="featured-img bg-warning bg-gradient d-flex align-items-center justify-content-center">
-                        <i class="bi bi-bookmark-fill display-4 text-white"></i>
+                        <i class="bi bi-bookmark-fill fs-3 text-white"></i>
                      </div>`;
                 
                 return `
                 <div class="col-md-6 col-lg-4">
                     <div class="article-card glass-card h-100">
                         ${imgHtml}
-                        <div class="card-body p-4 d-flex flex-column">
-                            <div class="d-flex align-items-center mb-2">
-                                <span class="badge bookmark-badge me-2">
-                                    <i class="bi bi-bookmark-fill me-1"></i>Bookmarked
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex align-items-center mb-2 gap-1">
+                                <span class="badge bookmark-badge">
+                                    <i class="bi bi-bookmark-fill me-1"></i>Saved
                                 </span>
                                 <span class="tag-badge">${bookmark.label}</span>
                             </div>
-                            <h5 class="card-title fw-bold text-dark">${bookmark.title}</h5>
-                            <p class="card-text text-muted small mb-3">
+                            <h6 class="card-title fw-bold text-dark mb-2" style="font-size: 0.875rem; line-height: 1.4;">${bookmark.title}</h6>
+                            <p class="card-text text-muted mb-2" style="font-size: 0.7rem;">
                                 <i class="bi bi-calendar me-1"></i> ${new Date(bookmark.bookmarkedAt).toLocaleDateString()}
                             </p>
                             <div class="d-flex gap-2 mt-auto">
-                                <a href="/article/${bookmark.permalink}" class="btn btn-gradient flex-grow-1">Read Article</a>
-                                <button onclick="removeBookmark('${bookmark.permalink}')" class="btn btn-outline-danger" title="Remove bookmark">
+                                <a href="/article/${bookmark.permalink}" class="btn btn-gradient flex-grow-1" style="font-size: 0.75rem;">Read Article</a>
+                                <button onclick="removeBookmark('${bookmark.permalink}')" class="btn btn-outline-danger btn-sm" title="Remove" style="font-size: 0.75rem;">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>

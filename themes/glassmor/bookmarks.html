@@ -20,7 +20,7 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
+            border-radius: 12px;
         }
         
         .glass-nav {
@@ -34,8 +34,8 @@
         }
         
         .hover-lift:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
         
         .line-clamp-2 {
@@ -45,35 +45,8 @@
             overflow: hidden;
         }
         
-        /* Improved focus states */
-        input:focus, select:focus, button:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
-        }
-        
-        /* Better button transitions */
         button, a {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Improved padding */
-        .p-6 {
-            padding: 1.5rem;
-        }
-        
-        .p-4 {
-            padding: 1.125rem;
-        }
-        
-        .px-6 {
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .p-6 {
-                padding: 1.25rem;
-            }
         }
     </style>
     
@@ -83,13 +56,13 @@
     <!-- Navigation -->
     <nav class="glass-nav">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-xl font-bold text-white">{{siteName}}</a>
-                <div class="flex space-x-3">
-                    <a href="/" class="glass-card text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-white/20 transition-all duration-300">
+            <div class="flex justify-between items-center h-14">
+                <a href="/" class="text-lg font-bold text-white">{{siteName}}</a>
+                <div class="flex space-x-2">
+                    <a href="/" class="glass-card text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-white/20 transition-all duration-300">
                         <i class="ri-home-line mr-1"></i>Home
                     </a>
-                    <a href="/admin/" class="bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-white/30 transition-all duration-300">
+                    <a href="/admin/" class="bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-white/30 transition-all duration-300">
                         <i class="ri-admin-line mr-1"></i>Admin
                     </a>
                 </div>
@@ -97,32 +70,32 @@
         </div>
     </nav>
 
-    <main class="py-12">
+    <main class="py-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
-            <div class="glass-card p-8 rounded-2xl mb-8 text-center">
-                <h1 class="text-3xl font-bold text-white mb-4">
-                    <i class="ri-bookmark-line mr-3 text-yellow-400"></i>My Bookmarks
+            <div class="glass-card p-5 rounded-xl mb-6 text-center">
+                <h1 class="text-xl font-bold text-white mb-2">
+                    <i class="ri-bookmark-line mr-2 text-yellow-400"></i>My Bookmarks
                 </h1>
-                <p class="text-white/70">Articles you've saved for later reading</p>
+                <p class="text-white/70 text-sm">Articles you've saved for later reading</p>
             </div>
 
             <!-- Bookmarks Grid -->
-            <div id="bookmarks-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="bookmarks-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Loading State -->
-                <div class="col-span-full flex justify-center items-center py-12">
-                    <div class="glass-card p-8 rounded-2xl text-center">
-                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-                        <p class="text-white">Loading bookmarks...</p>
+                <div class="col-span-full flex justify-center items-center py-8">
+                    <div class="glass-card p-6 rounded-xl text-center">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-3"></div>
+                        <p class="text-white text-sm">Loading bookmarks...</p>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="glass-nav mt-12 py-8">
+    <footer class="glass-nav mt-10 py-6">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-white/80">{{copyRight}}</p>
+            <p class="text-white/80 text-sm">{{copyRight}}</p>
         </div>
     </footer>
 
@@ -138,11 +111,11 @@
             if (bookmarks.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-full text-center">
-                        <div class="glass-card p-12 rounded-2xl">
-                            <i class="ri-bookmark-line text-6xl text-white/30 mb-6"></i>
-                            <h3 class="text-xl font-semibold text-white mb-3">No bookmarks yet</h3>
-                            <p class="text-white/70 mb-6">Start bookmarking articles to see them here!</p>
-                            <a href="/" class="bg-white text-blue-600 px-6 py-3 rounded-xl font-medium hover:shadow-lg transition-all">
+                        <div class="glass-card p-8 rounded-xl">
+                            <i class="ri-bookmark-line text-4xl text-white/30 mb-4"></i>
+                            <h3 class="text-base font-semibold text-white mb-2">No bookmarks yet</h3>
+                            <p class="text-white/70 text-sm mb-4">Start bookmarking articles to see them here!</p>
+                            <a href="/" class="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all">
                                 Browse Articles
                             </a>
                         </div>
@@ -153,28 +126,28 @@
 
             container.innerHTML = bookmarks.map(bookmark => {
                 const imgHtml = bookmark.img ? 
-                    `<img src="${bookmark.img}" class="w-full h-48 object-cover rounded-t-2xl" alt="${bookmark.title}">` : 
-                    `<div class="w-full h-48 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-t-2xl flex items-center justify-center">
-                        <i class="ri-bookmark-line text-4xl text-white"></i>
+                    `<img src="${bookmark.img}" class="w-full h-32 object-cover rounded-t-xl" alt="${bookmark.title}">` : 
+                    `<div class="w-full h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-t-xl flex items-center justify-center">
+                        <i class="ri-bookmark-line text-2xl text-white"></i>
                      </div>`;
                 
                 return `
-                <article class="glass-card rounded-2xl overflow-hidden hover-lift">
+                <article class="glass-card rounded-xl overflow-hidden hover-lift">
                     ${imgHtml}
-                    <div class="p-6">
-                        <h3 class="font-bold text-lg text-white mb-3 line-clamp-2">${bookmark.title}</h3>
-                        <div class="flex items-center text-sm text-white/70 mb-4">
-                            <span class="bg-yellow-400/20 text-yellow-300 text-xs px-3 py-1 rounded-full">${bookmark.label}</span>
-                            <span class="mx-2 text-white/30">•</span>
-                            <i class="ri-bookmark-fill text-yellow-400"></i>
-                            <span class="ml-1">Bookmarked</span>
+                    <div class="p-4">
+                        <h3 class="font-bold text-sm text-white mb-2 line-clamp-2 leading-snug">${bookmark.title}</h3>
+                        <div class="flex items-center text-xs text-white/70 mb-3">
+                            <span class="bg-yellow-400/20 text-yellow-300 text-xs px-2 py-0.5 rounded-full">${bookmark.label}</span>
+                            <span class="mx-1.5 text-white/30">•</span>
+                            <i class="ri-bookmark-fill text-yellow-400 text-xs"></i>
+                            <span class="ml-1">Saved</span>
                         </div>
                         <div class="flex space-x-2">
-                            <a href="/article/${bookmark.permalink}" class="flex-1 bg-white/20 text-white text-center px-4 py-3 rounded-xl hover:bg-white/30 transition-all">
+                            <a href="/article/${bookmark.permalink}" class="flex-1 bg-white/20 text-white text-center px-3 py-2 rounded-lg text-xs hover:bg-white/30 transition-all">
                                 Read Article
                             </a>
-                            <button onclick="removeBookmark('${bookmark.permalink}')" class="bg-red-400/20 text-red-300 p-3 rounded-xl hover:bg-red-400/30 transition-all" title="Remove bookmark">
-                                <i class="ri-bookmark-2-line"></i>
+                            <button onclick="removeBookmark('${bookmark.permalink}')" class="bg-red-400/20 text-red-300 p-2 rounded-lg hover:bg-red-400/30 transition-all" title="Remove bookmark">
+                                <i class="ri-delete-bin-line text-sm"></i>
                             </button>
                         </div>
                     </div>
@@ -193,14 +166,16 @@
 
         function showNotification(message) {
             const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 glass-card px-6 py-3 rounded-xl text-white font-medium z-50';
+            notification.className = 'fixed top-4 right-4 glass-card px-4 py-2 rounded-lg text-white text-sm font-medium z-50';
             notification.textContent = message;
             document.body.appendChild(notification);
             
             setTimeout(() => {
                 notification.style.transform = 'translateX(100%)';
                 setTimeout(() => {
-                    document.body.removeChild(notification);
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
                 }, 300);
             }, 3000);
         }

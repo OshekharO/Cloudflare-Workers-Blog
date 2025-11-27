@@ -53,7 +53,7 @@
         .hero-section {
             background: var(--gradient);
             color: white;
-            padding: 100px 0 60px;
+            padding: 80px 0 40px;
             position: relative;
             overflow: hidden;
         }
@@ -71,28 +71,28 @@
 
         .hero-title {
             font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
+            font-size: 2.25rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 0.75rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
         }
 
         .hero-subtitle {
-            font-size: 1.3rem;
+            font-size: 1rem;
             font-weight: 300;
             opacity: 0.9;
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
         .content-section {
-            padding: 80px 0;
+            padding: 50px 0;
         }
 
         .article-card {
             background: white;
             border: none;
-            border-radius: 16px;
+            border-radius: 12px;
             box-shadow: var(--shadow);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
@@ -102,23 +102,23 @@
         }
 
         .article-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
         }
 
         .article-card-img {
-            height: 220px;
+            height: 160px;
             object-fit: cover;
             transition: transform 0.3s ease;
             width: 100%;
         }
 
         .article-card:hover .article-card-img {
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
         .article-card-body {
-            padding: 1.5rem;
+            padding: 1.25rem;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -126,19 +126,19 @@
 
         .article-card-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             line-height: 1.4;
         }
 
         .article-card-meta {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.75rem;
             color: var(--secondary);
             flex-wrap: wrap;
         }
@@ -146,16 +146,17 @@
         .article-card-excerpt {
             color: var(--secondary);
             flex-grow: 1;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            font-size: 0.8rem;
         }
 
         .tag-badge {
             background: var(--gradient);
             color: white;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.7rem;
             font-weight: 500;
             white-space: nowrap;
         }
@@ -164,16 +165,17 @@
             background: var(--gradient);
             border: none;
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
             font-weight: 500;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             width: fit-content;
             margin-top: auto;
+            font-size: 0.8rem;
         }
 
         .btn-primary-custom:hover {
@@ -184,29 +186,30 @@
 
         .section-title {
             font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
+            font-size: 1.75rem;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
         }
 
         .footer {
             background: var(--dark);
             color: white;
-            padding: 3rem 0;
-            margin-top: 4rem;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            font-size: 0.8rem;
         }
 
         .loading-spinner {
-            width: 3rem;
-            height: 3rem;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary);
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 2rem auto;
+            margin: 1.5rem auto;
         }
 
         @keyframes spin {
@@ -216,47 +219,51 @@
 
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 2.5rem 1.5rem;
             color: var(--secondary);
         }
 
         .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
             opacity: 0.5;
         }
 
         .img-placeholder {
-            height: 220px;
+            height: 160px;
             background: var(--gradient);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 3rem;
+            font-size: 2rem;
         }
 
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 2.5rem;
+                font-size: 1.75rem;
             }
             
             .hero-subtitle {
-                font-size: 1.1rem;
+                font-size: 0.9rem;
             }
             
             .section-title {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
             
             .article-card-meta {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.5rem;
+                gap: 0.4rem;
             }
             
             .article-card-title {
-                font-size: 1.2rem;
+                font-size: 1rem;
+            }
+            
+            .hero-section {
+                padding: 70px 0 30px;
             }
         }
 
@@ -277,21 +284,31 @@
             text-decoration: none;
             color: inherit;
         }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
     {{codeBeforHead}}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top glass-effect">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top glass-effect py-2">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i class="fas fa-blog me-2"></i>{{siteName}}
+                <i class="fas fa-blog me-1"></i>{{siteName}}
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
-                    <a href="/admin/" class="btn btn-primary-custom btn-sm">
+                    <a href="/admin/" class="btn btn-primary-custom btn-sm" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">
                         <i class="fas fa-cog me-1"></i>Admin
                     </a>
                 </div>
@@ -309,7 +326,7 @@
     <section class="content-section">
         <div class="container">
             <h2 class="section-title">Latest Articles</h2>
-            <div class="row g-4" id="articles-container">
+            <div class="row g-3" id="articles-container">
                 <div class="col-12 text-center">
                     <div class="loading-spinner"></div>
                     <p class="text-white mt-2">Loading articles...</p>
