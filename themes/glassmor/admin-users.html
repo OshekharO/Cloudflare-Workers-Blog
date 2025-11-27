@@ -34,7 +34,52 @@
         }
         
         .hover-lift:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Improved form styling */
+        input, select {
+            transition: all 0.2s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Better button transitions */
+        button, a {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Improved padding and spacing */
+        .p-6 {
+            padding: 1.5rem;
+        }
+        
+        .px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        
+        .py-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+        
+        .gap-4 {
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .p-6 {
+                padding: 1.25rem;
+            }
         }
     </style>
     

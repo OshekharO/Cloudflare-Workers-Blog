@@ -34,7 +34,8 @@
         }
         
         .hover-lift:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
         }
         
         .line-clamp-2 {
@@ -42,6 +43,37 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+        
+        /* Improved focus states */
+        input:focus, select:focus, button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Better button transitions */
+        button, a {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Improved padding */
+        .p-6 {
+            padding: 1.5rem;
+        }
+        
+        .p-4 {
+            padding: 1.125rem;
+        }
+        
+        .px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .p-6 {
+                padding: 1.25rem;
+            }
         }
     </style>
     
