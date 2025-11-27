@@ -34,20 +34,25 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            border-radius: 0 0 16px 16px;
             color: white;
+            font-size: 0.9375rem;
+            min-height: 320px;
         }
         
         .EasyMDEContainer .editor-toolbar {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-bottom: none;
-            border-radius: 12px 12px 0 0;
+            border-radius: 16px 16px 0 0;
+            padding: 0.5rem;
         }
         
         .EasyMDEContainer .editor-toolbar button {
             color: white;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
         
         .EasyMDEContainer .editor-toolbar button:hover {
@@ -64,16 +69,72 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
+            transition: all 0.2s ease;
         }
         
         input:focus, select:focus, textarea:focus {
             background: rgba(255, 255, 255, 0.15);
             border-color: rgba(255, 255, 255, 0.4);
             outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
         }
         
         input::placeholder, textarea::placeholder {
             color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Better form spacing */
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            margin-bottom: 0.625rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Button improvements */
+        button, a {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        button:hover, a:hover {
+            transform: translateY(-1px);
+        }
+        
+        /* Card padding improvements */
+        .p-6 {
+            padding: 1.75rem;
+        }
+        
+        .px-6 {
+            padding-left: 1.75rem;
+            padding-right: 1.75rem;
+        }
+        
+        .py-4 {
+            padding-top: 1.25rem;
+            padding-bottom: 1.25rem;
+        }
+        
+        /* Gap improvements */
+        .gap-6 {
+            gap: 1.5rem;
+        }
+        
+        .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+            margin-left: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            .p-6 {
+                padding: 1.25rem;
+            }
+            
+            .px-6 {
+                padding-left: 1.25rem;
+                padding-right: 1.25rem;
+            }
         }
     </style>
     

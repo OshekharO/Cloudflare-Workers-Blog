@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks - {{siteName}}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --primary-dark: #1e3d72;
+            --secondary: #6c757d;
+            --accent: #f59e0b;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-section {
+            background: var(--gradient);
+            color: white;
+            padding: 100px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><polygon points="1000,100 1000,0 0,100"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .content-section {
+            padding: 60px 0;
+        }
+
+        .bookmarks-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .bookmarks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .bookmarks-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .bookmarks-count {
+            background: linear-gradient(135deg, var(--accent), #d97706);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .article-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .article-card-img {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+
+        .article-card:hover .article-card-img {
+            transform: scale(1.05);
+        }
+
+        .article-card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .article-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .article-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--secondary);
+            flex-wrap: wrap;
+        }
+
+        .tag-badge {
+            background: var(--gradient);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .bookmark-badge {
+            background: linear-gradient(135deg, var(--accent), #d97706);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .btn-outline-danger-custom {
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            background: transparent;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-danger-custom:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.4;
+            color: var(--accent);
+        }
+
+        .empty-state h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .img-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, var(--accent), #d97706);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .bookmarks-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .bookmarks-card {
+                padding: 1.25rem;
+            }
+            
+            .article-card-body {
+                padding: 1rem;
+            }
+        }
+
+        .toast-container {
+            z-index: 1100;
+        }
+    </style>
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top glass-effect">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-blog me-2"></i>{{siteName}}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a href="/" class="btn btn-outline-primary btn-sm me-2">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                    <a href="/admin/" class="btn-primary-custom btn-sm">
+                        <i class="fas fa-cog me-1"></i>Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container position-relative">
+            <h1 class="hero-title">
+                <i class="fas fa-bookmark me-3"></i>My Bookmarks
+            </h1>
+            <p class="hero-subtitle">Articles you've saved for later reading</p>
+        </div>
+    </section>
+
+    <!-- Bookmarks Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="bookmarks-card">
+                <div class="bookmarks-header">
+                    <h2 class="bookmarks-title">
+                        <i class="fas fa-bookmark text-warning"></i>
+                        Saved Articles
+                    </h2>
+                    <span class="bookmarks-count" id="bookmarks-count">0 bookmarks</span>
+                </div>
+                
+                <div class="row g-4" id="bookmarks-container">
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert">
+            <div class="toast-body d-flex align-items-center" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getBookmarks() {
+            return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+        }
+
+        function loadBookmarks() {
+            const bookmarks = getBookmarks();
+            const container = document.getElementById('bookmarks-container');
+            const countElement = document.getElementById('bookmarks-count');
+            
+            countElement.textContent = `${bookmarks.length} bookmark${bookmarks.length !== 1 ? 's' : ''}`;
+            
+            if (bookmarks.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <i class="fas fa-bookmark"></i>
+                            <h3>No bookmarks yet</h3>
+                            <p class="text-muted mb-4">Start bookmarking articles to see them here!</p>
+                            <a href="/" class="btn-primary-custom">
+                                <i class="fas fa-newspaper me-2"></i>Browse Articles
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Escape HTML to prevent XSS
+            const escapeHtml = (str) => {
+                if (!str) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            };
+
+            container.innerHTML = bookmarks.map(bookmark => {
+                const safeTitle = escapeHtml(bookmark.title);
+                const safeImg = escapeHtml(bookmark.img);
+                const safePermalink = escapeHtml(bookmark.permalink);
+                const safeLabel = escapeHtml(bookmark.label);
+
+                const imgHtml = bookmark.img ? 
+                    `<img src="${safeImg}" class="article-card-img" alt="${safeTitle}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                     <div class="img-placeholder" style="display:none;">
+                        <i class="fas fa-bookmark"></i>
+                     </div>` : 
+                    `<div class="img-placeholder">
+                        <i class="fas fa-bookmark"></i>
+                     </div>`;
+                
+                return `
+                <div class="col-md-6 col-lg-4">
+                    <div class="article-card h-100">
+                        ${imgHtml}
+                        <div class="article-card-body">
+                            <div class="article-card-meta">
+                                <span class="bookmark-badge">
+                                    <i class="fas fa-bookmark me-1"></i>Saved
+                                </span>
+                                <span class="tag-badge">${safeLabel || 'Uncategorized'}</span>
+                            </div>
+                            <h3 class="article-card-title">${safeTitle}</h3>
+                            <p class="text-muted small mb-3">
+                                <i class="fas fa-clock me-1"></i> 
+                                Saved ${bookmark.bookmarkedAt ? new Date(bookmark.bookmarkedAt).toLocaleDateString() : 'recently'}
+                            </p>
+                            <div class="card-actions">
+                                <a href="/article/${safePermalink}" class="btn-primary-custom flex-grow-1 justify-content-center">
+                                    <i class="fas fa-book-open"></i> Read
+                                </a>
+                                <button onclick="removeBookmark('${safePermalink}')" class="btn-outline-danger-custom" title="Remove bookmark">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function removeBookmark(permalink) {
+            const bookmarks = getBookmarks();
+            const filtered = bookmarks.filter(bookmark => bookmark.permalink !== permalink);
+            localStorage.setItem('blog_bookmarks', JSON.stringify(filtered));
+            loadBookmarks();
+            showNotification('Bookmark removed', 'warning');
+        }
+
+        function showNotification(message, type = 'info') {
+            const toast = document.getElementById('liveToast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            const iconClass = type === 'success' ? 'fa-check-circle text-success' : 
+                             type === 'warning' ? 'fa-exclamation-circle text-warning' : 
+                             'fa-info-circle text-info';
+            
+            toastMessage.innerHTML = `<i class="fas ${iconClass} me-2"></i>${message}`;
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+
+        // Load bookmarks on page load
+        document.addEventListener('DOMContentLoaded', loadBookmarks);
+    </script>
+    {{codeBeforBody}}
+</body>
+</html>

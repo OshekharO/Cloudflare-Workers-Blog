@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users - {{siteName}}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --primary-dark: #1e3d72;
+            --secondary: #6c757d;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --sidebar-width: 280px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--gradient);
+            color: white;
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.25rem 0.75rem;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        .admin-card {
+            background: white;
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .admin-card-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .admin-card-body {
+            padding: 1.5rem;
+        }
+
+        .stats-card {
+            background: var(--gradient);
+            color: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stats-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .superadmin-avatar {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .admin-avatar {
+            background: var(--gradient);
+        }
+
+        .badge-superadmin {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .badge-admin {
+            background: var(--gradient);
+        }
+
+        .btn-admin {
+            background: var(--gradient);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .btn-outline-admin {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-admin:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .table th {
+            border: none;
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1rem 0.75rem;
+        }
+
+        .table td {
+            border: none;
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .mobile-header {
+            display: none;
+            background: var(--gradient);
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .guide-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .guide-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .mobile-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+            
+            .admin-card-body {
+                padding: 1rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+            
+            .admin-card-header {
+                padding: 1rem;
+            }
+            
+            .table td, .table th {
+                padding: 0.5rem 0.25rem;
+            }
+        }
+
+        .toast-container {
+            z-index: 1100;
+        }
+    </style>
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Mobile Header -->
+    <div class="mobile-header d-lg-none">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h5 class="mb-0">
+            <i class="fas fa-users me-2"></i>Admin Users
+        </h5>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h4 class="mb-0">
+                <i class="fas fa-cogs me-2"></i>Admin Panel
+            </h4>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-item">
+                <a href="/admin/" class="nav-link">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Articles</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/users" class="nav-link active">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="/admin/edit" class="nav-link">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>New Article</span>
+                </a>
+            </div>
+            <div class="nav-item mt-4">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-eye"></i>
+                    <span>View Blog</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Quick Stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-user-plus fa-2x opacity-75"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <button onclick="openAddAdminModal()" class="btn btn-light btn-sm w-100">
+                                <i class="fas fa-plus me-1"></i> Add User
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card">
+                    <div class="stats-number" id="total-admins">0</div>
+                    <div class="stats-label">Total Admins</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card">
+                    <div class="stats-number" id="superadmin-count">0</div>
+                    <div class="stats-label">Super Admins</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card">
+                    <div class="stats-number" id="active-admins">0</div>
+                    <div class="stats-label">Active Users</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Management Card -->
+        <div class="admin-card">
+            <div class="admin-card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-users me-2"></i>Admin Users Management
+                </h5>
+                <div class="d-flex gap-2">
+                    <div class="input-group input-group-sm" style="width: 220px;">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" id="search-admins" class="form-control" placeholder="Search admins...">
+                    </div>
+                    <button onclick="loadAdmins()" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="admin-card-body">
+                <div id="admins-list">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Guide -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Admin Roles Guide
+                </h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="guide-card">
+                            <div class="d-flex align-items-center">
+                                <span class="badge badge-superadmin text-white px-3 py-2">
+                                    <i class="fas fa-shield-alt me-1"></i> Super Admin
+                                </span>
+                                <p class="mb-0 ms-3 small text-muted">Full system access, can manage other admins</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="guide-card">
+                            <div class="d-flex align-items-center">
+                                <span class="badge badge-admin text-white px-3 py-2">
+                                    <i class="fas fa-user-check me-1"></i> Admin
+                                </span>
+                                <p class="mb-0 ms-3 small text-muted">Content management only</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Admin Modal -->
+    <div class="modal fade" id="addAdminModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-admin-form">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Username *</label>
+                            <input type="text" id="username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Password *</label>
+                            <input type="password" id="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email *</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Role *</label>
+                            <select id="role" class="form-select" required>
+                                <option value="admin">Admin</option>
+                                <option value="superadmin">Super Admin</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-admin" onclick="addAdmin()">
+                        <i class="fas fa-user-plus me-1"></i> Add Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Admin Modal -->
+    <div class="modal fade" id="editAdminModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-admin-form">
+                        <input type="hidden" id="edit-admin-id">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Username</label>
+                            <input type="text" id="edit-username" class="form-control" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email *</label>
+                            <input type="email" id="edit-email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Role *</label>
+                            <select id="edit-role" class="form-select" required>
+                                <option value="admin">Admin</option>
+                                <option value="superadmin">Super Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Status *</label>
+                            <select id="edit-status" class="form-select" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-admin" onclick="updateAdmin()">
+                        <i class="fas fa-check me-1"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto" id="toastTitle">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentAdmins = [];
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        }
+
+        // Close sidebar when clicking on main content on mobile
+        document.getElementById('mainContent').addEventListener('click', function() {
+            if (window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            }
+        });
+
+        // Toast notification
+        function showToast(title, message, type = 'info') {
+            const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+            document.getElementById('liveToast').className = `toast ${type === 'success' ? 'bg-success text-white' : type === 'danger' ? 'bg-danger text-white' : ''}`;
+            toast.show();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdmins();
+            
+            document.getElementById('search-admins').addEventListener('input', function(e) {
+                filterAdmins(e.target.value);
+            });
+        });
+
+        async function loadAdmins() {
+            try {
+                const response = await fetch('/api/admins');
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        showToast('Error', 'Authentication required', 'danger');
+                        return;
+                    }
+                    if (response.status === 403) {
+                        showToast('Error', 'Access denied. Superadmin required.', 'danger');
+                        return;
+                    }
+                    throw new Error('Failed to load admins');
+                }
+                
+                currentAdmins = await response.json();
+                displayAdmins(currentAdmins);
+                updateStats();
+            } catch (error) {
+                console.error('Error loading admins:', error);
+                showToast('Error', 'Error loading admins', 'danger');
+            }
+        }
+
+        function displayAdmins(admins) {
+            const container = document.getElementById('admins-list');
+
+            if (admins.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Admin Users</h5>
+                        <p class="text-muted mb-4">Get started by adding your first admin user</p>
+                        <button onclick="openAddAdminModal()" class="btn-admin">
+                            <i class="fas fa-user-plus me-1"></i> Add Admin
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Last Login</th>
+                                <th width="100">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${admins.map(admin => `
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar ${admin.role === 'superadmin' ? 'superadmin-avatar' : 'admin-avatar'} me-3">
+                                                ${admin.username.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <strong>${admin.username}</strong>
+                                                <br><small class="text-muted">${admin.email}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge ${admin.role === 'superadmin' ? 'badge-superadmin' : 'badge-admin'} text-white">
+                                            <i class="fas fa-${admin.role === 'superadmin' ? 'shield-alt' : 'user-check'} me-1"></i>
+                                            ${admin.role}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge ${admin.status === 'active' ? 'bg-success' : 'bg-secondary'}">
+                                            ${admin.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">${new Date(admin.createdAt).toLocaleDateString()}</small>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            ${admin.lastLogin ? new Date(admin.lastLogin).toLocaleDateString() : 'Never'}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button onclick="editAdmin('${admin.id}')" class="btn btn-outline-admin" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
+                                                    class="btn btn-outline-danger" 
+                                                    title="Delete"
+                                                    ${admin.role === 'superadmin' ? 'disabled' : ''}>
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function filterAdmins(searchTerm) {
+            const filteredAdmins = currentAdmins.filter(
+                admin => admin.username.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         admin.role.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            displayAdmins(filteredAdmins);
+        }
+
+        function updateStats() {
+            const totalAdmins = currentAdmins.length;
+            const superadminCount = currentAdmins.filter(admin => admin.role === 'superadmin').length;
+            const activeAdmins = currentAdmins.filter(admin => admin.status === 'active').length;
+
+            document.getElementById('total-admins').textContent = totalAdmins;
+            document.getElementById('superadmin-count').textContent = superadminCount;
+            document.getElementById('active-admins').textContent = activeAdmins;
+        }
+
+        function openAddAdminModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addAdminModal'));
+            document.getElementById('add-admin-form').reset();
+            modal.show();
+        }
+
+        function openEditAdminModal() {
+            const modal = new bootstrap.Modal(document.getElementById('editAdminModal'));
+            modal.show();
+        }
+
+        async function addAdmin() {
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                email: document.getElementById('email').value,
+                role: document.getElementById('role').value,
+            };
+
+            try {
+                const response = await fetch('/api/admins', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (response.ok) {
+                    showToast('Success', 'Admin created successfully', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
+                    loadAdmins();
+                } else {
+                    if (response.status === 401 || response.status === 403) {
+                        showToast('Error', 'Access denied', 'danger');
+                        return;
+                    }
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to create admin');
+                }
+            } catch (error) {
+                console.error('Error creating admin:', error);
+                showToast('Error', error.message, 'danger');
+            }
+        }
+
+        async function editAdmin(adminId) {
+            const admin = currentAdmins.find(a => a.id === adminId);
+            if (!admin) return;
+
+            document.getElementById('edit-admin-id').value = admin.id;
+            document.getElementById('edit-username').value = admin.username;
+            document.getElementById('edit-email').value = admin.email;
+            document.getElementById('edit-role').value = admin.role;
+            document.getElementById('edit-status').value = admin.status;
+
+            openEditAdminModal();
+        }
+
+        async function updateAdmin() {
+            const adminId = document.getElementById('edit-admin-id').value;
+            const updateData = {
+                email: document.getElementById('edit-email').value,
+                role: document.getElementById('edit-role').value,
+                status: document.getElementById('edit-status').value,
+            };
+
+            try {
+                const response = await fetch('/api/admins/' + adminId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData),
+                });
+
+                if (response.ok) {
+                    showToast('Success', 'Admin updated successfully', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide();
+                    loadAdmins();
+                } else {
+                    if (response.status === 401 || response.status === 403) {
+                        showToast('Error', 'Access denied', 'danger');
+                        return;
+                    }
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to update admin');
+                }
+            } catch (error) {
+                console.error('Error updating admin:', error);
+                showToast('Error', error.message, 'danger');
+            }
+        }
+
+        async function deleteAdmin(adminId, username) {
+            if (!confirm(`Are you sure you want to delete admin "${username}"?`)) return;
+
+            try {
+                const response = await fetch('/api/admins/' + adminId, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    showToast('Success', 'Admin deleted successfully', 'success');
+                    loadAdmins();
+                } else {
+                    if (response.status === 401 || response.status === 403) {
+                        showToast('Error', 'Access denied', 'danger');
+                        return;
+                    }
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to delete admin');
+                }
+            } catch (error) {
+                console.error('Error deleting admin:', error);
+                showToast('Error', error.message, 'danger');
+            }
+        }
+    </script>
+    {{codeBeforBody}}
+</body>
+</html>
