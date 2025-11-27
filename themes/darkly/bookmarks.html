@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks - {{siteName}}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --neon-cyan: #00d9ff; --neon-purple: #bf00ff; --neon-green: #00ff88; --dark-bg: #1a1a2e; --darker-bg: #0f0f1a; }
+        body { font-family: 'Inter', sans-serif; background: var(--darker-bg); color: #e0e0e0; }
+        .navbar { background: rgba(26, 26, 46, 0.95) !important; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0, 217, 255, 0.1); }
+        .navbar-brand { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--neon-cyan) !important; }
+        .hero-section { background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%); padding: 5rem 0 3rem; position: relative; }
+        .hero-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at top right, rgba(0, 255, 136, 0.1) 0%, transparent 50%); }
+        .hero-title { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: var(--neon-green); text-shadow: 0 0 30px rgba(0, 255, 136, 0.3); }
+        .article-card { background: var(--dark-bg); border: 1px solid rgba(0, 217, 255, 0.1); border-radius: 12px; transition: all 0.3s ease; overflow: hidden; }
+        .article-card:hover { border-color: var(--neon-green); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); transform: translateY(-5px); }
+        .article-card .card-img-top { height: 140px; object-fit: cover; }
+        .category-badge { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #000; font-size: 0.6rem; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+        .bookmark-badge { background: rgba(0, 255, 136, 0.2); color: var(--neon-green); font-size: 0.6rem; text-transform: uppercase; }
+        .footer { background: var(--darker-bg); border-top: 1px solid rgba(255,255,255,0.05); padding: 2rem 0; color: #666; }
+        .btn-neon { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 4px; }
+        .btn-neon:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 15px var(--neon-green); }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">{{siteName}}</a>
+            <a href="/" class="btn btn-neon btn-sm">Home</a>
+        </div>
+    </nav>
+
+    <section class="hero-section text-center">
+        <div class="container position-relative">
+            <h1 class="hero-title"><i class="bi bi-bookmark-fill me-2"></i>Bookmarks</h1>
+            <p class="mt-2" style="color: #666;">Articles you've saved for later</p>
+        </div>
+    </section>
+
+    <main class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0" style="font-family: 'JetBrains Mono', monospace; color: var(--neon-green);">> Saved Articles</h5>
+            <span class="badge" id="bookmarks-count" style="background: rgba(0, 255, 136, 0.2); color: var(--neon-green);">0 bookmarks</span>
+        </div>
+        <div class="row g-4" id="bookmarks-container">
+            <div class="col-12 text-center py-5"><div class="spinner-border" style="color: var(--neon-green);"></div></div>
+        </div>
+    </main>
+
+    <footer class="footer"><div class="container text-center"><p class="mb-0">{{copyRight}}</p></div></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getBookmarks() { return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]'); }
+
+        function loadBookmarks() {
+            const bookmarks = getBookmarks();
+            const container = document.getElementById('bookmarks-container');
+            document.getElementById('bookmarks-count').textContent = `${bookmarks.length} bookmark${bookmarks.length !== 1 ? 's' : ''}`;
+            
+            if (bookmarks.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center py-5"><i class="bi bi-bookmark display-1 mb-3" style="color: #555;"></i><h4 style="font-family: JetBrains Mono, monospace; color: var(--neon-green);">No Bookmarks Yet</h4><p style="color: #666;">Start saving articles to see them here!</p><a href="/" class="btn btn-neon mt-3">Browse Articles</a></div>';
+                return;
+            }
+
+            container.innerHTML = bookmarks.map(b => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="card article-card h-100">
+                        ${b.img ? `<img src="${b.img}" class="card-img-top" alt="${b.title}">` : `<div class="card-img-top d-flex align-items-center justify-content-center" style="height:140px; background: linear-gradient(135deg, var(--dark-bg), #2a2a4e);"><i class="bi bi-bookmark-fill display-5" style="color: var(--neon-green);"></i></div>`}
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex gap-1 mb-2">
+                                <span class="badge bookmark-badge"><i class="bi bi-bookmark-fill me-1"></i>Saved</span>
+                                <span class="badge category-badge">${b.label}</span>
+                            </div>
+                            <h6 class="card-title" style="color: #fff;">${b.title}</h6>
+                            <small style="color: #555; font-family: JetBrains Mono, monospace;"><i class="bi bi-calendar me-1"></i>${new Date(b.bookmarkedAt).toLocaleDateString()}</small>
+                            <div class="d-flex gap-2 mt-auto pt-3">
+                                <a href="/article/${b.permalink}" class="btn btn-neon flex-grow-1">Read</a>
+                                <button onclick="removeBookmark('${b.permalink}')" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeBookmark(permalink) {
+            const bookmarks = getBookmarks().filter(b => b.permalink !== permalink);
+            localStorage.setItem('blog_bookmarks', JSON.stringify(bookmarks));
+            loadBookmarks();
+            showNotification('Bookmark removed', 'warning');
+        }
+
+        function showNotification(message, type) {
+            const toast = document.createElement('div');
+            toast.className = 'toast align-items-center border-0';
+            toast.style.cssText = 'background: var(--dark-bg); border: 1px solid var(--neon-green) !important;';
+            toast.innerHTML = `<div class="d-flex"><div class="toast-body" style="color: var(--neon-green)">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            new bootstrap.Toast(toast).show();
+            toast.addEventListener('hidden.bs.toast', () => document.body.removeChild(container));
+        }
+
+        loadBookmarks();
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>

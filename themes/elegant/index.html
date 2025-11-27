@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{siteName}}</title>
+    <meta name="description" content="{{siteDescription}}">
+    <meta name="keywords" content="{{keyWords}}">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts - Inspired by xeu.life typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --serif: 'Cormorant Garamond', Georgia, serif;
+            --sans: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-muted: #999;
+            --accent: #2c5282;
+            --accent-light: #4a7ab8;
+            --bg-cream: #faf9f7;
+            --bg-white: #ffffff;
+            --border-light: #e8e6e3;
+        }
+        
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            font-family: var(--sans);
+            background-color: var(--bg-cream);
+            color: var(--text-primary);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+        
+        /* Clean Navigation - Hugo style */
+        .navbar {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1.25rem 0;
+        }
+        
+        .navbar-brand {
+            font-family: var(--serif);
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-primary) !important;
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-link {
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary) !important;
+            padding: 0.5rem 1rem !important;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent) !important;
+        }
+        
+        /* Hero Section - Minimalist xeu.life style */
+        .hero {
+            padding: 5rem 0 4rem;
+            text-align: center;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .hero-title {
+            font-family: var(--serif);
+            font-size: 3.5rem;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+        
+        .hero-subtitle {
+            font-family: var(--sans);
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        /* Section Title - Hugo style */
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .section-title {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .section-count {
+            margin-left: auto;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        /* Article Cards - Clean Hugo-inspired layout */
+        .article-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .article-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
+        }
+        
+        .article-card .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .article-card .card-body {
+            padding: 1.75rem;
+        }
+        
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .article-category {
+            font-family: var(--sans);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.7rem;
+            color: var(--accent);
+        }
+        
+        .article-date {
+            font-family: var(--sans);
+        }
+        
+        .article-title {
+            font-family: var(--serif);
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .article-title a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .article-title a:hover {
+            color: var(--accent);
+        }
+        
+        .article-excerpt {
+            font-family: var(--sans);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }
+        
+        .read-more {
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.2s ease;
+        }
+        
+        .read-more:hover {
+            color: var(--accent-light);
+        }
+        
+        .read-more i {
+            margin-left: 0.35rem;
+            font-size: 0.9em;
+            transition: transform 0.2s ease;
+        }
+        
+        .read-more:hover i {
+            transform: translateX(3px);
+        }
+        
+        /* Bookmark Button */
+        .bookmark-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .bookmark-btn:hover, .bookmark-btn.bookmarked {
+            color: var(--accent);
+            background: var(--bg-white);
+        }
+        
+        /* Share Button */
+        .share-btn {
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            padding: 0.25rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .share-btn:hover {
+            color: var(--accent);
+        }
+        
+        /* Footer - Clean minimal */
+        .footer {
+            background: var(--bg-white);
+            border-top: 1px solid var(--border-light);
+            padding: 2.5rem 0;
+            margin-top: 4rem;
+        }
+        
+        .footer-text {
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        /* Pagination */
+        .pagination {
+            justify-content: center;
+            gap: 0.25rem;
+        }
+        
+        .page-link {
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+            padding: 0.5rem 1rem;
+        }
+        
+        .page-link:hover {
+            background: var(--bg-cream);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .page-item.active .page-link {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        /* Modal */
+        .modal-content {
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .modal-title {
+            font-family: var(--serif);
+            font-weight: 500;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero { padding: 3rem 0 2.5rem; }
+            .article-card .card-body { padding: 1.25rem; }
+            .article-title { font-size: 1.2rem; }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation - Clean Hugo style -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">{{siteName}}</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a href="/bookmarks" class="nav-link">
+                        <i class="bi bi-bookmark me-1"></i>Bookmarks
+                    </a>
+                    <a href="/admin/" class="nav-link">Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero - xeu.life inspired minimal -->
+    <header class="hero">
+        <div class="container">
+            <h1 class="hero-title">{{siteName}}</h1>
+            <p class="hero-subtitle">{{siteDescription}}</p>
+        </div>
+    </header>
+
+    <!-- Articles Section -->
+    <main class="py-5">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Recent Posts</h2>
+                <span class="section-count" id="article-count"></span>
+            </div>
+            
+            <div class="row g-4" id="articles-container">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-secondary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div id="pagination-container" class="mt-5"></div>
+        </div>
+    </main>
+
+    <!-- Share Modal -->
+    <div class="modal fade" id="shareModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title">Share this article</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="share-article-title" class="text-muted small mb-3"></p>
+                    <div class="d-flex justify-content-around">
+                        <button onclick="shareOnPlatform('twitter')" class="btn btn-outline-secondary btn-sm rounded-circle" style="width:40px;height:40px;">
+                            <i class="bi bi-twitter"></i>
+                        </button>
+                        <button onclick="shareOnPlatform('facebook')" class="btn btn-outline-secondary btn-sm rounded-circle" style="width:40px;height:40px;">
+                            <i class="bi bi-facebook"></i>
+                        </button>
+                        <button onclick="shareOnPlatform('linkedin')" class="btn btn-outline-secondary btn-sm rounded-circle" style="width:40px;height:40px;">
+                            <i class="bi bi-linkedin"></i>
+                        </button>
+                        <button onclick="copyArticleLink()" class="btn btn-outline-secondary btn-sm rounded-circle" style="width:40px;height:40px;">
+                            <i class="bi bi-link-45deg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="footer-text mb-0">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentSharePermalink = '';
+        let currentShareTitle = '';
+        let currentPage = 1;
+        const pageSize = 9;
+
+        function getBookmarks() { return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]'); }
+        function saveBookmarks(bookmarks) { localStorage.setItem('blog_bookmarks', JSON.stringify(bookmarks)); }
+        function isArticleBookmarked(permalink) { return getBookmarks().some(b => b.permalink === permalink); }
+
+        function toggleBookmark(permalink, title, img, label) {
+            const bookmarks = getBookmarks();
+            const idx = bookmarks.findIndex(b => b.permalink === permalink);
+            if (idx > -1) { bookmarks.splice(idx, 1); showNotification('Bookmark removed'); }
+            else { bookmarks.push({ permalink, title, img, label, bookmarkedAt: new Date().toISOString() }); showNotification('Article bookmarked'); }
+            saveBookmarks(bookmarks);
+            loadArticles(currentPage);
+        }
+
+        function shareArticle(permalink, title) {
+            currentSharePermalink = permalink;
+            currentShareTitle = title;
+            document.getElementById('share-article-title').textContent = title;
+            new bootstrap.Modal(document.getElementById('shareModal')).show();
+        }
+
+        function shareOnPlatform(platform) {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            const urls = {
+                twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareTitle)}&url=${encodeURIComponent(url)}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+            };
+            window.open(urls[platform], '_blank', 'width=600,height=400');
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        async function copyArticleLink() {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            try { await navigator.clipboard.writeText(url); showNotification('Link copied to clipboard'); }
+            catch (err) { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showNotification('Link copied to clipboard'); }
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        function showNotification(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast align-items-center text-bg-dark border-0';
+            toast.innerHTML = `<div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            new bootstrap.Toast(toast).show();
+            toast.addEventListener('hidden.bs.toast', () => document.body.removeChild(container));
+        }
+
+        async function loadArticles(page = 1) {
+            currentPage = page;
+            try {
+                const response = await fetch(`/api/articles?paginate=true&page=${page}&pageSize=${pageSize}`);
+                const data = await response.json();
+                const articles = data.articles || [];
+                const pagination = data.pagination || {};
+                
+                document.getElementById('article-count').textContent = `${pagination.totalArticles || 0} articles`;
+                
+                const container = document.getElementById('articles-container');
+                
+                if (articles.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-journal-text display-1 text-muted mb-3"></i>
+                            <h3 style="font-family: var(--serif);">No articles yet</h3>
+                            <p class="text-muted">Check back soon for new content.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const escapeHtml = (str) => { if (!str) return ''; return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); };
+
+                container.innerHTML = articles.map(article => {
+                    const isBookmarked = isArticleBookmarked(article.permalink);
+                    const safeTitle = escapeHtml(article.title);
+                    const safeImg = escapeHtml(article.img);
+                    const safePermalink = escapeHtml(article.permalink);
+                    const safeLabel = escapeHtml(article.label);
+                    const safeExcerpt = escapeHtml(article.excerpt);
+
+                    const imgHtml = article.img ? 
+                        `<img src="${safeImg}" class="card-img-top" alt="${safeTitle}">` : 
+                        `<div class="card-img-top d-flex align-items-center justify-content-center" style="height:200px; background: linear-gradient(135deg, #f5f5f5, #e8e8e8);">
+                            <i class="bi bi-journal-text display-4 text-muted"></i>
+                        </div>`;
+                    
+                    const dateFormatted = new Date(article.createDate).toLocaleDateString('en-US', { 
+                        year: 'numeric', month: 'long', day: 'numeric' 
+                    });
+                    
+                    return `
+                    <div class="col-md-6 col-lg-4">
+                        <article class="article-card">
+                            <div class="position-relative">
+                                ${imgHtml}
+                                <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
+                                        onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
+                                        title="${isBookmarked ? 'Remove bookmark' : 'Bookmark this article'}">
+                                    <i class="bi bi-bookmark${isBookmarked ? '-fill' : ''}"></i>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="article-meta">
+                                    <span class="article-category">${safeLabel}</span>
+                                    <span class="article-date">${dateFormatted}</span>
+                                </div>
+                                <h3 class="article-title">
+                                    <a href="/article/${safePermalink}">${safeTitle}</a>
+                                </h3>
+                                <p class="article-excerpt">${safeExcerpt}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="/article/${safePermalink}" class="read-more">
+                                        Continue reading <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                    <button onclick="shareArticle('${safePermalink}', '${safeTitle}')" class="share-btn" title="Share">
+                                        <i class="bi bi-share"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    `;
+                }).join('');
+
+                updatePaginationUI(pagination);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('articles-container').innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-exclamation-circle display-1 text-muted mb-3"></i>
+                        <h3 style="font-family: var(--serif);">Error loading articles</h3>
+                        <button onclick="loadArticles()" class="btn btn-outline-dark mt-3">Try again</button>
+                    </div>
+                `;
+            }
+        }
+
+        function updatePaginationUI(pagination) {
+            const container = document.getElementById('pagination-container');
+            if (!container || pagination.totalPages <= 1) { if (container) container.innerHTML = ''; return; }
+
+            let html = '<nav><ul class="pagination">';
+            html += `<li class="page-item ${!pagination.hasPrevPage ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadArticles(${pagination.page - 1}); return false;">&larr; Previous</a>
+            </li>`;
+            
+            for (let i = Math.max(1, pagination.page - 2); i <= Math.min(pagination.totalPages, pagination.page + 2); i++) {
+                html += `<li class="page-item ${i === pagination.page ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadArticles(${i}); return false;">${i}</a>
+                </li>`;
+            }
+            
+            html += `<li class="page-item ${!pagination.hasNextPage ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadArticles(${pagination.page + 1}); return false;">Next &rarr;</a>
+            </li></ul></nav>`;
+            
+            container.innerHTML = html;
+        }
+
+        loadArticles();
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
