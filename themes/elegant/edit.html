@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}} Article - {{siteName}}</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- EasyMDE -->
+    <link href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --text-muted: #999;
+            --bg-primary: #fff;
+            --bg-secondary: #f8f9fa;
+            --border-color: #e5e7eb;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 52px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .back-link {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .back-link:hover { color: var(--text-primary); }
+        
+        .page-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+        
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group.full { grid-column: 1 / -1; }
+        
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .form-control::placeholder { color: var(--text-muted); }
+        
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .input-group .form-control { flex: 1; }
+        
+        .input-group .btn-generate {
+            padding: 0 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        
+        .input-group .btn-generate:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        /* Status toggle */
+        .status-toggle {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .status-option {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-primary);
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .status-option:hover { border-color: var(--text-muted); }
+        
+        .status-option.active {
+            border-color: var(--accent);
+            background: #eff6ff;
+            color: var(--accent);
+        }
+        
+        .status-option.draft.active {
+            border-color: #f59e0b;
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        /* Editor */
+        .editor-wrapper {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .EasyMDEContainer {
+            border: none !important;
+        }
+        
+        .EasyMDEContainer .CodeMirror {
+            border: none !important;
+            border-radius: 0 !important;
+            font-size: 14px;
+            min-height: 400px;
+        }
+        
+        .editor-toolbar {
+            border-bottom: 1px solid var(--border-color) !important;
+            border-top: none !important;
+            border-left: none !important;
+            border-right: none !important;
+            border-radius: 0 !important;
+            padding: 6px 8px !important;
+        }
+        
+        .editor-toolbar button {
+            border: none !important;
+            border-radius: 4px !important;
+        }
+        
+        .editor-toolbar button:hover {
+            background: var(--bg-secondary) !important;
+        }
+        
+        .editor-statusbar {
+            border-top: 1px solid var(--border-color) !important;
+            padding: 6px 12px !important;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-success:hover { background: #059669; }
+        
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover { border-color: var(--text-muted); color: var(--text-primary); }
+        
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #dc2626; }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.success { background: var(--success); color: #fff; }
+        .toast.error { background: var(--danger); color: #fff; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @media (max-width: 640px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group { grid-column: auto; }
+            .header-actions { flex-wrap: wrap; }
+        }
+    </style>
+    {{codeBeforHead}}
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-left">
+                <a href="/admin/" class="back-link"><i class="bi bi-arrow-left"></i> Back</a>
+                <h1 class="page-title">{{action}} Article</h1>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="btn btn-secondary" onclick="previewArticle()">
+                    <i class="bi bi-eye"></i> Preview
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveArticle()">
+                    <i class="bi bi-check-lg"></i> Save
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <form id="article-form">
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label>Title</label>
+                    <input type="text" id="title" class="form-control" placeholder="Article title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Permalink</label>
+                    <div class="input-group">
+                        <input type="text" id="permalink" class="form-control" placeholder="article-url-slug">
+                        <button type="button" class="btn-generate" onclick="generateSlug()" title="Generate from title">
+                            <i class="bi bi-magic"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="label" class="form-control" placeholder="Category" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="createDate" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Featured Image URL</label>
+                    <input type="url" id="img" class="form-control" placeholder="https://...">
+                </div>
+                
+                <div class="form-group full">
+                    <label>Status</label>
+                    <div class="status-toggle">
+                        <div class="status-option active" data-status="published" onclick="setStatus('published')">
+                            <i class="bi bi-globe"></i> Published
+                        </div>
+                        <div class="status-option draft" data-status="draft" onclick="setStatus('draft')">
+                            <i class="bi bi-file-earmark"></i> Draft
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Content (Markdown)</label>
+                <div class="editor-wrapper">
+                    <textarea id="content"></textarea>
+                </div>
+            </div>
+            
+            <input type="hidden" id="status" value="published">
+            <input type="hidden" id="article-id" value="">
+        </form>
+    </div>
+
+    <!-- EasyMDE -->
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    
+    <script>
+        let easyMDE;
+        let originalPermalink = '';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize editor
+            easyMDE = new EasyMDE({
+                element: document.getElementById('content'),
+                spellChecker: false,
+                autosave: { enabled: true, uniqueId: 'article-editor', delay: 1000 },
+                placeholder: 'Write your content in Markdown...',
+                toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'side-by-side', 'fullscreen'],
+                status: ['lines', 'words']
+            });
+
+            // Set default date
+            document.getElementById('createDate').value = new Date().toISOString().split('T')[0];
+
+            // Load existing article if editing
+            const params = new URLSearchParams(window.location.search);
+            const permalink = params.get('permalink');
+            
+            if (permalink) {
+                await loadArticle(permalink);
+            }
+        });
+
+        async function loadArticle(permalink) {
+            try {
+                const response = await fetch(`/api/articles/${permalink}`);
+                if (!response.ok) throw new Error('Article not found');
+                
+                const article = await response.json();
+                
+                document.getElementById('title').value = article.title || '';
+                document.getElementById('permalink').value = article.permalink || '';
+                document.getElementById('label').value = article.label || '';
+                document.getElementById('img').value = article.img || '';
+                document.getElementById('article-id').value = article.id || '';
+                
+                if (article.createDate) {
+                    document.getElementById('createDate').value = article.createDate.split('T')[0];
+                }
+                
+                easyMDE.value(article.contentMarkdown || article.content || '');
+                
+                setStatus(article.status || 'published');
+                originalPermalink = article.permalink;
+                
+            } catch (error) {
+                showToast('Error loading article', 'error');
+                console.error(error);
+            }
+        }
+
+        function setStatus(status) {
+            document.getElementById('status').value = status;
+            document.querySelectorAll('.status-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.status === status);
+            });
+        }
+
+        async function generateSlug() {
+            const title = document.getElementById('title').value;
+            if (!title) {
+                showToast('Enter a title first', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/generate-slug', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('permalink').value = data.slug;
+                }
+            } catch (error) {
+                // Fallback: generate locally
+                const slug = title.toLowerCase().trim()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                document.getElementById('permalink').value = slug;
+            }
+        }
+
+        async function saveArticle() {
+            const title = document.getElementById('title').value.trim();
+            const permalink = document.getElementById('permalink').value.trim();
+            const label = document.getElementById('label').value.trim();
+            const createDate = document.getElementById('createDate').value;
+            const img = document.getElementById('img').value.trim();
+            const status = document.getElementById('status').value;
+            const content = easyMDE.value();
+            const id = document.getElementById('article-id').value;
+
+            if (!title || !permalink || !label || !createDate) {
+                showToast('Fill in all required fields', 'error');
+                return;
+            }
+
+            const article = {
+                title,
+                permalink,
+                label,
+                createDate: new Date(createDate).toISOString(),
+                img,
+                status,
+                contentMarkdown: content
+            };
+
+            if (id) article.id = id;
+
+            try {
+                let response;
+                if (originalPermalink) {
+                    response = await fetch(`/api/articles/${originalPermalink}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(article)
+                    });
+                } else {
+                    response = await fetch('/api/articles', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(article)
+                    });
+                }
+
+                if (response.ok) {
+                    showToast('Saved successfully', 'success');
+                    originalPermalink = permalink;
+                    
+                    // Clear autosave
+                    if (easyMDE.options.autosave && easyMDE.options.autosave.uniqueId) {
+                        localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
+                    }
+                    
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        window.location.href = '/admin/';
+                    }, 1000);
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Save failed');
+                }
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        function previewArticle() {
+            const permalink = document.getElementById('permalink').value;
+            if (originalPermalink) {
+                window.open(`/article/${originalPermalink}`, '_blank');
+            } else if (permalink) {
+                showToast('Save article first to preview', 'error');
+            } else {
+                showToast('Enter a permalink first', 'error');
+            }
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+    {{codeBeforBody}}
+</body>
+</html>
