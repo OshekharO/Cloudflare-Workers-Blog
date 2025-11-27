@@ -198,7 +198,6 @@ class Blog {
         const admin = await this.getAdminByUsername(username);
         if (!admin) return null;
         
-        // For simplicity, we're storing plain text (not recommended for production)
         if (admin.password === password && admin.status === 'active') {
             return admin;
         }
@@ -227,9 +226,6 @@ class Blog {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
 
-    // ... rest of your existing Blog methods (listArticles, getArticle, saveArticle, etc.)
-    // Keep all your existing article methods here
-    
     /**
      * List all articles with caching
      * @returns {Promise<Array>} - Array of articles
