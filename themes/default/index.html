@@ -9,10 +9,12 @@
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Poppins for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -21,48 +23,152 @@
             --accent-color: #06b6d4;
             --dark-color: #1e293b;
             --light-color: #f8fafc;
+            --border-color: rgba(99, 102, 241, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.875rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+        }
+        
+        /* Animation keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
         
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
         
+        /* Stylish Navbar */
         .navbar-glass {
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            animation: slideInDown 0.5s ease-out;
+            padding: 0.5rem 0;
         }
         
-        .article-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            border-radius: 16px;
-            overflow: hidden;
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
         }
         
-        .article-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        .navbar-brand:hover {
+            transform: scale(1.02);
         }
         
-        .featured-img {
-            height: 150px;
-            object-fit: cover;
+        .nav-link-custom {
+            position: relative;
+            padding: 0.4rem 0.8rem !important;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--dark-color) !important;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .nav-link-custom:hover {
+            color: var(--primary-color) !important;
+            background: rgba(99, 102, 241, 0.08);
+        }
+        
+        .nav-link-custom i {
+            margin-right: 0.3rem;
             transition: transform 0.3s ease;
         }
         
-        .article-card:hover .featured-img {
+        .nav-link-custom:hover i {
             transform: scale(1.1);
+        }
+        
+        .btn-nav-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-nav-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        .article-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+        
+        .article-card:nth-child(1) { animation-delay: 0.1s; }
+        .article-card:nth-child(2) { animation-delay: 0.2s; }
+        .article-card:nth-child(3) { animation-delay: 0.3s; }
+        .article-card:nth-child(4) { animation-delay: 0.4s; }
+        .article-card:nth-child(5) { animation-delay: 0.5s; }
+        .article-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        .article-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+        
+        .featured-img {
+            height: 140px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .article-card:hover .featured-img {
+            transform: scale(1.08);
         }
         
         .gradient-text {
@@ -75,67 +181,75 @@
         .tag-badge {
             background: linear-gradient(135deg, var(--accent-color), #3b82f6);
             color: white;
-            font-size: 0.65rem;
-            padding: 3px 8px;
-            border-radius: 12px;
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
         }
         
         .hero-section {
-            padding: 60px 0 30px;
+            padding: 50px 0 25px;
             text-align: center;
             color: white;
+            animation: fadeInUp 0.8s ease-out;
         }
         
         .hero-title {
-            font-size: 2rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         .hero-subtitle {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 300;
             opacity: 0.9;
-            max-width: 500px;
+            max-width: 450px;
             margin: 0 auto;
         }
         
         .content-section {
-            padding: 30px 0;
+            padding: 25px 0;
         }
         
         .footer {
             background: rgba(30, 41, 59, 0.95);
             color: white;
-            padding: 18px 0;
-            margin-top: 30px;
-            font-size: 0.8rem;
+            padding: 16px 0;
+            margin-top: 25px;
+            font-size: 0.75rem;
+            border-top: 2px solid var(--border-color);
         }
         
         .bookmark-btn {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
             z-index: 10;
+            font-size: 0.8rem;
         }
         
         .bookmark-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(5deg);
             background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
         .bookmark-btn.bookmarked {
             color: #f59e0b;
+            animation: pulse 0.3s ease;
         }
         
         .share-btn {
@@ -143,24 +257,56 @@
             border: none;
             color: #6b7280;
             transition: all 0.3s ease;
+            font-size: 0.85rem;
         }
         
         .share-btn:hover {
             color: var(--primary-color);
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(-5deg);
+        }
+        
+        .card-body {
+            padding: 0.875rem;
+        }
+        
+        .card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1.35;
+            margin-bottom: 0.4rem;
+        }
+        
+        .card-text {
+            font-size: 0.75rem;
+            line-height: 1.45;
+        }
+        
+        .btn-read-more {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-read-more:hover {
+            transform: translateX(3px);
         }
         
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
             }
             
             .hero-subtitle {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
             }
             
             .hero-section {
-                padding: 50px 0 25px;
+                padding: 45px 0 20px;
+            }
+            
+            .navbar-brand {
+                font-size: 1rem;
             }
         }
     </style>
@@ -169,18 +315,28 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-glass fixed-top py-2">
+    <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold gradient-text" href="/" style="font-size: 1.1rem;">{{siteName}}</a>
+            <a class="navbar-brand gradient-text" href="/">
+                <i class="fas fa-blog me-2"></i>{{siteName}}
+            </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto gap-2 align-items-center">
-                    <a href="/bookmarks" class="btn btn-outline-secondary btn-sm" style="font-size: 0.8rem;">
-                        <i class="bi bi-bookmark me-1"></i>Bookmarks
+                    <a href="/" class="nav-link nav-link-custom">
+                        <i class="fas fa-home"></i>Home
                     </a>
-                    <a href="/admin/" class="btn btn-primary btn-sm" style="font-size: 0.8rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none;">Admin</a>
+                    <a href="/bookmarks" class="nav-link nav-link-custom">
+                        <i class="fas fa-bookmark"></i>Bookmarks
+                    </a>
+                    <a href="/rss.xml" class="nav-link nav-link-custom" target="_blank">
+                        <i class="fas fa-rss"></i>RSS
+                    </a>
+                    <a href="/admin/" class="btn btn-nav-primary text-white">
+                        <i class="fas fa-cog me-1"></i>Admin
+                    </a>
                 </div>
             </div>
         </div>
@@ -405,7 +561,7 @@
                     const imgHtml = article.img ? 
                         `<img src="${safeImg}" class="featured-img w-100" alt="${safeTitle}">` : 
                         `<div class="featured-img bg-gradient d-flex align-items-center justify-content-center">
-                            <i class="bi bi-file-text display-5 text-white"></i>
+                            <i class="fas fa-newspaper fa-2x text-white"></i>
                          </div>`;
                     
                     return `
@@ -414,20 +570,22 @@
                             <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
                                     onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                <i class="bi bi-bookmark${isBookmarked ? '-fill' : ''}"></i>
+                                <i class="${isBookmarked ? 'fas' : 'far'} fa-bookmark"></i>
                             </button>
                             ${imgHtml}
-                            <div class="card-body p-3 d-flex flex-column">
-                                <h6 class="card-title fw-bold text-dark mb-2" style="font-size: 0.95rem; line-height: 1.4;">${safeTitle}</h6>
-                                <p class="card-text text-muted mb-2" style="font-size: 0.75rem;">
-                                    <i class="bi bi-calendar me-1"></i> ${new Date(article.createDate).toLocaleDateString()} 
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title fw-bold text-dark">${safeTitle}</h6>
+                                <p class="card-text text-muted mb-2">
+                                    <i class="far fa-calendar-alt me-1"></i> ${new Date(article.createDate).toLocaleDateString()} 
                                     <span class="tag-badge ms-2">${safeLabel}</span>
                                 </p>
-                                <p class="card-text text-muted flex-grow-1" style="font-size: 0.85rem; line-height: 1.5;">${safeExcerpt}</p>
-                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                    <a href="/article/${safePermalink}" class="btn btn-outline-dark btn-sm" style="font-size: 0.8rem;">Read More</a>
+                                <p class="card-text text-muted flex-grow-1">${safeExcerpt}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-2 pt-2" style="border-top: 1px solid var(--border-color);">
+                                    <a href="/article/${safePermalink}" class="btn btn-outline-dark btn-sm btn-read-more">
+                                        <i class="fas fa-arrow-right me-1"></i>Read More
+                                    </a>
                                     <button class="share-btn" onclick="shareArticle('${safePermalink}', '${safeTitle}')" title="Share article">
-                                        <i class="bi bi-share"></i>
+                                        <i class="fas fa-share-alt"></i>
                                     </button>
                                 </div>
                             </div>
