@@ -1,15 +1,15 @@
 # CF Workers Blog
 
-A modern, serverless blog platform built with Cloudflare Workers and KV storage. Features remote theme support, Markdown editing, multi-admin support, and a clean Material Design interface.
+A modern, serverless blog platform built with Cloudflare Workers and KV storage. Features remote theme support, Markdown editing, multi-admin support, and a clean responsive interface.
 
 ## Features
 
 - 🚀 **Serverless** - Built on Cloudflare Workers
 - 💾 **KV Storage** - Articles stored in Cloudflare KV
-- 🎨 **Remote Themes** - Fetch themes from GitHub repositories
+- 🎨 **4 Beautiful Themes** - Default, Glassmor, Minimal, Modern
 - 📝 **Markdown Support** - Easy content creation with Markdown
 - 🔐 **Multi-Admin Support** - Role-based admin management
-- 📱 **Responsive** - Modern Material Design interface
+- 📱 **Responsive Design** - Mobile-first, clean interface
 - ⚡ **Fast** - Edge computing with global CDN
 - 📊 **Export/Import** - Backup and migrate your content
 - 📡 **RSS Feed** - Automatic RSS feed generation
@@ -17,6 +17,17 @@ A modern, serverless blog platform built with Cloudflare Workers and KV storage.
 - 📚 **Draft Posts** - Save articles as drafts
 - 🔖 **Bookmarks** - Client-side article bookmarking
 - 📤 **Social Sharing** - Share articles on social media
+
+## Available Themes
+
+| Theme | Description |
+|-------|-------------|
+| **default** | Modern Bootstrap-based theme with glass-morphism effects |
+| **glassmor** | Tailwind CSS theme with translucent glass-style cards |
+| **minimal** | Clean, lightweight Tailwind theme with subtle animations |
+| **modern** | Professional Bootstrap theme with Playfair Display typography |
+
+Switch themes using URL parameter: `?theme=theme-name`
 
 ## Screenshot
 

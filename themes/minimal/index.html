@@ -72,15 +72,15 @@
     <!-- Navigation -->
     <nav class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-xl font-bold gradient-text truncate">{{siteName}}</a>
+            <div class="flex justify-between items-center h-14">
+                <a href="/" class="text-lg font-bold gradient-text truncate">{{siteName}}</a>
                 <div class="flex space-x-2">
-                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center whitespace-nowrap">
+                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors flex items-center whitespace-nowrap">
                         <i class="ri-bookmark-line mr-1"></i>
                         <span class="hidden xs:inline">Favorites</span>
                         <span class="xs:hidden">Fav</span>
                     </a>
-                    <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200 flex items-center whitespace-nowrap">
+                    <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:shadow-lg transition-all duration-200 flex items-center whitespace-nowrap">
                         <i class="ri-admin-line mr-1"></i>
                         <span class="hidden sm:inline">Admin</span>
                     </a>
@@ -90,10 +90,10 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="gradient-bg text-white py-16 sm:py-20">
+    <section class="gradient-bg text-white py-12 sm:py-14">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">{{siteName}}</h1>
-            <p class="text-lg sm:text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">{{siteDescription}}</p>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight">{{siteName}}</h1>
+            <p class="text-base sm:text-lg text-blue-100 max-w-2xl mx-auto leading-relaxed">{{siteDescription}}</p>
         </div>
     </section>
 
@@ -113,29 +113,29 @@
 
     <!-- Share Modal -->
     <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-        <div class="bg-white rounded-xl p-4 sm:p-6 w-full max-w-sm sm:max-w-md mx-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Share Article</h3>
+        <div class="bg-white rounded-lg p-4 w-full max-w-xs mx-auto">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-sm font-semibold">Share Article</h3>
                 <button onclick="closeShareModal()" class="text-gray-400 hover:text-gray-600 p-1">
-                    <i class="ri-close-line text-xl"></i>
+                    <i class="ri-close-line text-lg"></i>
                 </button>
             </div>
-            <p id="share-article-title" class="text-gray-600 mb-4 text-sm sm:text-base line-clamp-2"></p>
-            <div class="flex justify-around sm:justify-center sm:space-x-6">
-                <button onclick="shareOnPlatform('twitter')" class="flex flex-col items-center text-blue-400 hover:text-blue-500 transition-colors p-2">
-                    <i class="ri-twitter-fill text-2xl sm:text-2xl mb-1"></i>
+            <p id="share-article-title" class="text-gray-600 mb-3 text-xs line-clamp-2"></p>
+            <div class="flex justify-around">
+                <button onclick="shareOnPlatform('twitter')" class="flex flex-col items-center text-blue-400 hover:text-blue-500 transition-colors p-1.5">
+                    <i class="ri-twitter-fill text-lg mb-0.5"></i>
                     <span class="text-xs">Twitter</span>
                 </button>
-                <button onclick="shareOnPlatform('facebook')" class="flex flex-col items-center text-blue-600 hover:text-blue-700 transition-colors p-2">
-                    <i class="ri-facebook-fill text-2xl sm:text-2xl mb-1"></i>
+                <button onclick="shareOnPlatform('facebook')" class="flex flex-col items-center text-blue-600 hover:text-blue-700 transition-colors p-1.5">
+                    <i class="ri-facebook-fill text-lg mb-0.5"></i>
                     <span class="text-xs">Facebook</span>
                 </button>
-                <button onclick="shareOnPlatform('linkedin')" class="flex flex-col items-center text-blue-800 hover:text-blue-900 transition-colors p-2">
-                    <i class="ri-linkedin-fill text-2xl sm:text-2xl mb-1"></i>
+                <button onclick="shareOnPlatform('linkedin')" class="flex flex-col items-center text-blue-800 hover:text-blue-900 transition-colors p-1.5">
+                    <i class="ri-linkedin-fill text-lg mb-0.5"></i>
                     <span class="text-xs">LinkedIn</span>
                 </button>
-                <button onclick="copyArticleLink()" class="flex flex-col items-center text-gray-600 hover:text-gray-700 transition-colors p-2">
-                    <i class="ri-links-line text-2xl sm:text-2xl mb-1"></i>
+                <button onclick="copyArticleLink()" class="flex flex-col items-center text-gray-600 hover:text-gray-700 transition-colors p-1.5">
+                    <i class="ri-links-line text-lg mb-0.5"></i>
                     <span class="text-xs">Copy</span>
                 </button>
             </div>
@@ -143,9 +143,9 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-8">
+    <footer class="bg-white border-t border-gray-200 py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-600 text-sm sm:text-base">{{copyRight}}</p>
+            <p class="text-gray-600 text-xs sm:text-sm">{{copyRight}}</p>
         </div>
     </footer>
 
@@ -200,41 +200,41 @@
                     const safeExcerpt = escapeHtml(article.excerpt);
 
                     const imgHtml = article.img ? 
-                        `<img src="${safeImg}" class="w-full h-48 object-cover rounded-t-xl" alt="${safeTitle}" loading="lazy">` : 
-                        `<div class="w-full h-48 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-xl flex items-center justify-center">
-                            <i class="ri-article-line text-4xl text-white"></i>
+                        `<img src="${safeImg}" class="w-full h-36 object-cover rounded-t-lg" alt="${safeTitle}" loading="lazy">` : 
+                        `<div class="w-full h-36 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-lg flex items-center justify-center">
+                            <i class="ri-article-line text-2xl text-white"></i>
                          </div>`;
                     
                     return `
-                    <article class="article-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full gap-6">
+                    <article class="article-card bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
                         <div class="relative flex-shrink-0">
                             ${imgHtml}
-                            <button class="bookmark-btn absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-full ${isBookmarked ? 'bookmarked' : 'text-gray-500'}" 
+                            <button class="bookmark-btn absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full ${isBookmarked ? 'bookmarked' : 'text-gray-500'}" 
                                     onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                <i class="ri-bookmark-${isBookmarked ? 'fill' : 'line'} text-lg"></i>
+                                <i class="ri-bookmark-${isBookmarked ? 'fill' : 'line'} text-sm"></i>
                             </button>
                         </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <h3 class="font-bold text-lg text-gray-900 mb-3 line-clamp-2 leading-tight">${safeTitle}</h3>
-                            <div class="flex items-center text-sm text-gray-500 mb-4 flex-wrap gap-2">
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h3 class="font-bold text-sm text-gray-900 mb-2 line-clamp-2 leading-snug">${safeTitle}</h3>
+                            <div class="flex items-center text-xs text-gray-500 mb-3 flex-wrap gap-1.5">
                                 <div class="flex items-center">
                                     <i class="ri-calendar-line mr-1"></i>
                                     <span class="whitespace-nowrap">${new Date(article.createDate).toLocaleDateString()}</span>
                                 </div>
                                 <span class="text-gray-300">•</span>
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full whitespace-nowrap">${safeLabel}</span>
+                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full whitespace-nowrap">${safeLabel}</span>
                             </div>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">${safeExcerpt}</p>
-                            <div class="flex justify-between items-center pt-4 border-t border-gray-100 mt-auto">
-                                <a href="/article/${safePermalink}" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm whitespace-nowrap">
+                            <p class="text-gray-600 text-xs mb-3 line-clamp-3 flex-grow leading-relaxed">${safeExcerpt}</p>
+                            <div class="flex justify-between items-center pt-3 border-t border-gray-100 mt-auto">
+                                <a href="/article/${safePermalink}" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors text-xs whitespace-nowrap">
                                     Read More
                                     <i class="ri-arrow-right-line ml-1"></i>
                                 </a>
                                 <button onclick="shareArticle('${safePermalink}', '${safeTitle}')" 
                                         class="text-gray-400 hover:text-blue-500 transition-colors p-1"
                                         title="Share article">
-                                    <i class="ri-share-forward-line text-lg"></i>
+                                    <i class="ri-share-forward-line text-sm"></i>
                                 </button>
                             </div>
                         </div>
