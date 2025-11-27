@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <style>
+        :root {
+            --serif: 'Cormorant Garamond', Georgia, serif;
+            --sans: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-muted: #999;
+            --accent: #2c5282;
+            --bg-cream: #faf9f7;
+            --bg-white: #ffffff;
+            --border-light: #e8e6e3;
+        }
+        
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        
+        body { font-family: var(--sans); background-color: var(--bg-cream); color: var(--text-primary); font-size: 16px; line-height: 1.7; }
+        
+        .navbar { background: var(--bg-white); border-bottom: 1px solid var(--border-light); padding: 1.25rem 0; }
+        .navbar-brand { font-family: var(--serif); font-size: 1.75rem; font-weight: 600; color: var(--text-primary) !important; }
+        .nav-link { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary) !important; }
+        .nav-link:hover { color: var(--accent) !important; }
+        
+        /* Article Header - xeu.life inspired */
+        .article-header {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-light);
+            padding: 4rem 0;
+        }
+        
+        .article-category {
+            font-family: var(--sans);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        
+        .article-title {
+            font-family: var(--serif);
+            font-size: 3rem;
+            font-weight: 400;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .article-meta {
+            font-family: var(--sans);
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+        
+        .article-featured-image {
+            margin-top: 2rem;
+            max-height: 500px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        /* Article Content - Optimal readability */
+        .article-content {
+            background: var(--bg-white);
+            padding: 3rem;
+            margin-top: -1rem;
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            line-height: 1.9;
+            color: var(--text-primary);
+        }
+        
+        .article-content h1, .article-content h2, .article-content h3, .article-content h4 {
+            font-family: var(--serif);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .article-content h1 { font-size: 2rem; }
+        .article-content h2 { font-size: 1.75rem; }
+        .article-content h3 { font-size: 1.5rem; }
+        .article-content h4 { font-size: 1.25rem; }
+        
+        .article-content p { margin-bottom: 1.5rem; }
+        
+        .article-content blockquote {
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--text-secondary);
+            background: var(--bg-cream);
+        }
+        
+        .article-content pre {
+            background: #f8f9fa;
+            border: 1px solid var(--border-light);
+            padding: 1.25rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.9rem;
+        }
+        
+        .article-content code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            background: #f5f5f5;
+            padding: 0.15rem 0.35rem;
+            border-radius: 3px;
+            font-size: 0.85em;
+            color: #d14;
+        }
+        
+        .article-content pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+        
+        .article-content a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        
+        .article-content a:hover {
+            text-decoration: none;
+        }
+        
+        .article-content ul, .article-content ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .article-content li { margin-bottom: 0.5rem; }
+        
+        /* Share Section */
+        .share-section {
+            border-top: 1px solid var(--border-light);
+            padding-top: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .share-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-light);
+            background: var(--bg-white);
+            color: var(--text-secondary);
+            margin-right: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .share-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .btn-back {
+            font-family: var(--sans);
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn-back:hover { color: var(--text-primary); }
+        .btn-back i { margin-right: 0.35rem; }
+        
+        .footer { background: var(--bg-white); border-top: 1px solid var(--border-light); padding: 2.5rem 0; margin-top: 4rem; }
+        .footer-text { font-size: 0.9rem; color: var(--text-muted); }
+        
+        #raw-content { display: none; }
+        
+        @media (max-width: 768px) {
+            .article-title { font-size: 2rem; }
+            .article-header { padding: 2.5rem 0; }
+            .article-content { padding: 1.5rem; font-size: 1.1rem; }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">{{siteName}}</a>
+            <a href="/" class="nav-link"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+        </div>
+    </nav>
+
+    <header class="article-header">
+        <div class="container" style="max-width: 800px;">
+            <span class="article-category">{{label}}</span>
+            <h1 class="article-title">{{title}}</h1>
+            <div class="article-meta">
+                <i class="bi bi-calendar3 me-1"></i> {{createDate}}
+            </div>
+            {{#img}}<img src="{{img}}" class="article-featured-image" alt="{{title}}">{{/img}}
+        </div>
+    </header>
+
+    <main class="container" style="max-width: 800px;">
+        <article class="article-content">
+            <div id="raw-content">{{content}}</div>
+            <div id="article-content">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-secondary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="share-section">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <a href="/" class="btn-back">
+                            <i class="bi bi-arrow-left"></i> Back to all articles
+                        </a>
+                    </div>
+                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                        <span class="text-muted me-2" style="font-size: 0.9rem;">Share:</span>
+                        <button onclick="shareOnTwitter()" class="share-btn" title="Twitter">
+                            <i class="bi bi-twitter"></i>
+                        </button>
+                        <button onclick="shareOnFacebook()" class="share-btn" title="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </button>
+                        <button onclick="shareOnLinkedIn()" class="share-btn" title="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </button>
+                        <button onclick="copyShareLink()" class="share-btn" title="Copy link">
+                            <i class="bi bi-link-45deg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="footer-text mb-0">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getShareUrl() { return window.location.href; }
+        function getShareTitle() { return document.title.replace(` - ${'{{siteName}}'}`, ''); }
+
+        function shareOnTwitter() { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareTitle())}&url=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400'); }
+        function shareOnFacebook() { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400'); }
+        function shareOnLinkedIn() { window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400'); }
+        
+        async function copyShareLink() {
+            try { await navigator.clipboard.writeText(getShareUrl()); showNotification('Link copied to clipboard'); }
+            catch (err) { const ta = document.createElement('textarea'); ta.value = getShareUrl(); document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showNotification('Link copied to clipboard'); }
+        }
+
+        function showNotification(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast align-items-center text-bg-dark border-0';
+            toast.innerHTML = `<div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            new bootstrap.Toast(toast).show();
+            toast.addEventListener('hidden.bs.toast', () => document.body.removeChild(container));
+        }
+
+        function renderMarkdown() {
+            const contentEl = document.getElementById('article-content');
+            const rawEl = document.getElementById('raw-content');
+            let raw = rawEl.textContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+            
+            if (!raw || raw.trim() === '') {
+                contentEl.innerHTML = '<div class="alert alert-light border">No content available.</div>';
+                return;
+            }
+            
+            if (window.marked && window.hljs) {
+                try {
+                    marked.setOptions({
+                        highlight: (code, lang) => {
+                            if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
+                            return hljs.highlightAuto(code).value;
+                        },
+                        breaks: true,
+                        gfm: true
+                    });
+                    contentEl.innerHTML = marked.parse(raw);
+                } catch (e) {
+                    contentEl.innerHTML = `<pre style="white-space:pre-wrap; font-family: var(--sans);">${raw}</pre>`;
+                }
+            } else {
+                contentEl.innerHTML = `<pre style="white-space:pre-wrap; font-family: var(--sans);">${raw}</pre>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderMarkdown);
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>

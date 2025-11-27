@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{siteName}}</title>
+    <meta name="description" content="{{siteDescription}}">
+    <meta name="keywords" content="{{keyWords}}">
+    
+    <!-- Bootswatch Darkly Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon-cyan: #00d9ff;
+            --neon-purple: #bf00ff;
+            --neon-green: #00ff88;
+            --dark-bg: #1a1a2e;
+            --darker-bg: #0f0f1a;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker-bg);
+            color: #e0e0e0;
+        }
+        
+        .navbar {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--neon-cyan) !important;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at top right, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom left, rgba(191, 0, 255, 0.1) 0%, transparent 50%);
+        }
+        
+        .hero-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+        }
+        
+        .hero-subtitle {
+            color: #888;
+            font-size: 1rem;
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+        }
+        
+        .article-card {
+            background: var(--dark-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .article-card:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .article-card .card-img-top {
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .article-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .article-card .card-title {
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .article-card .card-text {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .category-badge {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            color: #000;
+            font-size: 0.65rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .meta-info {
+            color: #666;
+            font-size: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .btn-neon {
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-neon:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        
+        .btn-neon-filled {
+            background: var(--neon-cyan);
+            border: none;
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .btn-neon-filled:hover {
+            background: #00b3d9;
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+        
+        .bookmark-btn {
+            border: none;
+            background: transparent;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+        
+        .bookmark-btn:hover, .bookmark-btn.bookmarked {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .footer {
+            background: var(--darker-bg);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 2rem 0;
+            color: #666;
+        }
+        
+        .modal-content {
+            background: var(--dark-bg);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title { font-size: 1.75rem; }
+            .hero-section { padding: 3rem 0; }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">{{siteName}}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a href="/bookmarks" class="nav-link"><i class="bi bi-bookmark me-1"></i>Bookmarks</a>
+                    <a href="/admin/" class="btn btn-neon btn-sm ms-2">Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container position-relative">
+            <h1 class="hero-title">{{siteName}}</h1>
+            <p class="hero-subtitle mt-3">{{siteDescription}}</p>
+        </div>
+    </section>
+
+    <!-- Articles Section -->
+    <main class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h5 mb-0" style="font-family: 'JetBrains Mono', monospace; color: var(--neon-cyan);">
+                    <span class="glow-text">></span> Latest Posts
+                </h2>
+            </div>
+            
+            <div class="row g-4" id="articles-container">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border" style="color: var(--neon-cyan);" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div id="pagination-container" class="mt-5"></div>
+        </div>
+    </main>
+
+    <!-- Share Modal -->
+    <div class="modal fade" id="shareModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h6 class="modal-title" style="font-family: 'JetBrains Mono', monospace; color: var(--neon-cyan);">Share</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="share-article-title" class="text-muted small mb-3"></p>
+                    <div class="d-flex justify-content-around">
+                        <button onclick="shareOnPlatform('twitter')" class="btn btn-neon btn-sm"><i class="bi bi-twitter"></i></button>
+                        <button onclick="shareOnPlatform('facebook')" class="btn btn-neon btn-sm"><i class="bi bi-facebook"></i></button>
+                        <button onclick="shareOnPlatform('linkedin')" class="btn btn-neon btn-sm"><i class="bi bi-linkedin"></i></button>
+                        <button onclick="copyArticleLink()" class="btn btn-neon btn-sm"><i class="bi bi-link-45deg"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentSharePermalink = '';
+        let currentShareTitle = '';
+        let currentPage = 1;
+        const pageSize = 9;
+
+        function getBookmarks() { return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]'); }
+        function saveBookmarks(bookmarks) { localStorage.setItem('blog_bookmarks', JSON.stringify(bookmarks)); }
+        function isArticleBookmarked(permalink) { return getBookmarks().some(b => b.permalink === permalink); }
+
+        function toggleBookmark(permalink, title, img, label) {
+            const bookmarks = getBookmarks();
+            const idx = bookmarks.findIndex(b => b.permalink === permalink);
+            if (idx > -1) { bookmarks.splice(idx, 1); showNotification('Bookmark removed', 'warning'); }
+            else { bookmarks.push({ permalink, title, img, label, bookmarkedAt: new Date().toISOString() }); showNotification('Bookmarked!', 'success'); }
+            saveBookmarks(bookmarks);
+            loadArticles(currentPage);
+        }
+
+        function shareArticle(permalink, title) {
+            currentSharePermalink = permalink;
+            currentShareTitle = title;
+            document.getElementById('share-article-title').textContent = title;
+            new bootstrap.Modal(document.getElementById('shareModal')).show();
+        }
+
+        function shareOnPlatform(platform) {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            const urls = {
+                twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareTitle)}&url=${encodeURIComponent(url)}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+            };
+            window.open(urls[platform], '_blank', 'width=600,height=400');
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        async function copyArticleLink() {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            try { await navigator.clipboard.writeText(url); showNotification('Link copied!', 'success'); }
+            catch (err) { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showNotification('Link copied!', 'success'); }
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        function showNotification(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center border-0`;
+            toast.style.cssText = `background: var(--dark-bg); border: 1px solid ${type === 'success' ? 'var(--neon-green)' : 'var(--neon-cyan)'} !important;`;
+            toast.innerHTML = `<div class="d-flex"><div class="toast-body" style="color: ${type === 'success' ? 'var(--neon-green)' : 'var(--neon-cyan)'}">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            new bootstrap.Toast(toast).show();
+            toast.addEventListener('hidden.bs.toast', () => document.body.removeChild(container));
+        }
+
+        async function loadArticles(page = 1) {
+            currentPage = page;
+            try {
+                const response = await fetch(`/api/articles?paginate=true&page=${page}&pageSize=${pageSize}`);
+                const data = await response.json();
+                const articles = data.articles || [];
+                const pagination = data.pagination || {};
+                
+                const container = document.getElementById('articles-container');
+                
+                if (articles.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-center py-5"><i class="bi bi-terminal display-1 mb-3" style="color: var(--neon-cyan);"></i><h3 style="font-family: JetBrains Mono, monospace; color: var(--neon-cyan);">No Posts Yet</h3><p class="text-muted">Check back later for content.</p></div>';
+                    return;
+                }
+
+                const escapeHtml = (str) => { if (!str) return ''; return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); };
+
+                container.innerHTML = articles.map(article => {
+                    const isBookmarked = isArticleBookmarked(article.permalink);
+                    const safeTitle = escapeHtml(article.title);
+                    const safeImg = escapeHtml(article.img);
+                    const safePermalink = escapeHtml(article.permalink);
+                    const safeLabel = escapeHtml(article.label);
+                    const safeExcerpt = escapeHtml(article.excerpt);
+
+                    const imgHtml = article.img ? 
+                        `<img src="${safeImg}" class="card-img-top" alt="${safeTitle}">` : 
+                        `<div class="card-img-top d-flex align-items-center justify-content-center" style="height:180px; background: linear-gradient(135deg, var(--dark-bg), #2a2a4e);"><i class="bi bi-code-slash display-4" style="color: var(--neon-cyan);"></i></div>`;
+                    
+                    return `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card article-card h-100">
+                            <div class="position-relative">
+                                ${imgHtml}
+                                <button class="bookmark-btn position-absolute top-0 end-0 m-2 ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')">
+                                    <i class="bi bi-bookmark${isBookmarked ? '-fill' : ''} fs-5"></i>
+                                </button>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="category-badge">${safeLabel}</span>
+                                    <span class="meta-info">${new Date(article.createDate).toLocaleDateString()}</span>
+                                </div>
+                                <h5 class="card-title">${safeTitle}</h5>
+                                <p class="card-text flex-grow-1">${safeExcerpt}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="/article/${safePermalink}" class="btn btn-neon btn-sm">Read More</a>
+                                    <button onclick="shareArticle('${safePermalink}', '${safeTitle}')" class="btn btn-link" style="color: #555;"><i class="bi bi-share"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+                updatePaginationUI(pagination);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('articles-container').innerHTML = '<div class="col-12 text-center py-5"><i class="bi bi-exclamation-triangle display-1 mb-3" style="color: var(--neon-purple);"></i><h3>Error Loading Posts</h3><button onclick="loadArticles()" class="btn btn-neon mt-3">Retry</button></div>';
+            }
+        }
+
+        function updatePaginationUI(pagination) {
+            const container = document.getElementById('pagination-container');
+            if (!container || pagination.totalPages <= 1) { if (container) container.innerHTML = ''; return; }
+
+            let html = '<nav><ul class="pagination justify-content-center">';
+            html += `<li class="page-item ${!pagination.hasPrevPage ? 'disabled' : ''}"><a class="page-link" style="background: var(--dark-bg); border-color: var(--neon-cyan); color: var(--neon-cyan);" href="#" onclick="loadArticles(${pagination.page - 1}); return false;">Prev</a></li>`;
+            for (let i = Math.max(1, pagination.page - 2); i <= Math.min(pagination.totalPages, pagination.page + 2); i++) {
+                const isActive = i === pagination.page;
+                html += `<li class="page-item ${isActive ? 'active' : ''}"><a class="page-link" style="background: ${isActive ? 'var(--neon-cyan)' : 'var(--dark-bg)'}; border-color: var(--neon-cyan); color: ${isActive ? '#000' : 'var(--neon-cyan)'};" href="#" onclick="loadArticles(${i}); return false;">${i}</a></li>`;
+            }
+            html += `<li class="page-item ${!pagination.hasNextPage ? 'disabled' : ''}"><a class="page-link" style="background: var(--dark-bg); border-color: var(--neon-cyan); color: var(--neon-cyan);" href="#" onclick="loadArticles(${pagination.page + 1}); return false;">Next</a></li></ul></nav>`;
+            html += `<p class="text-center mt-2" style="color: #555; font-family: JetBrains Mono, monospace; font-size: 0.8rem;">Page ${pagination.page}/${pagination.totalPages}</p>`;
+            container.innerHTML = html;
+        }
+
+        loadArticles();
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>

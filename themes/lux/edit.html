@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}} Article - Admin</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/lux/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    
+    <style>
+        body { font-family: 'Nunito Sans', sans-serif; background-color: #f8f9fa; }
+        .sidebar { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; }
+        .sidebar .list-group-item { background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 0.75rem 1rem; margin: 0.25rem 0; text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; }
+        .sidebar .list-group-item:hover, .sidebar .list-group-item.active { background: rgba(255,255,255,0.1); color: #fff; }
+        .card { border: none; border-radius: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card-header { background: #1a1a2e; color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; border-radius: 0 !important; }
+        .form-label { font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+        .btn-primary { background: #1a1a2e; border-color: #1a1a2e; }
+        .btn-primary:hover { background: #0f3460; border-color: #0f3460; }
+        .EasyMDEContainer .CodeMirror { min-height: 300px; border-radius: 0; }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand text-uppercase" style="letter-spacing:2px;"><i class="bi bi-pencil me-2"></i>{{action}} Article</span>
+            <a href="/admin/" class="btn btn-outline-light btn-sm text-uppercase" style="letter-spacing:1px;"><i class="bi bi-arrow-left me-1"></i>Back</a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-lg-2 sidebar p-0">
+                <div class="p-4">
+                    <h6 class="text-uppercase mb-4" style="letter-spacing:2px; font-size:0.7rem;">Admin Panel</h6>
+                    <div class="list-group list-group-flush">
+                        <a href="/admin/" class="list-group-item list-group-item-action"><i class="bi bi-list-ul me-2"></i>Articles</a>
+                        <a href="/admin/edit" class="list-group-item list-group-item-action active"><i class="bi bi-plus-circle me-2"></i>{{action}} Article</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-9 col-lg-10 mt-3">
+                <div class="card">
+                    <div class="card-header py-3"><i class="bi bi-file-text me-2"></i>{{action}} Article</div>
+                    <div class="card-body">
+                        <form id="article-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="permalink" class="form-label">Permalink *</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="permalink" required pattern="[a-z0-9-]+" style="border-radius:0;">
+                                        <button class="btn btn-outline-secondary" type="button" id="generate-slug-btn" style="border-radius:0;"><i class="bi bi-magic"></i></button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="label" class="form-label">Label *</label>
+                                    <select class="form-select" id="label" required style="border-radius:0;">
+                                        <option value="">Choose...</option>
+                                        <option>Technology</option><option>Lifestyle</option><option>Travel</option><option>Food</option><option>Business</option><option>Science</option><option>Health</option><option>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title *</label>
+                                <input type="text" class="form-control" id="title" required style="border-radius:0;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="img" class="form-label">Featured Image URL</label>
+                                <input type="url" class="form-control" id="img" placeholder="https://example.com/image.jpg" style="border-radius:0;">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="createDate" class="form-label">Publish Date *</label>
+                                    <input type="datetime-local" class="form-control" id="createDate" required style="border-radius:0;">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select class="form-select" id="status" style="border-radius:0;">
+                                        <option value="published">Published</option>
+                                        <option value="draft">Draft</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="content" class="form-label">Content *</label>
+                                <textarea id="content"></textarea>
+                            </div>
+                            <div class="d-flex gap-2 justify-content-end pt-3 border-top">
+                                <button type="button" class="btn btn-secondary" onclick="window.history.back()" style="border-radius:0;"><i class="bi bi-x-circle me-1"></i>Cancel</button>
+                                <button type="submit" class="btn btn-primary" style="border-radius:0;"><i class="bi bi-check-circle me-1"></i>Save Article</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        let easyMDE = new EasyMDE({ element: document.getElementById('content'), spellChecker: false, status: false, toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'side-by-side', 'fullscreen', '|', 'guide'] });
+        let isEditing = false, currentPermalink = '';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const permalink = urlParams.get('permalink');
+        if (permalink) { isEditing = true; currentPermalink = permalink; loadArticle(permalink); }
+
+        async function loadArticle(permalink) {
+            const response = await fetch('/api/articles/' + permalink);
+            const article = await response.json();
+            document.getElementById('permalink').value = article.permalink;
+            document.getElementById('permalink').readOnly = true;
+            document.getElementById('title').value = article.title;
+            document.getElementById('img').value = article.img || '';
+            document.getElementById('label').value = article.label;
+            document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+            if (article.status) document.getElementById('status').value = article.status;
+            easyMDE.value(article.content);
+        }
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true; btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Saving...';
+            const formData = { permalink: document.getElementById('permalink').value, title: document.getElementById('title').value, img: document.getElementById('img').value, label: document.getElementById('label').value, createDate: document.getElementById('createDate').value, content: easyMDE.value(), status: document.getElementById('status').value };
+            const response = await fetch(isEditing ? '/api/articles/' + currentPermalink : '/api/articles', { method: isEditing ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+            if (response.ok) { alert(isEditing ? 'Article updated!' : 'Article created!'); window.location.href = '/admin/'; }
+            else { alert('Error saving article'); btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Save Article'; }
+        });
+
+        document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+        function generateSlugLocal(title) { return title ? title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '') : ''; }
+        document.getElementById('generate-slug-btn').addEventListener('click', async () => {
+            const title = document.getElementById('title').value;
+            if (!title) { alert('Enter a title first'); return; }
+            try { const response = await fetch('/api/generate-slug', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title }) }); if (response.ok) { const data = await response.json(); document.getElementById('permalink').value = data.slug; } else { document.getElementById('permalink').value = generateSlugLocal(title); } } catch (e) { document.getElementById('permalink').value = generateSlugLocal(title); }
+        });
+        document.getElementById('title').addEventListener('blur', () => { const pf = document.getElementById('permalink'); if (!pf.value && !isEditing) { const t = document.getElementById('title').value; if (t) pf.value = generateSlugLocal(t); } });
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
