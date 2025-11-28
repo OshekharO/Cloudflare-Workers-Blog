@@ -6,7 +6,7 @@ A modern, serverless blog platform built with Cloudflare Workers and KV storage.
 
 - 🚀 **Serverless** - Built on Cloudflare Workers
 - 💾 **KV Storage** - Articles stored in Cloudflare KV
-- 🎨 **8 Beautiful Themes** - Default, Glassmor, Minimal, Modern, Journal, Lux, Darkly, Elegant
+- 🎨 **10 Beautiful Themes** - Default, Glassmor, Minimal, Modern, Journal, Lux, Darkly, Elegant, MDB Pro, Chinese
 - 📝 **Markdown Support** - Easy content creation with Markdown
 - 🔐 **Multi-Admin Support** - Role-based admin management
 - 📱 **Responsive Design** - Mobile-first, clean interface
@@ -30,6 +30,8 @@ A modern, serverless blog platform built with Cloudflare Workers and KV storage.
 | **lux** | Elegant, premium theme with uppercase headings and dark accents | [Bootswatch Lux](https://bootswatch.com/lux/) |
 | **darkly** | Dark mode theme with neon cyan/purple accents | [Bootswatch Darkly](https://bootswatch.com/darkly/) |
 | **elegant** | Professional typography with optimal readability and card layouts | [xeu.life](https://xeu.life/) & Hugo themes |
+| **mdbpro** | Material Design theme using MDB UI Kit with gradient cards and modern dashboard | [MDB UI Kit](https://mdbootstrap.com/) |
+| **chinese** | Traditional Chinese aesthetic with Bulma CSS, calligraphy fonts, and red/gold color scheme | Chinese calligraphy & traditional art |
 
 Switch themes using URL parameter: `?theme=theme-name`
 

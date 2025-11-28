@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{siteName}}</title>
+    <meta name="description" content="{{siteDescription}}">
+    <meta name="keywords" content="{{keyWords}}">
+    
+    <!-- MDB UI Kit CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.2.0/css/mdb.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --mdb-primary: #3b71ca;
+            --mdb-secondary: #9fa6b2;
+            --mdb-success: #14a44d;
+            --mdb-danger: #dc4c64;
+            --mdb-warning: #e4a11b;
+            --mdb-info: #54b4d3;
+            --gradient-primary: linear-gradient(45deg, #3b71ca, #6d5dfc);
+            --gradient-secondary: linear-gradient(45deg, #6d5dfc, #e040fb);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+            min-height: 100vh;
+        }
+        
+        /* Navbar Styles */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 12px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: var(--gradient-primary);
+            padding: 100px 0 60px;
+            margin-bottom: 40px;
+            clip-path: ellipse(150% 100% at 50% 0%);
+        }
+        
+        .hero-title {
+            font-weight: 700;
+            font-size: 2.8rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Article Cards */
+        .article-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background: white;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(59, 113, 202, 0.2);
+        }
+        
+        .card-img-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 180px;
+        }
+        
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .article-card:hover .card-img-wrapper img {
+            transform: scale(1.1);
+        }
+        
+        .card-img-overlay-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+        }
+        
+        .card-img-placeholder {
+            height: 180px;
+            background: var(--gradient-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-img-placeholder i {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 0.75rem;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+            z-index: 2;
+        }
+        
+        .bookmark-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 2;
+            cursor: pointer;
+        }
+        
+        .bookmark-btn:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+        
+        .bookmark-btn.bookmarked {
+            color: #e4a11b;
+        }
+        
+        .card-body-custom {
+            padding: 1.5rem;
+        }
+        
+        .card-title-custom {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .card-date {
+            font-size: 0.8rem;
+            color: #9fa6b2;
+        }
+        
+        .card-excerpt {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .read-more-btn {
+            background: var(--gradient-primary);
+            border: none;
+            font-weight: 500;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        
+        .read-more-btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(59, 113, 202, 0.4);
+        }
+        
+        .share-btn {
+            background: none;
+            border: none;
+            color: #9fa6b2;
+            transition: all 0.3s ease;
+            padding: 8px;
+        }
+        
+        .share-btn:hover {
+            color: var(--mdb-primary);
+            transform: scale(1.1);
+        }
+        
+        /* Pagination */
+        .pagination-custom .page-link {
+            border: none;
+            border-radius: 10px;
+            margin: 0 4px;
+            font-weight: 500;
+            color: #333;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .pagination-custom .page-link:hover {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .pagination-custom .page-item.active .page-link {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        /* Footer */
+        .footer-custom {
+            background: #1a1a2e;
+            color: white;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-brand {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        /* Loading State */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-section {
+                padding: 80px 0 50px;
+            }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-blog me-2"></i>{{siteName}}
+            </a>
+            <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/bookmarks"><i class="fas fa-bookmark me-1"></i> Bookmarks</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-primary btn-rounded" href="/admin/">
+                            <i class="fas fa-cog me-1"></i> Admin
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="hero-title mb-3">{{siteName}}</h1>
+            <p class="hero-subtitle">{{siteDescription}}</p>
+        </div>
+    </section>
+
+    <!-- Articles Section -->
+    <section class="articles-section py-4">
+        <div class="container">
+            <div class="row g-4" id="articles-container">
+                <div class="col-12 loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-5" id="pagination-container"></div>
+        </div>
+    </section>
+
+    <!-- Share Modal -->
+    <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-share-alt me-2"></i>Share Article</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center pb-4">
+                    <p id="share-article-title" class="text-muted mb-4"></p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button onclick="shareOnPlatform('twitter')" class="btn btn-floating btn-lg" style="background: #1da1f2; color: white;">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button onclick="shareOnPlatform('facebook')" class="btn btn-floating btn-lg" style="background: #1877f2; color: white;">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button onclick="shareOnPlatform('linkedin')" class="btn btn-floating btn-lg" style="background: #0a66c2; color: white;">
+                            <i class="fab fa-linkedin-in"></i>
+                        </button>
+                        <button onclick="copyArticleLink()" class="btn btn-floating btn-lg btn-secondary">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-custom">
+        <div class="container text-center">
+            <div class="footer-brand">{{siteName}}</div>
+            <p class="mb-0 small opacity-75">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <!-- MDB UI Kit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.2.0/js/mdb.umd.min.js"></script>
+    
+    <script>
+        let currentSharePermalink = '';
+        let currentShareTitle = '';
+        let currentPage = 1;
+        let totalPages = 1;
+        const pageSize = 9;
+
+        function getBookmarks() {
+            return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+        }
+
+        function saveBookmarks(bookmarks) {
+            localStorage.setItem('blog_bookmarks', JSON.stringify(bookmarks));
+        }
+
+        function isArticleBookmarked(permalink) {
+            const bookmarks = getBookmarks();
+            return bookmarks.some(bookmark => bookmark.permalink === permalink);
+        }
+
+        function toggleBookmark(permalink, title, img, label) {
+            const bookmarks = getBookmarks();
+            const existingIndex = bookmarks.findIndex(bookmark => bookmark.permalink === permalink);
+            
+            if (existingIndex > -1) {
+                bookmarks.splice(existingIndex, 1);
+                saveBookmarks(bookmarks);
+                showToast('Bookmark removed', 'warning');
+            } else {
+                bookmarks.push({
+                    permalink,
+                    title,
+                    img,
+                    label,
+                    bookmarkedAt: new Date().toISOString()
+                });
+                saveBookmarks(bookmarks);
+                showToast('Article bookmarked!', 'success');
+            }
+            
+            loadArticles(currentPage);
+        }
+
+        function shareArticle(permalink, title) {
+            currentSharePermalink = permalink;
+            currentShareTitle = title;
+            document.getElementById('share-article-title').textContent = title;
+            const modal = new mdb.Modal(document.getElementById('shareModal'));
+            modal.show();
+        }
+
+        function shareOnPlatform(platform) {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            
+            const shareUrls = {
+                twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareTitle)}&url=${encodeURIComponent(url)}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+            };
+            
+            window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+            mdb.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        async function copyArticleLink() {
+            const url = `${window.location.origin}/article/${currentSharePermalink}`;
+            try {
+                await navigator.clipboard.writeText(url);
+                showToast('Link copied!', 'success');
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('Link copied!', 'success');
+            }
+            mdb.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        function showToast(message, type = 'info') {
+            const toastEl = document.createElement('div');
+            toastEl.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} border-0 position-fixed`;
+            toastEl.style.cssText = 'top: 80px; right: 20px; z-index: 1100;';
+            toastEl.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body"><i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-mdb-dismiss="toast"></button>
+                </div>
+            `;
+            document.body.appendChild(toastEl);
+            const toast = new mdb.Toast(toastEl, { autohide: true, delay: 3000 });
+            toast.show();
+            toastEl.addEventListener('hidden.mdb.toast', () => toastEl.remove());
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        async function loadArticles(page = 1) {
+            try {
+                currentPage = page;
+                const response = await fetch(`/api/articles?paginate=true&page=${page}&pageSize=${pageSize}`);
+                if (!response.ok) throw new Error('Failed to load articles');
+                const data = await response.json();
+                const articles = data.articles || [];
+                const pagination = data.pagination || {};
+                totalPages = pagination.totalPages || 1;
+                
+                const container = document.getElementById('articles-container');
+                
+                if (articles.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <i class="fas fa-newspaper"></i>
+                                <h4 class="text-muted">No Articles Yet</h4>
+                                <p class="text-muted">Check back later for new content!</p>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('pagination-container').innerHTML = '';
+                    return;
+                }
+
+                container.innerHTML = articles.map(article => {
+                    const isBookmarked = isArticleBookmarked(article.permalink);
+                    const safeTitle = escapeHtml(article.title);
+                    const safeImg = escapeHtml(article.img);
+                    const safePermalink = escapeHtml(article.permalink);
+                    const safeLabel = escapeHtml(article.label);
+                    const safeExcerpt = escapeHtml(article.excerpt);
+
+                    const imgHtml = article.img ? 
+                        `<div class="card-img-wrapper">
+                            <img src="${safeImg}" alt="${safeTitle}">
+                            <div class="card-img-overlay-gradient"></div>
+                        </div>` : 
+                        `<div class="card-img-placeholder">
+                            <i class="fas fa-file-alt"></i>
+                        </div>`;
+                    
+                    return `
+                    <div class="col-lg-4 col-md-6">
+                        <div class="article-card h-100">
+                            <div class="position-relative">
+                                <span class="category-badge">${safeLabel}</span>
+                                <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
+                                        onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
+                                        title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
+                                    <i class="fas fa-bookmark${isBookmarked ? '' : ''}"></i>
+                                </button>
+                                ${imgHtml}
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="card-date mb-2">
+                                    <i class="far fa-calendar-alt me-1"></i> ${new Date(article.createDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                </div>
+                                <h5 class="card-title-custom">${safeTitle}</h5>
+                                <p class="card-excerpt">${safeExcerpt}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="/article/${safePermalink}" class="btn read-more-btn text-white">
+                                        Read More <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                    <button class="share-btn" onclick="shareArticle('${safePermalink}', '${safeTitle}')" title="Share">
+                                        <i class="fas fa-share-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+                updatePaginationUI(pagination);
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                const container = document.getElementById('articles-container');
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle text-danger"></i>
+                            <h4 class="text-danger">Error Loading Articles</h4>
+                            <p class="text-muted">Please try again later.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function updatePaginationUI(pagination) {
+            const paginationContainer = document.getElementById('pagination-container');
+            if (!paginationContainer || pagination.totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let paginationHtml = '<nav><ul class="pagination pagination-custom mb-0">';
+            
+            paginationHtml += `<li class="page-item ${!pagination.hasPrevPage ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadArticles(${pagination.page - 1}); return false;">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>`;
+
+            const startPage = Math.max(1, pagination.page - 2);
+            const endPage = Math.min(pagination.totalPages, pagination.page + 2);
+
+            if (startPage > 1) {
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="loadArticles(1); return false;">1</a></li>`;
+                if (startPage > 2) {
+                    paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `<li class="page-item ${i === pagination.page ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadArticles(${i}); return false;">${i}</a>
+                </li>`;
+            }
+
+            if (endPage < pagination.totalPages) {
+                if (endPage < pagination.totalPages - 1) {
+                    paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+                paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="loadArticles(${pagination.totalPages}); return false;">${pagination.totalPages}</a></li>`;
+            }
+
+            paginationHtml += `<li class="page-item ${!pagination.hasNextPage ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadArticles(${pagination.page + 1}); return false;">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>`;
+
+            paginationHtml += '</ul></nav>';
+            paginationHtml += `<p class="text-muted small mt-3 text-center">Page ${pagination.page} of ${pagination.totalPages} (${pagination.totalArticles} articles)</p>`;
+
+            paginationContainer.innerHTML = paginationHtml;
+        }
+
+        loadArticles();
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
