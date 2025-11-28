@@ -5,72 +5,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{action}} Article - Admin</title>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- EasyMDE -->
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     
     <style>
+        /* CSS Variables for Light/Dark Themes */
         :root {
             --primary-color: #6366f1;
             --secondary-color: #8b5cf6;
-            --accent-color: #06b6d4;
-            --primary-gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
             --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-            --border-radius: 12px;
+            --border-radius: 16px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --sidebar-bg: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+            --navbar-bg: #1e293b;
+            --input-bg: #ffffff;
+            --editor-bg: #ffffff;
+            --editor-toolbar: #f9fafb;
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --sidebar-bg: linear-gradient(180deg, #312e81 0%, #4c1d95 100%);
+            --navbar-bg: #0f172a;
+            --input-bg: #1e293b;
+            --editor-bg: #1e293b;
+            --editor-toolbar: #334155;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+        
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
+            background: var(--bg-color);
+            color: var(--text-primary);
         }
         
         .sidebar {
-            background: var(--primary-gradient);
+            background: var(--sidebar-bg);
             color: white;
+            min-height: calc(100vh - 60px);
         }
         
-        .sidebar .list-group-item {
-            background: transparent;
-            border: none;
+        .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.85);
             padding: 0.875rem 1.25rem;
-            margin: 0.25rem 0;
-            border-radius: 10px;
+            margin: 0.25rem 0.5rem;
+            border-radius: 12px;
             transition: var(--transition);
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
         
-        .sidebar .list-group-item:hover,
-        .sidebar .list-group-item.active {
-            background: rgba(255, 255, 255, 0.15);
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
             color: white;
-            transform: translateX(4px);
+            transform: translateX(6px);
         }
         
-        .sidebar .list-group-item i {
-            font-size: 1.125rem;
+        .sidebar .nav-link i {
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar-brand {
+            padding: 1.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .navbar-admin {
+            background: var(--navbar-bg) !important;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+            border-color: rgba(255, 255, 255, 0.6);
         }
         
         .card {
-            border: none;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-        }
-        
-        .card:hover {
-            box-shadow: var(--shadow-md);
         }
         
         .card-header {
             background: transparent;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--card-border);
             padding: 1.25rem 1.5rem;
         }
         
@@ -79,27 +138,31 @@
         }
         
         .form-label {
+            font-weight: 600;
             font-size: 0.875rem;
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
         
         .form-control, .form-select {
-            border: 1px solid #e5e7eb;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
             border-radius: 10px;
             padding: 0.75rem 1rem;
+            color: var(--text-primary);
             transition: var(--transition);
-            font-size: 0.9375rem;
         }
         
         .form-control:focus, .form-select:focus {
+            background: var(--input-bg);
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
         }
         
         .form-text {
-            font-size: 0.8125rem;
-            color: #6b7280;
-            margin-top: 0.375rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
         
         .input-group .btn {
@@ -121,16 +184,16 @@
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
         }
         
         .btn-secondary {
             border-radius: 10px;
             padding: 0.75rem 1.5rem;
             font-weight: 500;
-            transition: var(--transition);
         }
         
+        /* EasyMDE Editor Styling */
         .editor-wrapper {
             border-radius: var(--border-radius);
             overflow: hidden;
@@ -138,71 +201,47 @@
         }
         
         .EasyMDEContainer .CodeMirror {
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-            border: 1px solid #e5e7eb;
+            background: var(--editor-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
             border-top: none;
-            font-size: 0.9375rem;
-            min-height: 300px;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            min-height: 350px;
         }
         
         .EasyMDEContainer .editor-toolbar {
-            border: 1px solid #e5e7eb;
+            background: var(--editor-toolbar);
+            border: 1px solid var(--card-border);
             border-radius: var(--border-radius) var(--border-radius) 0 0;
             padding: 0.5rem;
-            background: #f9fafb;
         }
         
         .EasyMDEContainer .editor-toolbar button {
-            border-radius: 6px;
-            transition: var(--transition);
+            border-radius: 8px;
+            color: var(--text-primary) !important;
         }
         
         .EasyMDEContainer .editor-toolbar button:hover {
-            background: #e5e7eb;
+            background: rgba(99, 102, 241, 0.1);
         }
         
         .EasyMDEContainer .editor-toolbar button.active {
             background: var(--primary-color);
-            color: white;
+            color: white !important;
         }
         
-        .mb-3 {
-            margin-bottom: 1.25rem !important;
-        }
-        
-        .mb-4 {
-            margin-bottom: 1.5rem !important;
-        }
-        
-        .pt-3 {
-            padding-top: 1.25rem !important;
-        }
-        
-        .gap-2 {
-            gap: 0.75rem !important;
+        [data-bs-theme="dark"] .EasyMDEContainer .CodeMirror-cursor {
+            border-color: white;
         }
         
         @media (max-width: 768px) {
             .sidebar {
-                position: relative;
                 min-height: auto;
                 padding: 1rem 0;
             }
             
-            .card-header {
+            .card-header, .card-body {
                 padding: 1rem;
-            }
-            
-            .card-body {
-                padding: 1rem;
-            }
-            
-            .form-control, .form-select {
-                padding: 0.625rem 0.875rem;
-            }
-            
-            .btn-primary, .btn-secondary {
-                padding: 0.625rem 1rem;
             }
         }
     </style>
@@ -211,13 +250,19 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <span class="navbar-brand"><i class="bi bi-pencil me-2"></i> {{action}} Article</span>
-            <div>
-                <a href="/admin/" class="btn btn-outline-light btn-sm me-2">
-                    <i class="bi bi-arrow-left me-1"></i>Back
+    <nav class="navbar navbar-dark navbar-admin">
+        <div class="container-fluid px-4">
+            <span class="navbar-brand d-flex align-items-center gap-2">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span>{{action}} Article</span>
+            </span>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/admin/" class="btn btn-outline-light btn-sm">
+                    <i class="fa-solid fa-arrow-left me-1"></i>Back
                 </a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon" id="theme-icon"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -226,42 +271,53 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-3 col-lg-2 sidebar p-0">
-                <div class="p-4">
-                    <h5 class="mb-4">Admin Panel</h5>
-                    <div class="list-group list-group-flush">
-                        <a href="/admin/" class="list-group-item list-group-item-action">
-                            <i class="bi bi-list-ul me-2"></i> Articles
+                <div class="sidebar-brand d-none d-md-block">
+                    <i class="fa-solid fa-shield-halved me-2"></i>Admin Panel
+                </div>
+                <div class="p-3">
+                    <nav class="nav flex-column">
+                        <a href="/admin/" class="nav-link">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <span>Articles</span>
                         </a>
-                        <a href="/admin/edit" class="list-group-item list-group-item-action active">
-                            <i class="bi bi-plus-circle me-2"></i> {{action}} Article
+                        <a href="/admin/edit" class="nav-link active">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <span>{{action}} Article</span>
                         </a>
-                    </div>
+                    </nav>
                 </div>
             </div>
             
             <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 mt-3">
+            <div class="col-md-9 col-lg-10 py-4 px-4">
                 <div class="card">
-                    <div class="card-header bg-white border-bottom-0 py-4">
-                        <h4 class="mb-0"><i class="bi bi-file-text me-2"></i> {{action}} Article</h4>
+                    <div class="card-header">
+                        <h4 class="mb-0 d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-file-pen" style="color: var(--primary-color);"></i>
+                            {{action}} Article
+                        </h4>
                     </div>
                     <div class="card-body">
                         <form id="article-form" class="needs-validation" novalidate>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="permalink" class="form-label fw-semibold">Permalink *</label>
+                                    <label for="permalink" class="form-label">
+                                        <i class="fa-solid fa-link me-1"></i>Permalink *
+                                    </label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="permalink" required 
                                                pattern="[a-z0-9-]+" title="Only lowercase letters, numbers, and hyphens allowed">
                                         <button class="btn btn-outline-secondary" type="button" id="generate-slug-btn" title="Generate from title">
-                                            <i class="bi bi-magic"></i>
+                                            <i class="fa-solid fa-wand-magic-sparkles"></i>
                                         </button>
                                     </div>
-                                    <div class="form-text">URL-friendly identifier (e.g., "my-article-title") - Click magic wand to auto-generate from title</div>
+                                    <div class="form-text">URL-friendly identifier - Click magic wand to auto-generate</div>
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
-                                    <label for="label" class="form-label fw-semibold">Label *</label>
+                                    <label for="label" class="form-label">
+                                        <i class="fa-solid fa-tag me-1"></i>Label *
+                                    </label>
                                     <select class="form-select" id="label" required>
                                         <option value="">Choose a label...</option>
                                         <option value="Technology">Technology</option>
@@ -277,24 +333,31 @@
                             </div>
                             
                             <div class="mb-3">
-                                <label for="title" class="form-label fw-semibold">Title *</label>
-                                <input type="text" class="form-control" id="title" required>
+                                <label for="title" class="form-label">
+                                    <i class="fa-solid fa-heading me-1"></i>Title *
+                                </label>
+                                <input type="text" class="form-control" id="title" required placeholder="Enter article title">
                             </div>
                             
                             <div class="mb-3">
-                                <label for="img" class="form-label fw-semibold">Featured Image URL</label>
-                                <input type="url" class="form-control" id="img" 
-                                       placeholder="https://example.com/image.jpg">
+                                <label for="img" class="form-label">
+                                    <i class="fa-solid fa-image me-1"></i>Featured Image URL
+                                </label>
+                                <input type="url" class="form-control" id="img" placeholder="https://example.com/image.jpg">
                             </div>
                             
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="createDate" class="form-label fw-semibold">Publish Date *</label>
+                                    <label for="createDate" class="form-label">
+                                        <i class="fa-regular fa-calendar me-1"></i>Publish Date *
+                                    </label>
                                     <input type="datetime-local" class="form-control" id="createDate" required>
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
-                                    <label for="status" class="form-label fw-semibold">Status</label>
+                                    <label for="status" class="form-label">
+                                        <i class="fa-solid fa-toggle-on me-1"></i>Status
+                                    </label>
                                     <select class="form-select" id="status">
                                         <option value="published">Published</option>
                                         <option value="draft">Draft</option>
@@ -303,18 +366,20 @@
                             </div>
                             
                             <div class="mb-4">
-                                <label for="content" class="form-label fw-semibold">Content *</label>
+                                <label for="content" class="form-label">
+                                    <i class="fa-solid fa-file-lines me-1"></i>Content *
+                                </label>
                                 <div class="editor-wrapper">
                                     <textarea id="content"></textarea>
                                 </div>
                             </div>
                             
-                            <div class="d-flex gap-2 justify-content-end pt-3 border-top">
+                            <div class="d-flex gap-3 justify-content-end pt-3 border-top" style="border-color: var(--card-border) !important;">
                                 <button type="button" class="btn btn-secondary" onclick="window.history.back()">
-                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                    <i class="fa-solid fa-xmark me-1"></i>Cancel
                                 </button>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-circle me-1"></i> Save Article
+                                    <i class="fa-solid fa-floppy-disk me-1"></i>Save Article
                                 </button>
                             </div>
                         </form>
@@ -324,9 +389,32 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
     <script>
+        // Theme Toggle
+        function getPreferredTheme() {
+            const stored = localStorage.getItem('theme');
+            if (stored) return stored;
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('theme', theme);
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+        }
+        
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-bs-theme');
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        }
+        
+        setTheme(getPreferredTheme());
+
         let easyMDE;
         let isEditing = false;
         let currentPermalink = '';
@@ -336,9 +424,7 @@
             element: document.getElementById('content'),
             spellChecker: false,
             status: false,
-            autosave: {
-                enabled: false
-            },
+            autosave: { enabled: false },
             toolbar: [
                 'bold', 'italic', 'heading', '|',
                 'quote', 'unordered-list', 'ordered-list', '|',
@@ -356,8 +442,6 @@
             isEditing = true;
             currentPermalink = permalink;
             document.title = 'Edit Article - Admin';
-            document.querySelector('nav .navbar-brand').innerHTML = '<i class="bi bi-pencil me-2"></i> Edit Article';
-            document.querySelector('.card-header h4').textContent = 'Edit Article';
             loadArticle(permalink);
         }
 
@@ -398,7 +482,7 @@
 
             const submitBtn = e.target.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Saving...';
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>Saving...';
 
             const formData = {
                 permalink: document.getElementById('permalink').value,
@@ -416,30 +500,23 @@
                 
                 const response = await fetch(url, {
                     method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
 
                 if (response.ok) {
-                    const message = isEditing ? 'Article updated successfully!' : 'Article created successfully!';
-                    if (formData.status === 'draft') {
-                        alert(message + ' (Saved as draft)');
-                    } else {
-                        alert(message);
-                    }
+                    const message = isEditing ? 'Article updated!' : 'Article created!';
+                    alert(formData.status === 'draft' ? message + ' (Saved as draft)' : message);
                     window.location.href = '/admin/';
                 } else {
-                    const error = await response.text();
-                    throw new Error(error);
+                    throw new Error(await response.text());
                 }
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error saving article: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Save Article';
+                submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i>Save Article';
             }
         });
 
@@ -449,15 +526,12 @@
         // Auto-generate slug from title
         function generateSlugLocal(title) {
             if (!title) return '';
-            return title
-                .toLowerCase()
-                .trim()
+            return title.toLowerCase().trim()
                 .replace(/[^\w\s-]/g, '')
                 .replace(/[\s_-]+/g, '-')
                 .replace(/^-+|-+$/g, '');
         }
 
-        // Generate slug button click handler
         document.getElementById('generate-slug-btn').addEventListener('click', async () => {
             const title = document.getElementById('title').value;
             if (!title) {
@@ -466,9 +540,8 @@
             }
 
             const btn = document.getElementById('generate-slug-btn');
-            const originalHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
             try {
                 const response = await fetch('/api/generate-slug', {
@@ -481,15 +554,13 @@
                     const data = await response.json();
                     document.getElementById('permalink').value = data.slug;
                 } else {
-                    // Fallback to local generation
                     document.getElementById('permalink').value = generateSlugLocal(title);
                 }
             } catch (error) {
-                // Fallback to local generation
                 document.getElementById('permalink').value = generateSlugLocal(title);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = originalHtml;
+                btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i>';
             }
         });
 

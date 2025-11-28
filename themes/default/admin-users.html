@@ -5,74 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Users - {{siteName}}</title>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
             --primary-color: #6366f1;
             --secondary-color: #8b5cf6;
+            --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
             --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-            --border-radius: 12px;
+            --border-radius: 16px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --sidebar-bg: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+            --navbar-bg: #1e293b;
+            --table-hover: #f8fafc;
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --sidebar-bg: linear-gradient(180deg, #312e81 0%, #4c1d95 100%);
+            --navbar-bg: #0f172a;
+            --table-hover: #334155;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8fafc;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
         }
         
         .sidebar {
-            background: var(--primary-gradient);
+            background: var(--sidebar-bg);
             color: white;
-            min-height: calc(100vh - 56px);
+            min-height: calc(100vh - 60px);
         }
         
         .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.85);
             padding: 0.875rem 1.25rem;
-            margin: 0.25rem 0;
-            border-radius: 10px;
+            margin: 0.25rem 0.5rem;
+            border-radius: 12px;
             transition: var(--transition);
             font-weight: 500;
-            font-size: 0.9375rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
         
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: rgba(255, 255, 255, 0.15);
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
             color: white;
-            transform: translateX(4px);
+            transform: translateX(6px);
         }
         
-        .sidebar .nav-link i {
-            font-size: 1.125rem;
+        .sidebar-brand {
+            padding: 1.5rem;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .navbar-admin {
+            background: var(--navbar-bg) !important;
+        }
+        
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg);
         }
         
         .card {
-            border: none;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-        }
-        
-        .card:hover {
-            box-shadow: var(--shadow-md);
         }
         
         .card-header {
             background: transparent;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--card-border);
             padding: 1.25rem 1.5rem;
-        }
-        
-        .card-body {
-            padding: 1.5rem;
         }
         
         .user-avatar {
@@ -83,252 +120,95 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 1.125rem;
             color: white;
-            box-shadow: var(--shadow-sm);
         }
         
-        .superadmin-avatar {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-        
-        .admin-avatar {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        }
-        
-        .badge-superadmin {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            padding: 0.5rem 0.875rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-            border-radius: 6px;
-        }
-        
-        .badge-admin {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            padding: 0.5rem 0.875rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-            border-radius: 6px;
-        }
-        
-        .stats-card {
-            transition: var(--transition);
-            border-radius: var(--border-radius);
-        }
+        .superadmin-avatar { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .admin-avatar { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .badge-superadmin { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .badge-admin { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
         
         .stats-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px);
             box-shadow: var(--shadow-md);
         }
         
-        .stats-card .card-body {
-            padding: 1.25rem;
-        }
-        
-        .table {
-            margin-bottom: 0;
-        }
-        
-        .table th {
-            font-weight: 600;
-            font-size: 0.8125rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #6b7280;
-            padding: 1rem 0.875rem;
-            border-bottom-width: 2px;
-        }
-        
-        .table td {
-            padding: 1rem 0.875rem;
-            vertical-align: middle;
-        }
-        
-        .table tbody tr {
-            transition: var(--transition);
-        }
-        
-        .table tbody tr:hover {
-            background-color: #f8fafc;
-        }
+        .table { color: var(--text-primary); }
+        .table th { color: var(--text-secondary); border-color: var(--card-border); }
+        .table td { border-color: var(--card-border); }
+        .table tbody tr:hover { background-color: var(--table-hover); }
         
         .btn-primary {
             background: var(--primary-gradient);
             border: none;
-            padding: 0.625rem 1.25rem;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
-        }
-        
-        .btn-outline-primary,
-        .btn-outline-danger {
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        .btn-group-sm .btn {
-            padding: 0.375rem 0.625rem;
-        }
-        
-        .input-group-sm .form-control {
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px 0 0 8px;
-        }
-        
-        .input-group-sm .input-group-text {
-            border-radius: 8px 0 0 8px;
-        }
-        
-        .input-group-sm .btn {
-            border-radius: 0 8px 8px 0;
+            border-radius: 10px;
         }
         
         .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: var(--border-radius);
-            border: none;
-            box-shadow: var(--shadow-lg);
         }
         
-        .modal-header {
-            border-bottom: 1px solid #e5e7eb;
-            padding: 1.25rem 1.5rem;
+        .form-control, .form-select {
+            background: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-primary);
         }
         
-        .modal-body {
-            padding: 1.5rem;
+        .form-control:focus, .form-select:focus {
+            background: var(--card-bg);
+            border-color: var(--primary-color);
+            color: var(--text-primary);
         }
         
-        .modal-footer {
-            border-top: 1px solid #e5e7eb;
-            padding: 1rem 1.5rem;
-        }
-        
-        @media (max-width: 992px) {
-            .sidebar {
-                min-height: auto;
-                padding: 1rem 0;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                min-height: auto;
-            }
-            
-            .btn-group-sm .btn {
-                padding: 0.375rem 0.5rem;
-            }
-            
-            .card-header {
-                padding: 1rem 1.25rem;
-            }
-            
-            .card-body {
-                padding: 1.25rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .table-responsive {
-                font-size: 0.875rem;
-            }
-            
-            .card-body {
-                padding: 1rem;
-            }
-            
-            .table th,
-            .table td {
-                padding: 0.75rem 0.5rem;
-            }
-            
-            .user-avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-        }
+        @media (max-width: 992px) { .sidebar { min-height: auto; } }
     </style>
     
     {{codeBeforHead}}
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
-        <div class="container-fluid">
-            <span class="navbar-brand">
-                <i class="bi bi-people-fill me-2"></i> Admin Users
+    <nav class="navbar navbar-dark navbar-admin navbar-expand-lg">
+        <div class="container-fluid px-4">
+            <span class="navbar-brand d-flex align-items-center gap-2">
+                <i class="fa-solid fa-users"></i> Admin Users
             </span>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <a href="/admin/" class="nav-link">
-                        <i class="bi bi-arrow-left me-1"></i> Back to Admin
-                    </a>
-                    <a href="/" class="nav-link">
-                        <i class="bi bi-eye me-1"></i> View Blog
-                    </a>
-                </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/admin/" class="nav-link"><i class="fa-solid fa-arrow-left me-1"></i> Back</a>
+                <a href="/" class="nav-link"><i class="fa-solid fa-eye me-1"></i> View Blog</a>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fa-solid fa-moon" id="theme-icon"></i>
+                </button>
             </div>
         </div>
     </nav>
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
             <div class="col-lg-2 col-md-3 sidebar p-0">
-                <div class="p-3 p-lg-4">
-                    <h5 class="mb-3 d-none d-md-block">Admin Panel</h5>
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/">
-                                <i class="bi bi-list-ul me-2"></i> 
-                                <span class="d-md-inline">Articles</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="/admin/users">
-                                <i class="bi bi-people-fill me-2"></i>
-                                <span class="d-md-inline">Users</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/edit">
-                                <i class="bi bi-plus-circle me-2"></i>
-                                <span class="d-md-inline">New Article</span>
-                            </a>
-                        </li>
-                    </ul>
+                <div class="sidebar-brand d-none d-md-block">
+                    <i class="fa-solid fa-shield-halved me-2"></i>Admin Panel
+                </div>
+                <div class="p-3">
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="/admin/"><i class="fa-solid fa-newspaper"></i><span>Articles</span></a>
+                        <a class="nav-link active" href="/admin/users"><i class="fa-solid fa-users"></i><span>Users</span></a>
+                        <a class="nav-link" href="/admin/edit"><i class="fa-solid fa-circle-plus"></i><span>New Article</span></a>
+                    </nav>
                 </div>
             </div>
             
-            <!-- Main Content -->
-            <div class="col-lg-10 col-md-9 mt-3">
-                <!-- Quick Stats -->
+            <div class="col-lg-10 col-md-9 py-4 px-4">
                 <div class="row g-3 mb-4">
                     <div class="col-xl-3 col-md-6">
                         <div class="card stats-card h-100">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="user-avatar admin-avatar text-white">
-                                            <i class="bi bi-person-plus"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="card-title mb-1">Add Admin</h6>
+                                    <div class="user-avatar admin-avatar"><i class="fa-solid fa-user-plus"></i></div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-1">Add Admin</h6>
                                         <button onclick="openAddAdminModal()" class="btn btn-primary btn-sm">
-                                            <i class="bi bi-plus-circle me-1"></i> Add User
+                                            <i class="fa-solid fa-plus me-1"></i> Add User
                                         </button>
                                     </div>
                                 </div>
@@ -339,14 +219,10 @@
                         <div class="card stats-card h-100">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="user-avatar admin-avatar text-white">
-                                            <i class="bi bi-people"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="card-title mb-0" id="total-admins">Loading...</h6>
-                                        <p class="text-muted small mb-0">Total Admins</p>
+                                    <div class="user-avatar admin-avatar"><i class="fa-solid fa-users"></i></div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0" id="total-admins">Loading...</h6>
+                                        <small class="text-muted">Total Admins</small>
                                     </div>
                                 </div>
                             </div>
@@ -356,14 +232,10 @@
                         <div class="card stats-card h-100">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="user-avatar superadmin-avatar text-white">
-                                            <i class="bi bi-shield-check"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="card-title mb-0" id="superadmin-count">Loading...</h6>
-                                        <p class="text-muted small mb-0">Super Admins</p>
+                                    <div class="user-avatar superadmin-avatar"><i class="fa-solid fa-shield-halved"></i></div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0" id="superadmin-count">Loading...</h6>
+                                        <small class="text-muted">Super Admins</small>
                                     </div>
                                 </div>
                             </div>
@@ -373,14 +245,10 @@
                         <div class="card stats-card h-100">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="user-avatar admin-avatar text-white">
-                                            <i class="bi bi-person-check"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="card-title mb-0" id="active-admins">Loading...</h6>
-                                        <p class="text-muted small mb-0">Active Users</p>
+                                    <div class="user-avatar admin-avatar"><i class="fa-solid fa-user-check"></i></div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0" id="active-admins">Loading...</h6>
+                                        <small class="text-muted">Active Users</small>
                                     </div>
                                 </div>
                             </div>
@@ -388,69 +256,19 @@
                     </div>
                 </div>
 
-                <!-- Users Management Card -->
                 <div class="card">
-                    <div class="card-header bg-white border-bottom-0 py-3 py-md-4">
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                            <h4 class="mb-2 mb-md-0">
-                                <i class="bi bi-people-fill me-2"></i> Admin Users Management
-                            </h4>
-                            <div class="d-flex gap-2">
-                                <div class="input-group input-group-sm" style="width: 250px;">
-                                    <span class="input-group-text">
-                                        <i class="bi bi-search"></i>
-                                    </span>
-                                    <input type="text" id="search-admins" class="form-control" placeholder="Search admins...">
-                                </div>
-                                <button onclick="loadAdmins()" class="btn btn-outline-secondary btn-sm">
-                                    <i class="bi bi-arrow-clockwise"></i>
-                                </button>
-                            </div>
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0"><i class="fa-solid fa-users-gear me-2" style="color: var(--primary-color);"></i>Admin Users</h4>
+                            <button onclick="loadAdmins()" class="btn btn-outline-secondary btn-sm">
+                                <i class="fa-solid fa-rotate"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="card-body">
                         <div id="admins-list">
                             <div class="text-center py-5">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- User Guide -->
-                <div class="card mt-4">
-                    <div class="card-header bg-white">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-info-circle me-2"></i> Admin Roles Guide
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center p-3 border rounded">
-                                    <div class="flex-shrink-0">
-                                        <span class="badge badge-superadmin text-white p-2">
-                                            <i class="bi bi-shield-check me-1"></i> Super Admin
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <p class="mb-0 small text-muted">Full system access, can manage other admins and all content</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center p-3 border rounded">
-                                    <div class="flex-shrink-0">
-                                        <span class="badge badge-admin text-white p-2">
-                                            <i class="bi bi-person-check me-1"></i> Admin
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <p class="mb-0 small text-muted">Content management only, cannot manage users or system settings</p>
-                                    </div>
-                                </div>
+                                <div class="spinner-border text-primary"></div>
                             </div>
                         </div>
                     </div>
@@ -461,10 +279,10 @@
 
     <!-- Add Admin Modal -->
     <div class="modal fade" id="addAdminModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Admin</h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-user-plus me-2"></i>Add New Admin</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -493,7 +311,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="addAdmin()">
-                        <i class="bi bi-person-plus me-1"></i> Add Admin
+                        <i class="fa-solid fa-user-plus me-1"></i> Add Admin
                     </button>
                 </div>
             </div>
@@ -502,10 +320,10 @@
 
     <!-- Edit Admin Modal -->
     <div class="modal fade" id="editAdminModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Admin</h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-user-pen me-2"></i>Edit Admin</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -538,78 +356,75 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="updateAdmin()">
-                        <i class="bi bi-check-lg me-1"></i> Save Changes
+                        <i class="fa-solid fa-check me-1"></i> Save Changes
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Theme Toggle
+        function getPreferredTheme() {
+            const stored = localStorage.getItem('theme');
+            if (stored) return stored;
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('theme', theme);
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+        
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-bs-theme');
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        }
+        
+        setTheme(getPreferredTheme());
+
         let currentAdmins = [];
 
-        document.addEventListener('DOMContentLoaded', function() {
-            loadAdmins();
-            
-            // Search functionality
-            document.getElementById('search-admins').addEventListener('input', function(e) {
-                filterAdmins(e.target.value);
-            });
-        });
+        document.addEventListener('DOMContentLoaded', loadAdmins);
 
         async function loadAdmins() {
             try {
                 const response = await fetch('/api/admins');
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        showAlert('Authentication required. Please log in again.', 'danger');
-                        return;
-                    }
-                    if (response.status === 403) {
-                        showAlert('Access denied. Only superadmins can manage users.', 'danger');
+                    if (response.status === 401 || response.status === 403) {
+                        showAlert('Access denied', 'danger');
                         return;
                     }
                     throw new Error('Failed to load admins');
                 }
-                
                 currentAdmins = await response.json();
                 displayAdmins(currentAdmins);
                 updateStats();
             } catch (error) {
-                console.error('Error loading admins:', error);
-                showAlert('Error loading admins: ' + error.message, 'danger');
+                showAlert('Error loading admins', 'danger');
             }
         }
 
         function displayAdmins(admins) {
             const container = document.getElementById('admins-list');
-
             if (admins.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="bi bi-people display-1 text-muted mb-3"></i>
-                        <h5 class="text-muted">No Admin Users</h5>
-                        <p class="text-muted mb-4">Get started by adding your first admin user</p>
-                        <button onclick="openAddAdminModal()" class="btn btn-primary">
-                            <i class="bi bi-person-plus me-1"></i> Add Admin
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = '<div class="text-center py-5"><i class="fa-solid fa-users fa-3x text-muted mb-3"></i><h5 class="text-muted">No Admin Users</h5></div>';
                 return;
             }
 
             container.innerHTML = `
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th>User</th>
                                 <th>Role</th>
                                 <th>Status</th>
                                 <th>Joined</th>
-                                <th>Last Login</th>
-                                <th width="100">Actions</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -617,7 +432,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="user-avatar ${admin.role === 'superadmin' ? 'superadmin-avatar' : 'admin-avatar'} text-white me-3">
+                                            <div class="user-avatar ${admin.role === 'superadmin' ? 'superadmin-avatar' : 'admin-avatar'} me-3">
                                                 ${admin.username.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
@@ -628,35 +443,19 @@
                                     </td>
                                     <td>
                                         <span class="badge ${admin.role === 'superadmin' ? 'badge-superadmin' : 'badge-admin'} text-white">
-                                            <i class="bi bi-${admin.role === 'superadmin' ? 'shield-check' : 'person-check'} me-1"></i>
-                                            ${admin.role}
+                                            <i class="fa-solid fa-${admin.role === 'superadmin' ? 'shield-halved' : 'user-check'} me-1"></i>${admin.role}
                                         </span>
                                     </td>
                                     <td>
                                         <span class="badge ${admin.status === 'active' ? 'bg-success' : 'bg-secondary'}">
-                                            <i class="bi bi-${admin.status === 'active' ? 'check-circle' : 'x-circle'} me-1"></i>
-                                            ${admin.status}
+                                            <i class="fa-solid fa-${admin.status === 'active' ? 'circle-check' : 'circle-xmark'} me-1"></i>${admin.status}
                                         </span>
                                     </td>
-                                    <td>
-                                        <small class="text-muted">${new Date(admin.createdAt).toLocaleDateString()}</small>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">
-                                            ${admin.lastLogin ? new Date(admin.lastLogin).toLocaleDateString() : 'Never'}
-                                        </small>
-                                    </td>
+                                    <td><small>${new Date(admin.createdAt).toLocaleDateString()}</small></td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <button onclick="editAdmin('${admin.id}')" class="btn btn-outline-primary" title="Edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
-                                                    class="btn btn-outline-danger" 
-                                                    title="Delete"
-                                                    ${admin.role === 'superadmin' ? 'disabled' : ''}>
-                                                <i class="bi bi-trash"></i>
-                                            </button>
+                                            <button onclick="editAdmin('${admin.id}')" class="btn btn-outline-primary"><i class="fa-solid fa-pen"></i></button>
+                                            <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" class="btn btn-outline-danger" ${admin.role === 'superadmin' ? 'disabled' : ''}><i class="fa-solid fa-trash"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -667,38 +466,17 @@
             `;
         }
 
-        function filterAdmins(searchTerm) {
-            const filteredAdmins = currentAdmins.filter(
-                admin => admin.username.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         admin.role.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            displayAdmins(filteredAdmins);
-        }
-
         function updateStats() {
-            const totalAdmins = currentAdmins.length;
-            const superadminCount = currentAdmins.filter(admin => admin.role === 'superadmin').length;
-            const activeAdmins = currentAdmins.filter(admin => admin.status === 'active').length;
-
-            document.getElementById('total-admins').textContent = totalAdmins;
-            document.getElementById('superadmin-count').textContent = superadminCount;
-            document.getElementById('active-admins').textContent = activeAdmins;
+            document.getElementById('total-admins').textContent = currentAdmins.length;
+            document.getElementById('superadmin-count').textContent = currentAdmins.filter(a => a.role === 'superadmin').length;
+            document.getElementById('active-admins').textContent = currentAdmins.filter(a => a.status === 'active').length;
         }
 
-        // Modal functions
         function openAddAdminModal() {
-            const modal = new bootstrap.Modal(document.getElementById('addAdminModal'));
             document.getElementById('add-admin-form').reset();
-            modal.show();
+            new bootstrap.Modal(document.getElementById('addAdminModal')).show();
         }
 
-        function openEditAdminModal() {
-            const modal = new bootstrap.Modal(document.getElementById('editAdminModal'));
-            modal.show();
-        }
-
-        // Admin management functions
         async function addAdmin() {
             const formData = {
                 username: document.getElementById('username').value,
@@ -710,9 +488,7 @@
             try {
                 const response = await fetch('/api/admins', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),
                 });
 
@@ -721,24 +497,14 @@
                     bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
                     loadAdmins();
                 } else {
-                    if (response.status === 401) {
-                        showAlert('Authentication required. Please log in again.', 'danger');
-                        return;
-                    }
-                    if (response.status === 403) {
-                        showAlert('Access denied. Only superadmins can manage users.', 'danger');
-                        return;
-                    }
-                    const error = await response.text();
-                    throw new Error(error);
+                    throw new Error(await response.text());
                 }
             } catch (error) {
-                console.error('Error creating admin:', error);
                 showAlert('Error creating admin: ' + error.message, 'danger');
             }
         }
 
-        async function editAdmin(adminId) {
+        function editAdmin(adminId) {
             const admin = currentAdmins.find(a => a.id === adminId);
             if (!admin) return;
 
@@ -748,7 +514,7 @@
             document.getElementById('edit-role').value = admin.role;
             document.getElementById('edit-status').value = admin.status;
 
-            openEditAdminModal();
+            new bootstrap.Modal(document.getElementById('editAdminModal')).show();
         }
 
         async function updateAdmin() {
@@ -762,9 +528,7 @@
             try {
                 const response = await fetch('/api/admins/' + adminId, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updateData),
                 });
 
@@ -773,72 +537,39 @@
                     bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide();
                     loadAdmins();
                 } else {
-                    if (response.status === 401) {
-                        showAlert('Authentication required. Please log in again.', 'danger');
-                        return;
-                    }
-                    if (response.status === 403) {
-                        showAlert('Access denied. Only superadmins can manage users.', 'danger');
-                        return;
-                    }
-                    const error = await response.text();
-                    throw new Error(error);
+                    throw new Error(await response.text());
                 }
             } catch (error) {
-                console.error('Error updating admin:', error);
                 showAlert('Error updating admin: ' + error.message, 'danger');
             }
         }
 
         async function deleteAdmin(adminId, username) {
-            if (!confirm(`Are you sure you want to delete admin "${username}"? This action cannot be undone.`)) return;
+            if (!confirm(`Delete admin "${username}"?`)) return;
 
             try {
-                const response = await fetch('/api/admins/' + adminId, {
-                    method: 'DELETE',
-                });
-
+                const response = await fetch('/api/admins/' + adminId, { method: 'DELETE' });
                 if (response.ok) {
-                    showAlert('Admin deleted successfully', 'success');
+                    showAlert('Admin deleted', 'success');
                     loadAdmins();
                 } else {
-                    if (response.status === 401) {
-                        showAlert('Authentication required. Please log in again.', 'danger');
-                        return;
-                    }
-                    if (response.status === 403) {
-                        showAlert('Access denied. Only superadmins can manage users.', 'danger');
-                        return;
-                    }
-                    const error = await response.text();
-                    throw new Error(error);
+                    throw new Error(await response.text());
                 }
             } catch (error) {
-                console.error('Error deleting admin:', error);
                 showAlert('Error deleting admin: ' + error.message, 'danger');
             }
         }
 
-        // Utility Functions
         function showAlert(message, type) {
-            // Remove existing alerts
-            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+            document.querySelectorAll('.alert').forEach(a => a.remove());
             
             const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
-            alert.style.zIndex = '1060';
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
+            alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3 shadow`;
+            alert.style.zIndex = '1100';
+            alert.innerHTML = `<i class="fa-solid fa-${type === 'success' ? 'circle-check' : 'triangle-exclamation'} me-2"></i>${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
             
             document.body.appendChild(alert);
-            
-            setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.remove();
-                }
-            }, 5000);
+            setTimeout(() => alert.remove(), 5000);
         }
     </script>
     
