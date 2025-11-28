@@ -15,9 +15,18 @@
     <link href="https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --text-primary: #1a1a1a;
+            --text-secondary: #555;
+            --text-muted: #777;
+            --accent-color: #c41e3a;
+            --bg-primary: #fdfcf9;
+            --bg-card: #ffffff;
+        }
+        
         body {
             font-family: 'News Cycle', Georgia, serif;
-            background-color: #fdfcf9;
+            background-color: var(--bg-primary);
         }
         
         .navbar-brand {
@@ -28,8 +37,8 @@
         }
         
         .masthead {
-            background: #fff;
-            border-bottom: 4px double #1a1a1a;
+            background: var(--bg-card);
+            border-bottom: 4px double var(--text-primary);
             padding: 2rem 0;
             margin-bottom: 1.5rem;
         }
@@ -40,12 +49,12 @@
             letter-spacing: 4px;
             text-transform: uppercase;
             margin-bottom: 0.5rem;
-            color: #1a1a1a;
+            color: var(--text-primary);
         }
         
         .masthead .lead {
             font-style: italic;
-            color: #555;
+            color: var(--text-secondary);
             font-size: 1rem;
             max-width: 500px;
             margin: 0 auto;
@@ -57,12 +66,12 @@
             padding: 0.5rem 0;
             margin-bottom: 2rem;
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-muted);
             letter-spacing: 0.5px;
         }
         
         .article-card {
-            background: #fff;
+            background: var(--bg-card);
             border: none;
             border-bottom: 2px solid #eee;
             transition: all 0.25s ease;
@@ -85,18 +94,18 @@
             font-weight: 700;
             font-size: 1.125rem;
             line-height: 1.35;
-            color: #1a1a1a;
+            color: var(--text-primary);
             font-family: 'News Cycle', Georgia, serif;
         }
         
         .article-card .card-text {
             font-size: 0.9rem;
             line-height: 1.6;
-            color: #444;
+            color: var(--text-secondary);
         }
         
         .category-badge {
-            background: #c41e3a;
+            background: var(--accent-color);
             color: #fff;
             text-transform: uppercase;
             font-size: 0.65rem;
@@ -108,7 +117,7 @@
         
         .meta-info {
             font-size: 0.8rem;
-            color: #777;
+            color: var(--text-muted);
         }
         
         .bookmark-btn {
@@ -120,16 +129,16 @@
         }
         
         .bookmark-btn:hover, .bookmark-btn.bookmarked {
-            color: #c41e3a;
+            color: var(--accent-color);
         }
         
         .section-divider {
-            border-top: 3px solid #1a1a1a;
+            border-top: 3px solid var(--text-primary);
             margin: 2.5rem 0;
         }
         
         .footer {
-            background: #1a1a1a;
+            background: var(--text-primary);
             color: #ddd;
             padding: 1.5rem 0;
             margin-top: 2.5rem;
@@ -137,8 +146,8 @@
         }
         
         .btn-primary {
-            background: #c41e3a;
-            border-color: #c41e3a;
+            background: var(--accent-color);
+            border-color: var(--accent-color);
             border-radius: 2px;
             font-weight: 600;
             letter-spacing: 0.5px;

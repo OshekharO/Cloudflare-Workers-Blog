@@ -15,9 +15,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --primary-color: #0f172a;
+            --primary-light: #1e40af;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --bg-primary: #f5f5f5;
+            --bg-card: #ffffff;
+        }
+        
         body {
             font-family: 'Nunito Sans', sans-serif;
-            background-color: #f5f5f5;
+            background-color: var(--bg-primary);
         }
         
         .navbar {
@@ -74,7 +83,7 @@
             text-transform: uppercase;
             margin-bottom: 2rem;
             text-align: center;
-            color: #0f172a;
+            color: var(--text-primary);
         }
         
         .section-title::after {
