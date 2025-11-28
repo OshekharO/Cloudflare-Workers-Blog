@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}}文章 - 管理后台</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chinese Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <!-- EasyMDE -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    
+    <style>
+        :root {
+            --chinese-red: #c41e3a;
+            --chinese-red-dark: #8b0000;
+            --chinese-gold: #d4a017;
+            --ink-black: #1a1a1a;
+            --paper-cream: #faf8f5;
+            --cloud-white: #fefefe;
+        }
+        
+        * { font-family: 'Noto Serif SC', serif; }
+        body { background: var(--paper-cream); min-height: 100vh; }
+        
+        .navbar-chinese {
+            background: linear-gradient(135deg, var(--chinese-red) 0%, var(--chinese-red-dark) 100%);
+        }
+        
+        .navbar-chinese .navbar-brand {
+            font-family: 'ZCOOL XiaoWei', serif;
+            color: var(--chinese-gold) !important;
+        }
+        
+        .navbar-chinese .navbar-item {
+            color: var(--paper-cream) !important;
+        }
+        
+        .sidebar-chinese {
+            background: var(--ink-black);
+            min-height: calc(100vh - 52px);
+            padding: 1.5rem 0;
+        }
+        
+        .sidebar-chinese .menu-list a {
+            color: rgba(255,255,255,0.7);
+            padding: 0.75rem 1.5rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-chinese .menu-list a:hover,
+        .sidebar-chinese .menu-list a.is-active {
+            background: rgba(196, 30, 58, 0.3);
+            color: var(--paper-cream);
+            border-left-color: var(--chinese-gold);
+        }
+        
+        .content-area { padding: 2rem; }
+        
+        .card-chinese {
+            background: var(--cloud-white);
+            border-radius: 4px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(212, 160, 23, 0.2);
+        }
+        
+        .card-chinese .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(212, 160, 23, 0.2);
+        }
+        
+        .card-chinese .card-header-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            color: var(--ink-black);
+        }
+        
+        .input, .textarea, .select select {
+            border-color: rgba(212, 160, 23, 0.3);
+            border-radius: 2px;
+        }
+        
+        .input:focus, .textarea:focus, .select select:focus {
+            border-color: var(--chinese-red);
+            box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+        }
+        
+        .label {
+            font-weight: 600;
+            color: var(--ink-black);
+        }
+        
+        .btn-chinese {
+            background: linear-gradient(135deg, var(--chinese-red) 0%, var(--chinese-red-dark) 100%);
+            color: var(--paper-cream);
+            border: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-chinese:hover {
+            transform: translateY(-2px);
+            color: var(--chinese-gold);
+        }
+        
+        .EasyMDEContainer .CodeMirror {
+            border-color: rgba(212, 160, 23, 0.3);
+            border-radius: 0 0 4px 4px;
+            min-height: 350px;
+        }
+        
+        .EasyMDEContainer .editor-toolbar {
+            border-color: rgba(212, 160, 23, 0.3);
+            border-radius: 4px 4px 0 0;
+            background: var(--paper-cream);
+        }
+        
+        .EasyMDEContainer .editor-toolbar button.active,
+        .EasyMDEContainer .editor-toolbar button:hover {
+            background: var(--chinese-red);
+            color: white;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar-chinese { min-height: auto; }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-chinese">
+        <div class="container-fluid">
+            <div class="navbar-brand">
+                <span class="navbar-item"><i class="fas fa-edit me-2"></i>{{action}}文章</span>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-end">
+                    <a href="/admin/" class="navbar-item"><i class="fas fa-arrow-left me-1"></i> 返回</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="columns is-gapless">
+        <!-- Sidebar -->
+        <div class="column is-2 sidebar-chinese">
+            <aside class="menu">
+                <ul class="menu-list">
+                    <li><a href="/admin/"><i class="fas fa-file-alt me-2"></i>文章管理</a></li>
+                    <li><a class="is-active"><i class="fas fa-plus me-2"></i>{{action}}文章</a></li>
+                </ul>
+            </aside>
+        </div>
+        
+        <!-- Content -->
+        <div class="column content-area">
+            <div class="card card-chinese">
+                <header class="card-header">
+                    <p class="card-header-title"><i class="fas fa-edit me-2"></i>{{action}}文章</p>
+                </header>
+                <div class="card-content">
+                    <form id="article-form">
+                        <div class="columns">
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">固定链接 *</label>
+                                    <div class="field has-addons">
+                                        <div class="control is-expanded">
+                                            <input class="input" type="text" id="permalink" required pattern="[a-z0-9-]+">
+                                        </div>
+                                        <div class="control">
+                                            <button type="button" class="button" id="generate-slug-btn">
+                                                <i class="fas fa-magic"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="help">URL友好标识符</p>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">分类 *</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select id="label" required>
+                                                <option value="">选择分类...</option>
+                                                <option value="技术">技术</option>
+                                                <option value="生活">生活</option>
+                                                <option value="旅行">旅行</option>
+                                                <option value="美食">美食</option>
+                                                <option value="商业">商业</option>
+                                                <option value="科学">科学</option>
+                                                <option value="健康">健康</option>
+                                                <option value="其他">其他</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label">标题 *</label>
+                            <div class="control">
+                                <input class="input" type="text" id="title" required>
+                            </div>
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label">封面图片URL</label>
+                            <div class="control">
+                                <input class="input" type="url" id="img" placeholder="https://example.com/image.jpg">
+                            </div>
+                        </div>
+                        
+                        <div class="columns">
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">发布日期 *</label>
+                                    <div class="control">
+                                        <input class="input" type="datetime-local" id="createDate" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label class="label">状态</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select id="status">
+                                                <option value="published">已发布</option>
+                                                <option value="draft">草稿</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field">
+                            <label class="label">内容 *</label>
+                            <div class="control">
+                                <textarea id="content"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="field is-grouped is-grouped-right">
+                            <div class="control">
+                                <button type="button" class="button" onclick="window.history.back()">
+                                    <i class="fas fa-times me-1"></i> 取消
+                                </button>
+                            </div>
+                            <div class="control">
+                                <button type="submit" class="button btn-chinese">
+                                    <i class="fas fa-save me-1"></i> 保存文章
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        let easyMDE;
+        let isEditing = false;
+        let currentPermalink = '';
+
+        easyMDE = new EasyMDE({ 
+            element: document.getElementById('content'),
+            spellChecker: false,
+            status: false,
+            toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'side-by-side', 'fullscreen', '|', 'guide']
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const permalink = urlParams.get('permalink');
+        
+        if (permalink) {
+            isEditing = true;
+            currentPermalink = permalink;
+            loadArticle(permalink);
+        }
+
+        async function loadArticle(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                const article = await response.json();
+                
+                document.getElementById('permalink').value = article.permalink;
+                document.getElementById('permalink').readOnly = true;
+                document.getElementById('title').value = article.title;
+                document.getElementById('img').value = article.img || '';
+                document.getElementById('label').value = article.label;
+                document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+                document.getElementById('status').value = article.status || 'published';
+                easyMDE.value(article.content);
+            } catch (error) {
+                alert('加载文章失败');
+                window.location.href = '/admin/';
+            }
+        }
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                permalink: document.getElementById('permalink').value,
+                title: document.getElementById('title').value,
+                img: document.getElementById('img').value,
+                label: document.getElementById('label').value,
+                createDate: document.getElementById('createDate').value,
+                content: easyMDE.value(),
+                status: document.getElementById('status').value
+            };
+
+            try {
+                const url = isEditing ? '/api/articles/' + currentPermalink : '/api/articles';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert(isEditing ? '文章更新成功！' : '文章创建成功！');
+                    window.location.href = '/admin/';
+                } else {
+                    throw new Error('保存失败');
+                }
+            } catch (error) {
+                alert('保存文章失败');
+            }
+        });
+
+        document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+
+        function generateSlug(title) {
+            return title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+
+        document.getElementById('generate-slug-btn').addEventListener('click', () => {
+            const title = document.getElementById('title').value;
+            if (title) {
+                document.getElementById('permalink').value = generateSlug(title);
+            }
+        });
+
+        document.getElementById('title').addEventListener('blur', () => {
+            const permalinkField = document.getElementById('permalink');
+            if (!permalinkField.value && !isEditing) {
+                const title = document.getElementById('title').value;
+                if (title) permalinkField.value = generateSlug(title);
+            }
+        });
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
