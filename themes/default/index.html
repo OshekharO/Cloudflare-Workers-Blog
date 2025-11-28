@@ -715,13 +715,32 @@
                         .replace(/'/g, '&#039;');
                 };
 
+                // Escape for use in JavaScript strings (onclick handlers)
+                const escapeJs = (str) => {
+                    if (!str) return '';
+                    return String(str)
+                        .replace(/\\/g, '\\\\')
+                        .replace(/'/g, "\\'")
+                        .replace(/"/g, '\\"')
+                        .replace(/\n/g, '\\n')
+                        .replace(/\r/g, '\\r');
+                };
+
                 container.innerHTML = articles.map((article, index) => {
                     const isBookmarked = isArticleBookmarked(article.permalink);
+                    
+                    // HTML-safe versions for display
                     const safeTitle = escapeHtml(article.title);
                     const safeImg = escapeHtml(article.img);
                     const safePermalink = escapeHtml(article.permalink);
                     const safeLabel = escapeHtml(article.label);
                     const safeExcerpt = escapeHtml(article.excerpt);
+                    
+                    // JS-safe versions for onclick handlers
+                    const jsSafePermalink = escapeJs(article.permalink);
+                    const jsSafeTitle = escapeJs(article.title);
+                    const jsSafeImg = escapeJs(article.img);
+                    const jsSafeLabel = escapeJs(article.label);
 
                     const imgHtml = article.img ? 
                         `<div class="position-relative overflow-hidden">
@@ -735,7 +754,7 @@
                     <div class="col-md-6 col-lg-4" style="animation-delay: ${index * 0.1}s">
                         <div class="article-card h-100 position-relative">
                             <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
-                                    onclick="toggleBookmark('${safePermalink}', '${safeTitle.replace(/'/g, "\\'")}', '${safeImg}', '${safeLabel}')"
+                                    onclick="toggleBookmark('${jsSafePermalink}', '${jsSafeTitle}', '${jsSafeImg}', '${jsSafeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
                                 <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
                             </button>
@@ -753,7 +772,7 @@
                                     <a href="/article/${safePermalink}" class="btn btn-gradient btn-sm">
                                         <i class="fa-solid fa-book-open me-1"></i>Read More
                                     </a>
-                                    <button class="share-btn" onclick="shareArticle('${safePermalink}', '${safeTitle.replace(/'/g, "\\'")}')" title="Share article">
+                                    <button class="share-btn" onclick="shareArticle('${jsSafePermalink}', '${jsSafeTitle}')" title="Share article">
                                         <i class="fa-solid fa-share-nodes"></i>
                                     </button>
                                 </div>
