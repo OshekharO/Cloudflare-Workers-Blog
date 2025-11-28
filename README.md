@@ -6,7 +6,7 @@ A modern, serverless blog platform built with Cloudflare Workers and KV storage.
 
 - 🚀 **Serverless** - Built on Cloudflare Workers
 - 💾 **KV Storage** - Articles stored in Cloudflare KV
-- 🎨 **10 Beautiful Themes** - Default, Glassmor, Minimal, Modern, Journal, Lux, Darkly, Elegant, MDB Pro, Chinese
+- 🎨 **10 Beautiful Themes** - Default, Minimal, Modern, Journal, Lux, MDB Pro, Chinese
 - 📝 **Markdown Support** - Easy content creation with Markdown
 - 🔐 **Multi-Admin Support** - Role-based admin management
 - 📱 **Responsive Design** - Mobile-first, clean interface
@@ -23,13 +23,10 @@ A modern, serverless blog platform built with Cloudflare Workers and KV storage.
 | Theme | Description | Inspiration |
 |-------|-------------|-------------|
 | **default** | Modern Bootstrap-based theme with glass-morphism effects | Original design |
-| **glassmor** | Tailwind CSS theme with translucent glass-style cards | Glass UI trends |
 | **minimal** | Clean, lightweight Tailwind theme with subtle animations | Minimalist design |
 | **modern** | Professional Bootstrap theme with Playfair Display typography | Magazine layouts |
 | **journal** | Newspaper-style theme with clean serif typography | [Bootswatch Journal](https://bootswatch.com/journal/) |
 | **lux** | Elegant, premium theme with uppercase headings and dark accents | [Bootswatch Lux](https://bootswatch.com/lux/) |
-| **darkly** | Dark mode theme with neon cyan/purple accents | [Bootswatch Darkly](https://bootswatch.com/darkly/) |
-| **elegant** | Professional typography with optimal readability and card layouts | [xeu.life](https://xeu.life/) & Hugo themes |
 | **mdbpro** | Material Design theme using MDB UI Kit with gradient cards and modern dashboard | [MDB UI Kit](https://mdbootstrap.com/) |
 | **chinese** | Traditional Chinese aesthetic with Bulma CSS, calligraphy fonts, and red/gold color scheme | Chinese calligraphy & traditional art |
 
