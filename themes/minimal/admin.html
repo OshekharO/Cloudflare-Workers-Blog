@@ -728,7 +728,7 @@
             try {
                 const text = await file.text();
                 const articles = JSON.parse(text);
-                if (!Array.isArray(articles)) throw new Error('Invalid file format');
+                if (!Array.isArray(articles)) throw new Error('Invalid file format: Expected JSON array of articles');
 
                 const response = await fetch('/api/import', {
                     method: 'POST',
