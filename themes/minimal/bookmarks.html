@@ -5,85 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookmarks - {{siteName}}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            pink: '#fce4ec',
+                            purple: '#e8daef',
+                            blue: '#d6eaf8',
+                            mint: '#d5f5e3',
+                            peach: '#fdebd0',
+                            lavender: '#e8e0f0',
+                            rose: '#f8e1e7',
+                            sky: '#e0f2fe',
+                            cream: '#fef9e7',
+                            sage: '#e8f5e9'
+                        },
+                        accent: {
+                            primary: '#7c6f9f',
+                            secondary: '#e89bb0',
+                            tertiary: '#7fb8c9'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #e8daef 50%, #d6eaf8 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
         
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         
-        /* Card hover effects */
-        .article-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
         }
         
-        .article-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        .bookmark-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(124, 111, 159, 0.1);
         }
         
-        /* Button transitions */
-        button, a {
-            transition: all 0.2s ease;
+        .bookmark-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(124, 111, 159, 0.2);
+            border-color: rgba(232, 155, 176, 0.5);
         }
         
-        button:hover {
-            transform: translateY(-1px);
+        .card-image {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-image img {
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .bookmark-card:hover .card-image img {
+            transform: scale(1.08);
+        }
+        
+        .category-tag {
+            background: linear-gradient(135deg, #fdebd0 0%, #fef9e7 100%);
+            color: #d68910;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6b5f8e 0%, #8a7eb1 100%);
+            box-shadow: 0 8px 25px rgba(124, 111, 159, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-delete {
+            background: linear-gradient(135deg, #f8e1e7 0%, #fce4ec 100%);
+            color: #c0392b;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .footer-glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
     {{codeBeforHead}}
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <nav class="bg-white shadow-sm border-b border-gray-100">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-14">
-                <a href="/" class="text-lg font-bold gradient-text">{{siteName}}</a>
-                <div class="flex space-x-2">
-                    <a href="/" class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors">
-                        <i class="ri-home-line mr-1"></i>Home
+<body class="flex flex-col min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-nav sticky top-0 z-50 border-b border-white/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                        <i class="ri-quill-pen-line text-white text-lg md:text-xl"></i>
+                    </div>
+                    <span class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">{{siteName}}</span>
+                </a>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-2 md:space-x-3">
+                    <a href="/" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white/80 hover:bg-white text-gray-700 font-medium transition-all shadow-sm hover:shadow-md">
+                        <i class="ri-home-4-line text-accent-primary"></i>
+                        <span class="hidden sm:inline">Home</span>
                     </a>
-                    <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:shadow-lg transition-all duration-200">
-                        <i class="ri-admin-line mr-1"></i>Admin
+                    <a href="/admin/" class="btn-primary text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center shadow-md">
+                        <i class="ri-dashboard-line mr-2"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="py-8">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-                <h1 class="text-lg font-bold text-gray-900 mb-1">
-                    <i class="ri-bookmark-line mr-2 text-yellow-500"></i>My Bookmarks
-                </h1>
-                <p class="text-gray-600 text-sm">Articles you've saved for later</p>
+    <main class="flex-1 py-8 md:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header Card -->
+            <div class="glass-card p-6 md:p-8 mb-8 shadow-lg">
+                <div class="flex items-center space-x-4">
+                    <div class="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-pastel-cream to-pastel-peach flex items-center justify-center shadow-lg">
+                        <i class="ri-bookmark-fill text-2xl md:text-3xl text-yellow-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">My Bookmarks</h1>
+                        <p class="text-gray-500">Articles you've saved for later</p>
+                    </div>
+                </div>
             </div>
 
-            <div id="bookmarks-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Bookmarks Grid -->
+            <div id="bookmarks-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 <!-- Loading State -->
-                <div class="col-span-full flex justify-center items-center py-12">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div class="col-span-full flex flex-col justify-center items-center py-16">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center animate-pulse mb-4">
+                        <i class="ri-loader-4-line text-white text-2xl animate-spin"></i>
+                    </div>
+                    <p class="text-gray-500 font-medium">Loading bookmarks...</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-200 py-6">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-600 text-xs">{{copyRight}}</p>
+    <!-- Footer -->
+    <footer class="footer-glass border-t border-white/30 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
+                        <i class="ri-quill-pen-line text-white"></i>
+                    </div>
+                    <span class="text-gray-700 font-semibold">{{siteName}}</span>
+                </div>
+                <p class="text-gray-500 text-sm">{{copyRight}}</p>
+            </div>
         </div>
     </footer>
 
     <script>
         function getBookmarks() {
-            return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+            try {
+                return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+            } catch {
+                return [];
+            }
         }
 
         function loadBookmarks() {
@@ -92,12 +218,14 @@
             
             if (bookmarks.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-full text-center py-8">
-                        <i class="ri-bookmark-line text-4xl text-gray-300 mb-3"></i>
-                        <h3 class="text-base font-semibold text-gray-600 mb-1">No bookmarks yet</h3>
-                        <p class="text-gray-500 text-sm mb-3">Start bookmarking articles to see them here!</p>
-                        <a href="/" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-blue-700 transition-colors">
-                            Browse Articles
+                    <div class="col-span-full text-center py-16">
+                        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-pastel-cream to-pastel-peach mx-auto flex items-center justify-center mb-5">
+                            <i class="ri-bookmark-line text-4xl text-yellow-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">No bookmarks yet</h3>
+                        <p class="text-gray-500 mb-6 max-w-md mx-auto">Start bookmarking articles you love and they'll appear here for easy access!</p>
+                        <a href="/" class="btn-primary text-white px-6 py-3 rounded-xl inline-flex items-center font-semibold shadow-lg">
+                            <i class="ri-compass-3-line mr-2"></i>Browse Articles
                         </a>
                     </div>
                 `;
@@ -106,28 +234,32 @@
 
             container.innerHTML = bookmarks.map(bookmark => {
                 const imgHtml = bookmark.img ? 
-                    `<img src="${bookmark.img}" class="w-full h-32 object-cover rounded-t-lg" alt="${bookmark.title}">` : 
-                    `<div class="w-full h-32 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-t-lg flex items-center justify-center">
-                        <i class="ri-bookmark-line text-2xl text-white"></i>
+                    `<img src="${bookmark.img}" class="w-full h-44 object-cover" alt="${bookmark.title}" loading="lazy">` : 
+                    `<div class="w-full h-44 bg-gradient-to-br from-pastel-cream via-pastel-peach to-pastel-rose flex items-center justify-center">
+                        <i class="ri-bookmark-fill text-4xl text-white/80"></i>
                      </div>`;
                 
                 return `
-                <article class="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
-                    ${imgHtml}
-                    <div class="p-4">
-                        <h3 class="font-bold text-sm text-gray-900 mb-2 line-clamp-2 leading-snug">${bookmark.title}</h3>
-                        <div class="flex items-center text-xs text-gray-500 mb-3">
-                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full">${bookmark.label}</span>
-                            <span class="mx-1.5">•</span>
-                            <i class="ri-bookmark-fill text-yellow-500 text-xs"></i>
-                            <span class="ml-1">Saved</span>
+                <article class="bookmark-card flex flex-col h-full">
+                    <div class="card-image relative flex-shrink-0">
+                        ${imgHtml}
+                        <div class="absolute top-4 left-4">
+                            <span class="category-tag px-3 py-1.5 rounded-xl text-xs font-semibold shadow-md">${bookmark.label}</span>
                         </div>
-                        <div class="flex space-x-2">
-                            <a href="/article/${bookmark.permalink}" class="flex-1 bg-blue-600 text-white text-center px-3 py-1.5 rounded-lg text-xs hover:bg-blue-700 transition-colors">
-                                Read Article
+                        <div class="absolute top-4 right-4">
+                            <div class="w-9 h-9 rounded-xl bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-md">
+                                <i class="ri-bookmark-fill text-yellow-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3 class="font-bold text-gray-900 mb-4 line-clamp-2 leading-snug text-lg">${bookmark.title}</h3>
+                        <div class="flex gap-3 mt-auto">
+                            <a href="/article/${bookmark.permalink}" class="btn-primary flex-1 text-white text-center px-4 py-2.5 rounded-xl text-sm font-semibold">
+                                <i class="ri-book-read-line mr-1"></i>Read
                             </a>
-                            <button onclick="removeBookmark('${bookmark.permalink}')" class="bg-red-100 text-red-700 p-1.5 rounded-lg hover:bg-red-200 transition-colors" title="Remove bookmark">
-                                <i class="ri-delete-bin-line text-sm"></i>
+                            <button onclick="removeBookmark('${bookmark.permalink}')" class="btn-delete w-11 h-11 rounded-xl flex items-center justify-center" title="Remove bookmark">
+                                <i class="ri-delete-bin-line"></i>
                             </button>
                         </div>
                     </div>
@@ -144,18 +276,40 @@
             showNotification('Bookmark removed');
         }
 
-        function showNotification(message) {
+        function showNotification(message, type = 'warning') {
+            document.querySelectorAll('.notification').forEach(el => el.remove());
+            
+            const colors = {
+                success: 'from-green-400 to-emerald-500',
+                warning: 'from-yellow-400 to-orange-500',
+                error: 'from-red-400 to-rose-500'
+            };
+            
+            const icons = {
+                success: 'ri-check-line',
+                warning: 'ri-bookmark-line',
+                error: 'ri-error-warning-line'
+            };
+            
             const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg bg-yellow-500 text-white font-medium z-50';
-            notification.textContent = message;
+            notification.className = `notification fixed top-24 right-6 px-5 py-3.5 rounded-2xl shadow-xl text-white font-medium z-50 flex items-center gap-2 bg-gradient-to-r ${colors[type] || colors.warning} transform transition-all duration-500`;
+            notification.innerHTML = `<i class="${icons[type] || icons.warning} text-lg"></i>${message}`;
+            
             document.body.appendChild(notification);
             
             setTimeout(() => {
-                document.body.removeChild(notification);
+                notification.style.transform = 'translateX(120%)';
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
             }, 3000);
         }
 
-        loadBookmarks();
+        // Load bookmarks on page load
+        document.addEventListener('DOMContentLoaded', loadBookmarks);
     </script>
     
     {{codeBeforBody}}
