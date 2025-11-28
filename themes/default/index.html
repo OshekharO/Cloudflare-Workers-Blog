@@ -7,64 +7,140 @@
     <meta name="description" content="{{siteDescription}}">
     <meta name="keywords" content="{{keyWords}}">
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* CSS Variables for Light/Dark Themes */
         :root {
             --primary-color: #6366f1;
             --secondary-color: #8b5cf6;
             --accent-color: #06b6d4;
-            --dark-color: #1e293b;
-            --light-color: #f8fafc;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            
+            /* Light mode colors */
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --navbar-bg: rgba(255, 255, 255, 0.95);
+            --footer-bg: rgba(30, 41, 59, 0.95);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --shadow-hover: rgba(0, 0, 0, 0.15);
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --navbar-bg: rgba(30, 41, 59, 0.98);
+            --footer-bg: rgba(15, 23, 42, 0.98);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --shadow-hover: rgba(0, 0, 0, 0.4);
+        }
+        
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
+            color: var(--text-primary);
         }
         
+        /* Glass Card Effects */
         .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px var(--shadow-color);
         }
         
+        /* Navbar Styling */
         .navbar-glass {
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--navbar-bg) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            box-shadow: 0 2px 20px var(--shadow-color);
         }
         
-        .article-card {
+        /* Theme Toggle Button */
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
+            font-size: 1.1rem;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: 0 4px 20px var(--shadow-hover);
+        }
+        
+        /* Article Card Animations */
+        .article-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 16px;
             overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .article-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px var(--shadow-hover);
         }
         
         .featured-img {
-            height: 150px;
+            height: 180px;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .article-card:hover .featured-img {
-            transform: scale(1.1);
+            transform: scale(1.08);
         }
         
+        .img-placeholder {
+            height: 180px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .img-placeholder i {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Gradient Text */
         .gradient-text {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
@@ -72,96 +148,282 @@
             background-clip: text;
         }
         
+        /* Tag Badge */
         .tag-badge {
             background: linear-gradient(135deg, var(--accent-color), #3b82f6);
             color: white;
-            font-size: 0.65rem;
-            padding: 3px 8px;
-            border-radius: 12px;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
+        /* Hero Section */
         .hero-section {
-            padding: 60px 0 30px;
+            padding: 80px 0 40px;
             text-align: center;
             color: white;
         }
         
         .hero-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.8s ease-out;
         }
         
         .hero-subtitle {
-            font-size: 0.95rem;
-            font-weight: 300;
+            font-size: 1.1rem;
+            font-weight: 400;
             opacity: 0.9;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
         }
         
+        /* Content Section */
         .content-section {
-            padding: 30px 0;
+            padding: 40px 0;
         }
         
+        /* Footer */
         .footer {
-            background: rgba(30, 41, 59, 0.95);
+            background: var(--footer-bg);
             color: white;
-            padding: 18px 0;
-            margin-top: 30px;
-            font-size: 0.8rem;
+            padding: 24px 0;
+            margin-top: 40px;
+            font-size: 0.85rem;
         }
         
+        [data-bs-theme="dark"] .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Bookmark Button */
         .bookmark-btn {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.9);
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.95);
             border: none;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 10;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
         
         .bookmark-btn:hover {
-            transform: scale(1.1);
-            background: white;
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
         
         .bookmark-btn.bookmarked {
-            color: #f59e0b;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
         }
         
+        /* Share Button */
         .share-btn {
             background: none;
             border: none;
-            color: #6b7280;
+            color: var(--text-secondary);
             transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 50%;
         }
         
         .share-btn:hover {
             color: var(--primary-color);
-            transform: scale(1.1);
+            transform: scale(1.2);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        /* Primary Button */
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+        
+        /* Card Body */
+        .card-body-custom {
+            padding: 1.25rem;
+        }
+        
+        .card-title-custom {
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .card-text-custom {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .card-meta {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        /* Staggered animation for cards */
+        .article-card {
+            animation: fadeInUp 0.6s ease-out both;
+        }
+        
+        /* Pagination Styles */
+        .pagination .page-link {
+            border: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 4px;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .pagination .page-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
         }
         
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
             }
             
             .hero-subtitle {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
             }
             
             .hero-section {
-                padding: 50px 0 25px;
+                padding: 70px 0 30px;
             }
+            
+            .featured-img, .img-placeholder {
+                height: 160px;
+            }
+            
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 1.5rem;
+            }
+            
+            .hero-section {
+                padding: 60px 0 25px;
+            }
+            
+            .content-section {
+                padding: 25px 0;
+            }
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Modal Styling for Dark Mode */
+        [data-bs-theme="dark"] .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+        }
+        
+        [data-bs-theme="dark"] .modal-header,
+        [data-bs-theme="dark"] .modal-footer {
+            border-color: var(--card-border);
         }
     </style>
     
@@ -171,16 +433,23 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-glass fixed-top py-2">
         <div class="container">
-            <a class="navbar-brand fw-bold gradient-text" href="/" style="font-size: 1.1rem;">{{siteName}}</a>
+            <a class="navbar-brand fw-bold gradient-text" href="/" style="font-size: 1.2rem;">
+                <i class="fa-solid fa-blog me-2"></i>{{siteName}}
+            </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto gap-2 align-items-center">
-                    <a href="/bookmarks" class="btn btn-outline-secondary btn-sm" style="font-size: 0.8rem;">
-                        <i class="bi bi-bookmark me-1"></i>Bookmarks
+                    <a href="/bookmarks" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-bookmark me-1"></i>Bookmarks
                     </a>
-                    <a href="/admin/" class="btn btn-primary btn-sm" style="font-size: 0.8rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none;">Admin</a>
+                    <a href="/admin/" class="btn btn-gradient btn-sm rounded-pill px-3">
+                        <i class="fa-solid fa-gauge-high me-1"></i>Admin
+                    </a>
+                    <button class="theme-toggle ms-2" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
+                        <i class="fa-solid fa-moon" id="theme-icon"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -189,7 +458,9 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <h1 class="hero-title">{{siteName}}</h1>
+            <h1 class="hero-title">
+                <i class="fa-solid fa-feather-pointed me-2"></i>{{siteName}}
+            </h1>
             <p class="hero-subtitle">{{siteDescription}}</p>
         </div>
     </section>
@@ -198,10 +469,9 @@
     <section class="content-section">
         <div class="container">
             <div class="row g-4" id="articles-container">
-                <div class="col-12 text-center">
-                    <div class="spinner-border text-light" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+                <div class="col-12 text-center py-5">
+                    <div class="loading-spinner mx-auto"></div>
+                    <p class="text-white mt-3 opacity-75">Loading articles...</p>
                 </div>
             </div>
             <!-- Pagination -->
@@ -211,30 +481,28 @@
 
     <!-- Share Modal -->
     <div class="modal fade" id="shareModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content glass-card">
-                <div class="modal-header border-bottom-0 py-2">
-                    <h6 class="modal-title">Share Article</h6>
-                    <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-bottom-0 py-3">
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-share-nodes me-2 gradient-text"></i>Share Article
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body pt-0 pb-3">
-                    <p id="share-article-title" class="text-muted small mb-3" style="font-size: 0.8rem;"></p>
-                    <div class="d-flex justify-content-around gap-1">
-                        <button onclick="shareOnPlatform('twitter')" class="btn btn-sm btn-outline-primary d-flex flex-column align-items-center p-2" style="min-width: 55px;">
-                            <i class="bi bi-twitter"></i>
-                            <small style="font-size: 0.65rem;">Twitter</small>
+                <div class="modal-body pb-4">
+                    <p id="share-article-title" class="text-muted mb-4"></p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button onclick="shareOnPlatform('twitter')" class="btn btn-lg btn-outline-info rounded-circle p-3" title="Share on X (Twitter)">
+                            <i class="fa-brands fa-x-twitter fa-lg"></i>
                         </button>
-                        <button onclick="shareOnPlatform('facebook')" class="btn btn-sm btn-outline-primary d-flex flex-column align-items-center p-2" style="min-width: 55px;">
-                            <i class="bi bi-facebook"></i>
-                            <small style="font-size: 0.65rem;">Facebook</small>
+                        <button onclick="shareOnPlatform('facebook')" class="btn btn-lg btn-outline-primary rounded-circle p-3" title="Share on Facebook">
+                            <i class="fa-brands fa-facebook-f fa-lg"></i>
                         </button>
-                        <button onclick="shareOnPlatform('linkedin')" class="btn btn-sm btn-outline-primary d-flex flex-column align-items-center p-2" style="min-width: 55px;">
-                            <i class="bi bi-linkedin"></i>
-                            <small style="font-size: 0.65rem;">LinkedIn</small>
+                        <button onclick="shareOnPlatform('linkedin')" class="btn btn-lg btn-outline-primary rounded-circle p-3" style="--bs-btn-hover-bg: #0a66c2; --bs-btn-hover-border-color: #0a66c2;" title="Share on LinkedIn">
+                            <i class="fa-brands fa-linkedin-in fa-lg"></i>
                         </button>
-                        <button onclick="copyArticleLink()" class="btn btn-sm btn-outline-secondary d-flex flex-column align-items-center p-2" style="min-width: 55px;">
-                            <i class="bi bi-link-45deg"></i>
-                            <small style="font-size: 0.65rem;">Copy</small>
+                        <button onclick="copyArticleLink()" class="btn btn-lg btn-outline-secondary rounded-circle p-3" title="Copy link">
+                            <i class="fa-solid fa-link fa-lg"></i>
                         </button>
                     </div>
                 </div>
@@ -244,15 +512,56 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container text-center">
-            <div>{{copyRight}}</div>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    <span class="opacity-75">{{copyRight}}</span>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="/rss.xml" class="text-white-50 me-3 text-decoration-none" title="RSS Feed">
+                        <i class="fa-solid fa-rss"></i>
+                    </a>
+                    <a href="/sitemap.xml" class="text-white-50 text-decoration-none" title="Sitemap">
+                        <i class="fa-solid fa-sitemap"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5.3.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Theme Toggle Functionality
+        function getPreferredTheme() {
+            const stored = localStorage.getItem('theme');
+            if (stored) return stored;
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateThemeIcon(theme);
+        }
+        
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+        }
+        
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-bs-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            setTheme(next);
+        }
+        
+        // Initialize theme on load
+        setTheme(getPreferredTheme());
+
         let currentSharePermalink = '';
         let currentShareTitle = '';
 
@@ -330,22 +639,31 @@
         }
 
         function showNotification(message, type = 'info') {
-            // Create toast notification
+            const iconMap = {
+                success: 'fa-solid fa-circle-check',
+                warning: 'fa-solid fa-triangle-exclamation',
+                info: 'fa-solid fa-circle-info',
+                danger: 'fa-solid fa-circle-xmark'
+            };
+            
             const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} border-0`;
+            toast.className = `toast align-items-center text-bg-${type} border-0`;
             toast.innerHTML = `
                 <div class="d-flex">
-                    <div class="toast-body">${message}</div>
+                    <div class="toast-body">
+                        <i class="${iconMap[type] || iconMap.info} me-2"></i>${message}
+                    </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
             `;
             
             const container = document.createElement('div');
             container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '1100';
             container.appendChild(toast);
             document.body.appendChild(container);
             
-            const bsToast = new bootstrap.Toast(toast);
+            const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
             bsToast.show();
             
             toast.addEventListener('hidden.bs.toast', () => {
@@ -371,11 +689,14 @@
                 
                 if (articles.length === 0) {
                     container.innerHTML = `
-                        <div class="col-12 text-center">
+                        <div class="col-12 text-center fade-in">
                             <div class="glass-card p-5">
-                                <i class="bi bi-newspaper display-1 text-muted mb-3"></i>
-                                <h3 class="text-muted">No Articles Yet</h3>
-                                <p class="text-muted">Check back later for new content!</p>
+                                <i class="fa-solid fa-newspaper fa-4x text-muted mb-4"></i>
+                                <h3 class="text-muted mb-3">No Articles Yet</h3>
+                                <p class="text-muted mb-4">Check back later for new content!</p>
+                                <a href="/admin/" class="btn btn-gradient">
+                                    <i class="fa-solid fa-plus me-2"></i>Create Your First Article
+                                </a>
                             </div>
                         </div>
                     `;
@@ -394,40 +715,65 @@
                         .replace(/'/g, '&#039;');
                 };
 
-                container.innerHTML = articles.map(article => {
+                // Escape for use in JavaScript strings (onclick handlers)
+                const escapeJs = (str) => {
+                    if (!str) return '';
+                    return String(str)
+                        .replace(/\\/g, '\\\\')
+                        .replace(/'/g, "\\'")
+                        .replace(/"/g, '\\"')
+                        .replace(/\n/g, '\\n')
+                        .replace(/\r/g, '\\r');
+                };
+
+                container.innerHTML = articles.map((article, index) => {
                     const isBookmarked = isArticleBookmarked(article.permalink);
+                    
+                    // HTML-safe versions for display
                     const safeTitle = escapeHtml(article.title);
                     const safeImg = escapeHtml(article.img);
                     const safePermalink = escapeHtml(article.permalink);
                     const safeLabel = escapeHtml(article.label);
                     const safeExcerpt = escapeHtml(article.excerpt);
+                    
+                    // JS-safe versions for onclick handlers
+                    const jsSafePermalink = escapeJs(article.permalink);
+                    const jsSafeTitle = escapeJs(article.title);
+                    const jsSafeImg = escapeJs(article.img);
+                    const jsSafeLabel = escapeJs(article.label);
 
                     const imgHtml = article.img ? 
-                        `<img src="${safeImg}" class="featured-img w-100" alt="${safeTitle}">` : 
-                        `<div class="featured-img bg-gradient d-flex align-items-center justify-content-center">
-                            <i class="bi bi-file-text display-5 text-white"></i>
-                         </div>`;
+                        `<div class="position-relative overflow-hidden">
+                            <img src="${safeImg}" class="featured-img w-100" alt="${safeTitle}" loading="lazy">
+                        </div>` : 
+                        `<div class="img-placeholder">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>`;
                     
                     return `
-                    <div class="col-md-6 col-lg-4">
-                        <div class="article-card glass-card h-100 position-relative">
+                    <div class="col-md-6 col-lg-4" style="animation-delay: ${index * 0.1}s">
+                        <div class="article-card h-100 position-relative">
                             <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" 
-                                    onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
+                                    onclick="toggleBookmark('${jsSafePermalink}', '${jsSafeTitle}', '${jsSafeImg}', '${jsSafeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                <i class="bi bi-bookmark${isBookmarked ? '-fill' : ''}"></i>
+                                <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-bookmark"></i>
                             </button>
                             ${imgHtml}
-                            <div class="card-body p-3 d-flex flex-column">
-                                <h6 class="card-title fw-bold text-dark mb-2" style="font-size: 0.95rem; line-height: 1.4;">${safeTitle}</h6>
-                                <p class="card-text text-muted mb-2" style="font-size: 0.75rem;">
-                                    <i class="bi bi-calendar me-1"></i> ${new Date(article.createDate).toLocaleDateString()} 
-                                    <span class="tag-badge ms-2">${safeLabel}</span>
-                                </p>
-                                <p class="card-text text-muted flex-grow-1" style="font-size: 0.85rem; line-height: 1.5;">${safeExcerpt}</p>
-                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                    <a href="/article/${safePermalink}" class="btn btn-outline-dark btn-sm" style="font-size: 0.8rem;">Read More</a>
-                                    <button class="share-btn" onclick="shareArticle('${safePermalink}', '${safeTitle}')" title="Share article">
-                                        <i class="bi bi-share"></i>
+                            <div class="card-body-custom d-flex flex-column">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="tag-badge">${safeLabel}</span>
+                                    <span class="card-meta">
+                                        <i class="fa-regular fa-calendar me-1"></i>${new Date(article.createDate).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <h5 class="card-title-custom">${safeTitle}</h5>
+                                <p class="card-text-custom flex-grow-1 mb-3">${safeExcerpt}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top" style="border-color: var(--card-border) !important;">
+                                    <a href="/article/${safePermalink}" class="btn btn-gradient btn-sm">
+                                        <i class="fa-solid fa-book-open me-1"></i>Read More
+                                    </a>
+                                    <button class="share-btn" onclick="shareArticle('${jsSafePermalink}', '${jsSafeTitle}')" title="Share article">
+                                        <i class="fa-solid fa-share-nodes"></i>
                                     </button>
                                 </div>
                             </div>
@@ -441,11 +787,14 @@
                 console.error('Error loading articles:', error);
                 const container = document.getElementById('articles-container');
                 container.innerHTML = `
-                    <div class="col-12 text-center">
+                    <div class="col-12 text-center fade-in">
                         <div class="glass-card p-5">
-                            <i class="bi bi-exclamation-triangle display-1 text-danger mb-3"></i>
-                            <h3 class="text-danger">Error Loading Articles</h3>
-                            <p class="text-muted">Please try again later.</p>
+                            <i class="fa-solid fa-triangle-exclamation fa-4x text-danger mb-4"></i>
+                            <h3 class="text-danger mb-3">Error Loading Articles</h3>
+                            <p class="text-muted mb-4">Please try again later.</p>
+                            <button onclick="loadArticles()" class="btn btn-gradient">
+                                <i class="fa-solid fa-rotate me-2"></i>Retry
+                            </button>
                         </div>
                     </div>
                 `;
@@ -461,12 +810,12 @@
                 return;
             }
 
-            let paginationHtml = '<nav aria-label="Article pagination"><ul class="pagination justify-content-center">';
+            let paginationHtml = '<nav aria-label="Article pagination"><ul class="pagination justify-content-center mb-2">';
             
             // Previous button
             paginationHtml += `<li class="page-item ${!pagination.hasPrevPage ? 'disabled' : ''}">
                 <a class="page-link" href="#" onclick="loadArticles(${pagination.page - 1}); return false;" ${!pagination.hasPrevPage ? 'tabindex="-1"' : ''}>
-                    <i class="bi bi-chevron-left"></i> Previous
+                    <i class="fa-solid fa-chevron-left me-1"></i>Prev
                 </a>
             </li>`;
 
@@ -497,12 +846,14 @@
             // Next button
             paginationHtml += `<li class="page-item ${!pagination.hasNextPage ? 'disabled' : ''}">
                 <a class="page-link" href="#" onclick="loadArticles(${pagination.page + 1}); return false;" ${!pagination.hasNextPage ? 'tabindex="-1"' : ''}>
-                    Next <i class="bi bi-chevron-right"></i>
+                    Next<i class="fa-solid fa-chevron-right ms-1"></i>
                 </a>
             </li>`;
 
             paginationHtml += '</ul></nav>';
-            paginationHtml += `<p class="text-center text-white-50 mt-2">Page ${pagination.page} of ${pagination.totalPages} (${pagination.totalArticles} articles)</p>`;
+            paginationHtml += `<p class="text-center text-white-50 small mb-0">
+                <i class="fa-solid fa-layer-group me-1"></i>Page ${pagination.page} of ${pagination.totalPages} (${pagination.totalArticles} articles)
+            </p>`;
 
             paginationContainer.innerHTML = paginationHtml;
         }

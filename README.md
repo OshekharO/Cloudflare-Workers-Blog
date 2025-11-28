@@ -1,22 +1,56 @@
 # CF Workers Blog
 
-A modern, serverless blog platform built with Cloudflare Workers and KV storage. Features remote theme support, Markdown editing, multi-admin support, and a clean responsive interface.
+A modern, serverless blog platform built with Cloudflare Workers and KV storage. Features remote theme support, Markdown editing, multi-admin support, and a clean responsive interface with **dark/light mode toggle**.
+
+## ✨ New in Latest Update
+
+- 🌓 **Dark/Light Mode Toggle** - System preference detection with manual toggle
+- 🎨 **Font Awesome 6.5.1 Icons** - Modern, scalable vector icons
+- 📱 **Enhanced Responsive Design** - Perfectly aligned components across all devices
+- ✨ **Smooth Animations** - CSS transitions and keyframe animations
+- 🎭 **Professional Color Scheme** - Modern gradient-based design language
+- 🔧 **Bootstrap 5.3.3** - Latest Bootstrap version with improved components
+- 💅 **Custom CSS Improvements** - Glass-morphism effects and modern styling
 
 ## Features
 
-- 🚀 **Serverless** - Built on Cloudflare Workers
+- 🚀 **Serverless** - Built on Cloudflare Workers edge computing
 - 💾 **KV Storage** - Articles stored in Cloudflare KV
-- 🎨 **10 Beautiful Themes** - Default, Minimal, Modern, Journal, Lux, MDB Pro, Chinese
-- 📝 **Markdown Support** - Easy content creation with Markdown
-- 🔐 **Multi-Admin Support** - Role-based admin management
-- 📱 **Responsive Design** - Mobile-first, clean interface
+- 🎨 **Beautiful Themes** - Default, Minimal, Modern, Journal, Lux, MDB Pro, Chinese
+- 📝 **Markdown Support** - Easy content creation with EasyMDE editor
+- 🔐 **Multi-Admin Support** - Role-based admin management (superadmin/admin)
+- 📱 **Responsive Design** - Mobile-first, perfectly aligned interface
 - ⚡ **Fast** - Edge computing with global CDN
-- 📊 **Export/Import** - Backup and migrate your content
-- 📡 **RSS Feed** - Automatic RSS feed generation
-- 🗺️ **Sitemap** - SEO-friendly XML sitemap
-- 📚 **Draft Posts** - Save articles as drafts
-- 🔖 **Bookmarks** - Client-side article bookmarking
-- 📤 **Social Sharing** - Share articles on social media
+- 📊 **Export/Import** - Backup and migrate your content easily
+- 📡 **RSS Feed** - Automatic RSS 2.0 feed generation
+- 🗺️ **Sitemap** - SEO-friendly XML sitemap with image support
+- 📚 **Draft Posts** - Save articles as drafts before publishing
+- 🔖 **Bookmarks** - Client-side article bookmarking with localStorage
+- 📤 **Social Sharing** - Share articles on Twitter/X, Facebook, LinkedIn
+- 🌓 **Dark/Light Mode** - Theme toggle with system preference detection
+
+## 🎨 UI/UX Improvements
+
+### Theme Toggle
+The blog now includes a beautiful dark/light mode toggle that:
+- Detects system preference on first visit
+- Remembers user preference in localStorage
+- Features smooth 180° rotation animation on hover
+- Persists across all pages
+
+### Modern Design Elements
+- **Glass-morphism cards** with backdrop blur effects
+- **Gradient backgrounds** for visual depth
+- **Smooth hover animations** on interactive elements
+- **Professional typography** with Inter font family
+- **Consistent spacing and alignment** across components
+
+### Admin Dashboard
+- **Modern sidebar navigation** with gradient background
+- **Stats cards** with hover lift effects
+- **Tabbed interface** for articles and drafts
+- **Tool cards** with icon wrappers
+- **Responsive table layouts** for user management
 
 ## Available Themes
 
@@ -267,9 +301,61 @@ This project is based on initial code from [gdtool/cloudflare-workers-blog](http
 Special thanks to:
 - [gdtool](https://github.com/gdtool) for the original implementation
 - [Cloudflare](https://cloudflare.com) for Workers and KV storage
-- [Materialize CSS](https://materializecss.com) for UI components
+- [Bootstrap](https://getbootstrap.com) for UI framework (v5.3.3)
+- [Font Awesome](https://fontawesome.com) for icons (v6.5.1)
 - [Marked.js](https://marked.js.org) for Markdown parsing
 - [EasyMDE](https://github.com/Ionaru/easy-markdown-editor) for Markdown editor
+- [Highlight.js](https://highlightjs.org) for syntax highlighting
+
+## 💡 Suggestions for Future Improvements
+
+### Performance Enhancements
+- [ ] Implement image lazy loading with blur placeholders
+- [ ] Add service worker for offline support
+- [ ] Implement article content caching with cache API
+- [ ] Add prefetching for faster navigation
+
+### Features to Consider
+- [ ] Comment system integration (Disqus, Utterances, or custom)
+- [ ] Search functionality with full-text search
+- [ ] Tags/categories with tag cloud visualization
+- [ ] Related articles suggestions
+- [ ] Reading time estimation
+- [ ] Table of contents for long articles
+- [ ] Newsletter subscription integration
+- [ ] Analytics dashboard for article views
+- [ ] Scheduled publishing for articles
+- [ ] Multi-language support (i18n)
+
+### Admin Dashboard Improvements
+- [ ] Drag-and-drop article reordering
+- [ ] Bulk actions for articles (publish, delete, export)
+- [ ] Media library for image management
+- [ ] Article revision history
+- [ ] Real-time collaboration (WebSocket-based)
+- [ ] Dashboard analytics with charts
+- [ ] Custom field support for articles
+
+### Security Enhancements
+- [ ] Two-factor authentication (2FA)
+- [ ] Rate limiting for API endpoints
+- [ ] CSRF token protection
+- [ ] Content Security Policy headers
+- [ ] Audit logging for admin actions
+
+### SEO Improvements
+- [ ] Open Graph meta tags for social sharing
+- [ ] Twitter Cards support
+- [ ] Structured data (JSON-LD) for articles
+- [ ] Canonical URL management
+- [ ] Breadcrumb navigation
+
+### Developer Experience
+- [ ] TypeScript migration for type safety
+- [ ] Unit and integration tests
+- [ ] CI/CD pipeline with GitHub Actions
+- [ ] Documentation site with examples
+- [ ] Theme customization GUI
 
 ## License
 

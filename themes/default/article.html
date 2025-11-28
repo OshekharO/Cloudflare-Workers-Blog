@@ -5,224 +5,368 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}} - {{siteName}}</title>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Marked.js for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
-    <!-- Highlight.js for syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- Highlight.js for syntax highlighting - using a theme that works for both light/dark modes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" id="hljs-theme">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     
     <style>
+        /* CSS Variables for Light/Dark Themes */
         :root {
             --primary-color: #6366f1;
             --secondary-color: #8b5cf6;
             --accent-color: #06b6d4;
-            --dark-color: #1e293b;
-            --light-color: #f8fafc;
+            
+            /* Light mode colors */
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --card-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --navbar-bg: rgba(255, 255, 255, 0.95);
+            --footer-bg: rgba(30, 41, 59, 0.95);
+            --code-bg: #f3f4f6;
+            --pre-bg: #1f2937;
+            --blockquote-bg: rgba(99, 102, 241, 0.05);
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --card-bg: rgba(30, 41, 59, 0.98);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --navbar-bg: rgba(30, 41, 59, 0.98);
+            --footer-bg: rgba(15, 23, 42, 0.98);
+            --code-bg: #334155;
+            --pre-bg: #0f172a;
+            --blockquote-bg: rgba(99, 102, 241, 0.1);
+        }
+        
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
+            color: var(--text-primary);
         }
         
         .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
         
         .navbar-glass {
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--navbar-bg) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
         
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+        
+        /* Article Content */
         .article-content {
-            line-height: 1.7;
-            font-size: 0.95rem;
-            color: #374151;
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: var(--text-primary);
         }
         
         .article-content img {
             max-width: 100%;
             height: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin: 1.25rem 0;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            margin: 1.5rem 0;
         }
         
-        /* Proper heading sizes */
         .article-content h1 {
-            font-size: 1.75rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--dark-color);
-            margin: 1.75rem 0 0.875rem 0;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 0.4rem;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-color);
         }
         
         .article-content h2 {
-            font-size: 1.375rem;
+            font-size: 1.6rem;
             font-weight: 600;
-            color: var(--dark-color);
-            margin: 1.5rem 0 0.875rem 0;
-            border-left: 3px solid var(--primary-color);
-            padding-left: 0.875rem;
+            color: var(--text-primary);
+            margin: 1.75rem 0 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--primary-color);
         }
         
         .article-content h3 {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: var(--dark-color);
-            margin: 1.25rem 0 0.625rem 0;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem;
         }
         
         .article-content h4 {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--dark-color);
-            margin: 1rem 0 0.5rem 0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.6rem;
         }
         
         .article-content p {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
+            color: var(--text-secondary);
         }
         
         .article-content blockquote {
-            border-left: 3px solid var(--primary-color);
-            padding: 0.75rem 1.25rem;
-            margin: 1.25rem 0;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
             font-style: italic;
-            color: #6b7280;
-            background: rgba(99, 102, 241, 0.05);
-            border-radius: 0 6px 6px 0;
-            font-size: 0.9rem;
+            color: var(--text-secondary);
+            background: var(--blockquote-bg);
+            border-radius: 0 12px 12px 0;
         }
         
         .article-content code {
-            background: #f3f4f6;
-            padding: 0.15rem 0.35rem;
-            border-radius: 3px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.85em;
+            background: var(--code-bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
             color: #e11d48;
         }
         
+        [data-bs-theme="dark"] .article-content code {
+            color: #fb7185;
+        }
+        
         .article-content pre {
-            background: #1f2937;
+            background: var(--pre-bg);
             color: #f9fafb;
-            padding: 1rem;
-            border-radius: 6px;
+            padding: 1.25rem;
+            border-radius: 12px;
             overflow-x: auto;
-            margin: 1rem 0;
-            font-size: 0.8rem;
+            margin: 1.25rem 0;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
         
         .article-content pre code {
             background: none;
             color: inherit;
             padding: 0;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
         
         .article-content ul, .article-content ol {
-            padding-left: 1.5rem;
-            margin: 0.875rem 0;
+            padding-left: 1.75rem;
+            margin: 1rem 0;
+            color: var(--text-secondary);
         }
         
         .article-content li {
-            margin: 0.3rem 0;
+            margin: 0.4rem 0;
         }
         
         .article-content table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.25rem 0;
-            font-size: 0.875rem;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
         }
         
         .article-content table th,
         .article-content table td {
-            padding: 0.625rem;
-            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            border: 1px solid var(--card-border);
             text-align: left;
         }
         
         .article-content table th {
-            background: #f9fafb;
+            background: var(--code-bg);
             font-weight: 600;
         }
         
         .article-content a {
             color: var(--primary-color);
             text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
         }
         
         .article-content a:hover {
-            text-decoration: underline;
+            border-bottom-color: var(--primary-color);
         }
         
+        /* Tag Badge */
         .tag-badge {
             background: linear-gradient(135deg, var(--accent-color), #3b82f6);
             color: white;
-            font-size: 0.8rem;
-            padding: 6px 14px;
-            border-radius: 16px;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
         }
         
-        .footer {
-            background: rgba(30, 41, 59, 0.95);
-            color: white;
-            padding: 24px 0;
-            margin-top: 40px;
-            font-size: 0.875rem;
-        }
-        
+        /* Gradient Text */
         .gradient-text {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
+        
+        /* Footer */
+        .footer {
+            background: var(--footer-bg);
+            color: white;
+            padding: 24px 0;
+            margin-top: 40px;
+            font-size: 0.875rem;
+        }
+        
         #raw-content {
             display: none;
         }
         
+        /* Share Buttons */
         .share-buttons {
             display: flex;
-            gap: 8px;
+            gap: 12px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         
         .share-btn {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             border: none;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
         }
         
         .share-btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
         
         .btn-twitter { background: #1da1f2; color: white; }
         .btn-facebook { background: #1877f2; color: white; }
         .btn-linkedin { background: #0a66c2; color: white; }
-        .btn-copy { background: #6b7280; color: white; }
+        .btn-copy { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; }
+        
+        /* Article Header */
+        .article-header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .article-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .featured-image {
+            width: 100%;
+            max-height: 450px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+            margin: 1.5rem 0 2rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 1.75rem;
+            }
+            
+            .article-content {
+                font-size: 1rem;
+            }
+            
+            .article-content h1 {
+                font-size: 1.6rem;
+            }
+            
+            .article-content h2 {
+                font-size: 1.35rem;
+            }
+            
+            .share-btn {
+                width: 44px;
+                height: 44px;
+            }
+        }
     </style>
     
     {{codeBeforHead}}
@@ -231,9 +375,16 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold gradient-text" href="/">{{siteName}}</a>
-            <div class="navbar-nav ms-auto">
-                <a href="/" class="btn btn-outline-primary btn-sm mt-2">Home</a>
+            <a class="navbar-brand fw-bold gradient-text" href="/">
+                <i class="fa-solid fa-blog me-2"></i>{{siteName}}
+            </a>
+            <div class="navbar-nav ms-auto d-flex flex-row align-items-center gap-2">
+                <a href="/" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                    <i class="fa-solid fa-house me-1"></i>Home
+                </a>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
+                    <i class="fa-solid fa-moon" id="theme-icon"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -241,15 +392,17 @@
     <!-- Article Content -->
     <div class="container mt-5 pt-5">
         <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <article class="glass-card p-4 mb-4">
-                    <header class="mb-4 text-center">
-                        <h1 class="fw-bold mb-3" style="font-size: 1.75rem;">{{title}}</h1>
-                        <div class="d-flex justify-content-center align-items-center gap-3 text-muted mb-3" style="font-size: 0.875rem;">
-                            <span><i class="bi bi-calendar me-1"></i> {{createDate}}</span>
-                            <span class="tag-badge">{{label}}</span>
+            <div class="col-lg-10 col-xl-9">
+                <article class="glass-card p-4 p-md-5 mb-4 fade-in-up">
+                    <header class="article-header">
+                        <h1 class="article-title">{{title}}</h1>
+                        <div class="article-meta">
+                            <span><i class="fa-regular fa-calendar me-1"></i>{{createDate}}</span>
+                            <span class="tag-badge">
+                                <i class="fa-solid fa-tag me-1"></i>{{label}}
+                            </span>
                         </div>
-                        {{#img}}<img src="{{img}}" class="img-fluid rounded-3 shadow mb-3" alt="{{title}}" style="max-height: 350px; object-fit: cover; width: 100%;">{{/img}}
+                        {{#img}}<img src="{{img}}" class="featured-image" alt="{{title}}">{{/img}}
                     </header>
                     
                     <!-- Hidden element to store raw markdown content -->
@@ -257,7 +410,7 @@
                     
                     <div class="article-content" id="article-content">
                         <!-- Content will be rendered here by JavaScript -->
-                        <div class="text-center">
+                        <div class="text-center py-5">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Loading content...</span>
                             </div>
@@ -265,28 +418,30 @@
                     </div>
                     
                     <!-- Social Sharing -->
-                    <div class="mt-5 pt-4 border-top">
+                    <div class="mt-5 pt-4 border-top" style="border-color: var(--card-border) !important;">
                         <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <a href="/" class="btn btn-outline-primary btn-sm me-2">
-                                    <i class="bi bi-arrow-left me-2"></i> Back to Home
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <a href="/" class="btn btn-outline-primary rounded-pill">
+                                    <i class="fa-solid fa-arrow-left me-2"></i>Back to Home
                                 </a>
                             </div>
-                            <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                                <div class="share-buttons">
-                                    <span class="text-muted me-3">Share:</span>
-                                    <button onclick="shareOnTwitter()" class="share-btn btn-twitter" title="Share on Twitter">
-                                        <i class="bi bi-twitter"></i>
-                                    </button>
-                                    <button onclick="shareOnFacebook()" class="share-btn btn-facebook" title="Share on Facebook">
-                                        <i class="bi bi-facebook"></i>
-                                    </button>
-                                    <button onclick="shareOnLinkedIn()" class="share-btn btn-linkedin" title="Share on LinkedIn">
-                                        <i class="bi bi-linkedin"></i>
-                                    </button>
-                                    <button onclick="copyShareLink()" class="share-btn btn-copy" title="Copy link">
-                                        <i class="bi bi-link-45deg"></i>
-                                    </button>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-md-end align-items-center gap-2">
+                                    <span class="text-muted me-2">Share:</span>
+                                    <div class="share-buttons">
+                                        <button onclick="shareOnTwitter()" class="share-btn btn-twitter" title="Share on X (Twitter)">
+                                            <i class="fa-brands fa-x-twitter"></i>
+                                        </button>
+                                        <button onclick="shareOnFacebook()" class="share-btn btn-facebook" title="Share on Facebook">
+                                            <i class="fa-brands fa-facebook-f"></i>
+                                        </button>
+                                        <button onclick="shareOnLinkedIn()" class="share-btn btn-linkedin" title="Share on LinkedIn">
+                                            <i class="fa-brands fa-linkedin-in"></i>
+                                        </button>
+                                        <button onclick="copyShareLink()" class="share-btn btn-copy" title="Copy link">
+                                            <i class="fa-solid fa-link"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -303,10 +458,39 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5.3.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Theme Toggle Functionality
+        function getPreferredTheme() {
+            const stored = localStorage.getItem('theme');
+            if (stored) return stored;
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateThemeIcon(theme);
+        }
+        
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+        }
+        
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-bs-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            setTheme(next);
+        }
+        
+        // Initialize theme on load
+        setTheme(getPreferredTheme());
+
         function getShareUrl() {
             return window.location.href;
         }
@@ -346,21 +530,30 @@
         }
 
         function showNotification(message, type = 'info') {
+            const iconMap = {
+                success: 'fa-solid fa-circle-check',
+                warning: 'fa-solid fa-triangle-exclamation',
+                info: 'fa-solid fa-circle-info'
+            };
+            
             const toast = document.createElement('div');
             toast.className = `toast align-items-center text-bg-${type} border-0`;
             toast.innerHTML = `
                 <div class="d-flex">
-                    <div class="toast-body">${message}</div>
+                    <div class="toast-body">
+                        <i class="${iconMap[type] || iconMap.info} me-2"></i>${message}
+                    </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
             `;
             
             const container = document.createElement('div');
             container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.style.zIndex = '1100';
             container.appendChild(toast);
             document.body.appendChild(container);
             
-            const bsToast = new bootstrap.Toast(toast);
+            const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
             bsToast.show();
             
             toast.addEventListener('hidden.bs.toast', () => {
@@ -378,12 +571,11 @@
             rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
             
             if (!rawContent || rawContent.trim() === '') {
-                contentElement.innerHTML = '<div class="alert alert-warning">No content available.</div>';
+                contentElement.innerHTML = '<div class="alert alert-warning"><i class="fa-solid fa-triangle-exclamation me-2"></i>No content available.</div>';
                 return;
             }
             
             if (window.marked && window.hljs) {
-                // Use Marked.js with syntax highlighting
                 try {
                     // Configure marked options
                     marked.setOptions({
@@ -408,21 +600,17 @@
                     applyPostRenderStyles();
                 } catch (error) {
                     console.error('Error parsing markdown:', error);
-                    // Fallback: display raw content with basic formatting
                     contentElement.innerHTML = `<div class="alert alert-warning">
-                        <h5>Error rendering content</h5>
+                        <h5><i class="fa-solid fa-triangle-exclamation me-2"></i>Error rendering content</h5>
                         <pre style="white-space: pre-wrap;">${rawContent}</pre>
                     </div>`;
                 }
             } else {
-                // Fallback: display raw content with preserved formatting
                 contentElement.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${rawContent}</pre>`;
             }
         }
         
-        // Apply additional styles after markdown is rendered
         function applyPostRenderStyles() {
-            // Ensure code blocks have proper styling
             const codeBlocks = document.querySelectorAll('pre code');
             codeBlocks.forEach(block => {
                 if (!block.classList.contains('hljs')) {
@@ -430,7 +618,6 @@
                 }
             });
             
-            // Ensure proper spacing for lists
             const lists = document.querySelectorAll('ul, ol');
             lists.forEach(list => {
                 if (!list.style.marginBottom) {
@@ -439,7 +626,6 @@
             });
         }
         
-        // Render content when page loads
         document.addEventListener('DOMContentLoaded', renderMarkdown);
     </script>
     
