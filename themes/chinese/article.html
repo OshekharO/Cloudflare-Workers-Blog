@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chinese Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <!-- Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <style>
+        :root {
+            --chinese-red: #c41e3a;
+            --chinese-red-dark: #8b0000;
+            --chinese-gold: #d4a017;
+            --ink-black: #1a1a1a;
+            --ink-gray: #4a4a4a;
+            --paper-cream: #faf8f5;
+            --cloud-white: #fefefe;
+        }
+        
+        * { font-family: 'Noto Serif SC', serif; }
+        
+        body {
+            background: var(--paper-cream);
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .navbar-chinese {
+            background: linear-gradient(135deg, var(--chinese-red) 0%, var(--chinese-red-dark) 100%);
+            box-shadow: 0 4px 20px rgba(139, 0, 0, 0.3);
+        }
+        
+        .navbar-chinese .navbar-brand {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 1.5rem;
+            color: var(--chinese-gold) !important;
+        }
+        
+        .navbar-chinese .navbar-item {
+            color: var(--paper-cream) !important;
+        }
+        
+        .navbar-chinese .navbar-item:hover {
+            background: rgba(212, 160, 23, 0.2) !important;
+            color: var(--chinese-gold) !important;
+        }
+        
+        .article-header-chinese {
+            background: linear-gradient(135deg, var(--chinese-red) 0%, var(--chinese-red-dark) 100%);
+            padding: 8rem 1.5rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .article-header-chinese::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a017' fill-opacity='0.1' d='M50 0L100 50L50 100L0 50Z'/%3E%3C/svg%3E");
+            background-size: 50px 50px;
+        }
+        
+        .article-title-chinese {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 2.5rem;
+            color: var(--paper-cream);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            position: relative;
+            text-align: center;
+        }
+        
+        .article-meta-chinese {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .article-meta-chinese span {
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tag-chinese {
+            background: rgba(212, 160, 23, 0.3);
+            color: var(--chinese-gold);
+            padding: 0.3rem 1rem;
+            border-radius: 2px;
+            font-weight: 500;
+        }
+        
+        .article-card-chinese {
+            background: var(--cloud-white);
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(212, 160, 23, 0.2);
+            margin-top: -3rem;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+        }
+        
+        .featured-img-chinese {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+        
+        .article-body-chinese {
+            padding: 2.5rem;
+        }
+        
+        .article-content {
+            line-height: 2;
+            font-size: 1.05rem;
+            color: var(--ink-black);
+        }
+        
+        .article-content h1 {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 1.75rem;
+            color: var(--chinese-red);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--chinese-gold);
+        }
+        
+        .article-content h2 {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 1.5rem;
+            color: var(--ink-black);
+            margin: 1.75rem 0 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--chinese-red);
+        }
+        
+        .article-content h3 {
+            font-size: 1.25rem;
+            color: var(--ink-black);
+            margin: 1.5rem 0 0.75rem;
+        }
+        
+        .article-content p {
+            margin-bottom: 1.25rem;
+            text-align: justify;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .article-content blockquote {
+            border-left: 4px solid var(--chinese-gold);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            background: var(--paper-cream);
+            font-style: italic;
+            color: var(--ink-gray);
+        }
+        
+        .article-content code {
+            background: #f5f0e6;
+            padding: 0.2rem 0.5rem;
+            border-radius: 2px;
+            font-family: 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--chinese-red);
+        }
+        
+        .article-content pre {
+            background: var(--ink-black);
+            color: #f5f5f5;
+            padding: 1.25rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        
+        .article-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .article-content a {
+            color: var(--chinese-red);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--chinese-red);
+        }
+        
+        .article-content a:hover {
+            color: var(--chinese-red-dark);
+        }
+        
+        .article-content ul, .article-content ol {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .article-content li {
+            margin: 0.5rem 0;
+        }
+        
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        .article-content table th,
+        .article-content table td {
+            padding: 0.75rem;
+            border: 1px solid var(--chinese-gold);
+            text-align: left;
+        }
+        
+        .article-content table th {
+            background: linear-gradient(135deg, var(--chinese-red) 0%, var(--chinese-red-dark) 100%);
+            color: var(--paper-cream);
+        }
+        
+        #raw-content { display: none; }
+        
+        .share-section-chinese {
+            border-top: 1px dashed var(--chinese-gold);
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .share-title-chinese {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 1.25rem;
+            color: var(--ink-black);
+            margin-bottom: 1rem;
+        }
+        
+        .share-btn-chinese {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--chinese-gold);
+            background: transparent;
+            color: var(--ink-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn-chinese:hover {
+            background: var(--chinese-red);
+            border-color: var(--chinese-red);
+            color: var(--paper-cream);
+        }
+        
+        .btn-chinese {
+            background: linear-gradient(135deg, var(--chinese-red) 0%, var(--chinese-red-dark) 100%);
+            color: var(--paper-cream);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-chinese:hover {
+            background: linear-gradient(135deg, var(--chinese-red-dark) 0%, #5a0000 100%);
+            color: var(--chinese-gold);
+            transform: translateY(-2px);
+        }
+        
+        .btn-chinese-outline {
+            background: transparent;
+            border: 2px solid var(--chinese-red);
+            color: var(--chinese-red);
+        }
+        
+        .btn-chinese-outline:hover {
+            background: var(--chinese-red);
+            color: var(--paper-cream);
+        }
+        
+        .footer-chinese {
+            background: linear-gradient(135deg, var(--ink-black) 0%, #2a2a2a 100%);
+            color: var(--paper-cream);
+            padding: 2rem 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer-chinese::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--chinese-red), var(--chinese-gold), var(--chinese-red));
+        }
+        
+        @media (max-width: 768px) {
+            .article-title-chinese {
+                font-size: 1.75rem;
+            }
+            
+            .article-header-chinese {
+                padding: 6rem 1rem 3rem;
+            }
+            
+            .article-body-chinese {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar is-fixed-top navbar-chinese" role="navigation">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="/">{{siteName}}</a>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-end">
+                    <a href="/" class="navbar-item">
+                        <i class="fas fa-home me-2"></i> 首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="article-header-chinese">
+        <div class="container">
+            <h1 class="article-title-chinese">{{title}}</h1>
+            <div class="article-meta-chinese">
+                <span><i class="far fa-calendar"></i> {{createDate}}</span>
+                <span class="tag-chinese">{{label}}</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Article Content -->
+    <main class="container" style="margin-bottom: 3rem;">
+        <article class="article-card-chinese">
+            {{#img}}
+            <img src="{{img}}" class="featured-img-chinese" alt="{{title}}">
+            {{/img}}
+            
+            <div class="article-body-chinese">
+                <div id="raw-content">{{content}}</div>
+                
+                <div class="article-content" id="article-content">
+                    <div class="has-text-centered py-5">
+                        <div class="spinner-chinese" style="display: inline-block; width: 40px; height: 40px; border: 3px solid #eee; border-top-color: var(--chinese-red); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    </div>
+                </div>
+                
+                <!-- Share Section -->
+                <div class="share-section-chinese">
+                    <h3 class="share-title-chinese"><i class="fas fa-share-alt me-2"></i>分享文章</h3>
+                    <div class="buttons">
+                        <button onclick="shareOnTwitter()" class="share-btn-chinese" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button onclick="shareOnFacebook()" class="share-btn-chinese" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button onclick="shareOnLinkedIn()" class="share-btn-chinese" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </button>
+                        <button onclick="copyShareLink()" class="share-btn-chinese" title="复制链接">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="is-flex is-justify-content-space-between is-align-items-center mt-5 pt-4" style="border-top: 1px dashed var(--chinese-gold);">
+                    <a href="/" class="btn-chinese btn-chinese-outline">
+                        <i class="fas fa-arrow-left"></i> 返回首页
+                    </a>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-chinese">
+        <div class="container has-text-centered">
+            <p>{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <script>
+        function shareOnTwitter() {
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(document.title)}&url=${encodeURIComponent(window.location.href)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        async function copyShareLink() {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                showNotification('链接已复制');
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = window.location.href;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('链接已复制');
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification is-success';
+            notification.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000;';
+            notification.innerHTML = `<button class="delete" onclick="this.parentElement.remove()"></button>${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function renderMarkdown() {
+            const contentElement = document.getElementById('article-content');
+            const rawContentElement = document.getElementById('raw-content');
+            
+            let rawContent = rawContentElement.textContent;
+            rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+            
+            if (!rawContent || rawContent.trim() === '') {
+                contentElement.innerHTML = '<div class="notification is-warning">暂无内容</div>';
+                return;
+            }
+            
+            if (window.marked && window.hljs) {
+                try {
+                    marked.setOptions({
+                        highlight: function(code, lang) {
+                            if (lang && hljs.getLanguage(lang)) {
+                                return hljs.highlight(code, { language: lang }).value;
+                            }
+                            return hljs.highlightAuto(code).value;
+                        },
+                        breaks: true,
+                        gfm: true
+                    });
+                    
+                    contentElement.innerHTML = marked.parse(rawContent);
+                } catch (error) {
+                    contentElement.innerHTML = `<pre style="white-space: pre-wrap;">${rawContent}</pre>`;
+                }
+            } else {
+                contentElement.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${rawContent}</pre>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderMarkdown);
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found - {{siteName}}</title>
+    
+    <!-- MDB UI Kit CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --elevation-8: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+        }
+        
+        * { font-family: 'Roboto', sans-serif; }
+        
+        body {
+            background: var(--gradient-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .error-card {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: var(--elevation-8);
+            max-width: 450px;
+            margin: 1rem;
+        }
+        
+        .error-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #ffebee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .error-icon .material-icons {
+            font-size: 3rem;
+            color: #e53935;
+        }
+        
+        .error-code {
+            font-size: 4rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .error-message {
+            font-size: 1.25rem;
+            color: #424242;
+            margin-bottom: 0.5rem;
+        }
+        
+        .error-description {
+            color: #757575;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-material {
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn-material-primary {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .btn-material-primary:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .btn-material-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .btn-material-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <div class="error-card">
+        <div class="error-icon">
+            <span class="material-icons">error_outline</span>
+        </div>
+        <h1 class="error-code">404</h1>
+        <h2 class="error-message">Page Not Found</h2>
+        <p class="error-description">The page you're looking for doesn't exist or has been moved.</p>
+        <div class="d-flex gap-2 justify-content-center flex-wrap">
+            <a href="/" class="btn-material btn-material-primary">
+                <span class="material-icons">home</span> Home
+            </a>
+            <a href="/admin/" class="btn-material btn-material-outline">
+                <span class="material-icons">admin_panel_settings</span> Admin
+            </a>
+        </div>
+    </div>
+    
+    {{codeBeforBody}}
+</body>
+</html>

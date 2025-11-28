@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    
+    <!-- MDB UI Kit CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <style>
+        :root {
+            --mdb-primary: #1976d2;
+            --mdb-primary-dark: #1565c0;
+            --mdb-secondary: #9c27b0;
+            --mdb-accent: #00bcd4;
+            --mdb-surface: #ffffff;
+            --mdb-background: #fafafa;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-danger: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --elevation-1: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+            --elevation-2: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+            --elevation-4: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+            --elevation-8: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+        }
+        
+        * {
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background: var(--mdb-background);
+            min-height: 100vh;
+        }
+        
+        /* Navbar */
+        .navbar-material {
+            background: var(--gradient-primary) !important;
+            box-shadow: var(--elevation-4);
+        }
+        
+        .navbar-brand {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Article Header */
+        .article-header {
+            background: var(--gradient-primary);
+            padding: 100px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .article-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.05' d='M0,192L48,197.3C96,203,192,213,288,218.7C384,224,480,224,576,213.3C672,203,768,181,864,186.7C960,192,1056,224,1152,229.3C1248,235,1344,213,1392,202.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
+        }
+        
+        .article-header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .article-title {
+            font-size: 2.25rem;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+        
+        .article-meta-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .article-meta-header span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+        
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.4rem 1rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        /* Article Card */
+        .article-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--elevation-4);
+            margin-top: -60px;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+        }
+        
+        .featured-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+        
+        .article-body {
+            padding: 2rem;
+        }
+        
+        /* Article Content Styles */
+        .article-content {
+            line-height: 1.8;
+            font-size: 1rem;
+            color: #424242;
+        }
+        
+        .article-content h1 {
+            font-size: 1.75rem;
+            font-weight: 500;
+            color: #212121;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--mdb-primary);
+        }
+        
+        .article-content h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #212121;
+            margin: 1.75rem 0 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--mdb-primary);
+        }
+        
+        .article-content h3 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #212121;
+            margin: 1.5rem 0 0.75rem;
+        }
+        
+        .article-content h4 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #212121;
+            margin: 1.25rem 0 0.5rem;
+        }
+        
+        .article-content p {
+            margin-bottom: 1.25rem;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: var(--elevation-2);
+            margin: 1.5rem 0;
+        }
+        
+        .article-content blockquote {
+            border-left: 4px solid var(--mdb-primary);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            background: #f5f5f5;
+            border-radius: 0 4px 4px 0;
+            font-style: italic;
+            color: #616161;
+        }
+        
+        .article-content code {
+            background: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            color: #e91e63;
+        }
+        
+        .article-content pre {
+            background: #263238;
+            color: #eceff1;
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            box-shadow: var(--elevation-2);
+        }
+        
+        .article-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .article-content ul, .article-content ol {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .article-content li {
+            margin: 0.4rem 0;
+        }
+        
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            box-shadow: var(--elevation-1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .article-content table th,
+        .article-content table td {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        }
+        
+        .article-content table th {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .article-content table tr:nth-child(even) {
+            background: #fafafa;
+        }
+        
+        .article-content a {
+            color: var(--mdb-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        
+        #raw-content {
+            display: none;
+        }
+        
+        /* Share Section */
+        .share-section {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .share-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #616161;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .share-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: var(--elevation-2);
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--elevation-4);
+        }
+        
+        .share-btn-twitter { background: #1da1f2; }
+        .share-btn-facebook { background: #1877f2; }
+        .share-btn-linkedin { background: #0a66c2; }
+        .share-btn-copy { background: #607d8b; }
+        
+        /* Navigation */
+        .article-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .btn-material {
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.875rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--elevation-2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn-material:hover {
+            box-shadow: var(--elevation-4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-material-primary {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+        }
+        
+        .btn-material-primary:hover {
+            color: white;
+        }
+        
+        .btn-material-outline {
+            background: transparent;
+            border: 2px solid var(--mdb-primary);
+            color: var(--mdb-primary);
+        }
+        
+        .btn-material-outline:hover {
+            background: var(--mdb-primary);
+            color: white;
+        }
+        
+        /* Footer */
+        .footer-material {
+            background: #263238;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 1.5rem;
+            }
+            
+            .article-header {
+                padding: 80px 0 60px;
+            }
+            
+            .article-body {
+                padding: 1.25rem;
+            }
+            
+            .article-meta-header {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .article-nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-material fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="material-icons">dashboard</span>
+                {{siteName}}
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a href="/" class="btn btn-outline-light btn-sm">
+                    <span class="material-icons me-1">home</span> Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="article-header">
+        <div class="container">
+            <div class="article-header-content">
+                <h1 class="article-title">{{title}}</h1>
+                <div class="article-meta-header">
+                    <span>
+                        <span class="material-icons">calendar_today</span>
+                        {{createDate}}
+                    </span>
+                    <span class="chip">{{label}}</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Article Content -->
+    <main class="container mb-5">
+        <article class="article-card">
+            {{#img}}
+            <img src="{{img}}" class="featured-image" alt="{{title}}">
+            {{/img}}
+            
+            <div class="article-body">
+                <!-- Hidden raw content -->
+                <div id="raw-content">{{content}}</div>
+                
+                <!-- Rendered content -->
+                <div class="article-content" id="article-content">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading content...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Share Section -->
+                <div class="share-section">
+                    <h3 class="share-title">
+                        <span class="material-icons">share</span>
+                        Share this article
+                    </h3>
+                    <div class="share-buttons">
+                        <button onclick="shareOnTwitter()" class="share-btn share-btn-twitter" title="Share on Twitter">
+                            <span class="material-icons">tag</span>
+                        </button>
+                        <button onclick="shareOnFacebook()" class="share-btn share-btn-facebook" title="Share on Facebook">
+                            <span class="material-icons">facebook</span>
+                        </button>
+                        <button onclick="shareOnLinkedIn()" class="share-btn share-btn-linkedin" title="Share on LinkedIn">
+                            <span class="material-icons">work</span>
+                        </button>
+                        <button onclick="copyShareLink()" class="share-btn share-btn-copy" title="Copy link">
+                            <span class="material-icons">link</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="article-nav">
+                    <a href="/" class="btn-material btn-material-outline">
+                        <span class="material-icons">arrow_back</span>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-material">
+        <div class="container text-center">
+            <p class="mb-0">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <!-- MDB JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"></script>
+    
+    <script>
+        function getShareUrl() {
+            return window.location.href;
+        }
+
+        function getShareTitle() {
+            return document.title.replace(` - ${'{{siteName}}'}`, '');
+        }
+
+        function shareOnTwitter() {
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareTitle())}&url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        async function copyShareLink() {
+            try {
+                await navigator.clipboard.writeText(getShareUrl());
+                showSnackbar('Link copied to clipboard!');
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = getShareUrl();
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showSnackbar('Link copied to clipboard!');
+            }
+        }
+
+        function showSnackbar(message) {
+            const snackbar = document.createElement('div');
+            snackbar.className = 'position-fixed bottom-0 start-50 translate-middle-x p-3';
+            snackbar.style.zIndex = '1100';
+            snackbar.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-body d-flex align-items-center">
+                        <span class="material-icons me-2 text-success">check_circle</span>
+                        ${message}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(snackbar);
+            
+            setTimeout(() => {
+                snackbar.remove();
+            }, 3000);
+        }
+
+        // Parse and render markdown content
+        function renderMarkdown() {
+            const contentElement = document.getElementById('article-content');
+            const rawContentElement = document.getElementById('raw-content');
+            
+            let rawContent = rawContentElement.textContent;
+            rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+            
+            if (!rawContent || rawContent.trim() === '') {
+                contentElement.innerHTML = '<div class="alert alert-warning"><span class="material-icons me-2">warning</span>No content available.</div>';
+                return;
+            }
+            
+            if (window.marked && window.hljs) {
+                try {
+                    marked.setOptions({
+                        highlight: function(code, lang) {
+                            if (lang && hljs.getLanguage(lang)) {
+                                try {
+                                    return hljs.highlight(code, { language: lang }).value;
+                                } catch (err) {
+                                    console.warn('Error highlighting code:', err);
+                                }
+                            }
+                            return hljs.highlightAuto(code).value;
+                        },
+                        breaks: true,
+                        gfm: true
+                    });
+                    
+                    const htmlContent = marked.parse(rawContent);
+                    contentElement.innerHTML = htmlContent;
+                    
+                    // Apply additional styling
+                    const codeBlocks = document.querySelectorAll('pre code');
+                    codeBlocks.forEach(block => {
+                        if (!block.classList.contains('hljs')) {
+                            block.classList.add('hljs');
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error parsing markdown:', error);
+                    contentElement.innerHTML = `<pre style="white-space: pre-wrap;">${rawContent}</pre>`;
+                }
+            } else {
+                contentElement.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${rawContent}</pre>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderMarkdown);
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>

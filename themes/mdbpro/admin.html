@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - {{siteName}}</title>
+    
+    <!-- MDB UI Kit CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --mdb-primary: #1976d2;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-danger: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-warning: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+            --elevation-1: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+            --elevation-2: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+            --elevation-4: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+        }
+        
+        * { font-family: 'Roboto', sans-serif; }
+        
+        body { background: #f5f5f5; min-height: 100vh; }
+        
+        .navbar-material {
+            background: var(--gradient-primary) !important;
+            box-shadow: var(--elevation-4);
+        }
+        
+        .sidebar {
+            background: #263238;
+            min-height: calc(100vh - 56px);
+            padding-top: 1.5rem;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.7);
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: #667eea;
+        }
+        
+        .content-area { padding: 2rem; }
+        
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: var(--elevation-1);
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 1.25rem 1.5rem;
+        }
+        
+        .stat-card {
+            border-radius: 8px;
+            box-shadow: var(--elevation-2);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--elevation-4);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .stat-icon.gradient-1 { background: var(--gradient-primary); }
+        .stat-icon.gradient-2 { background: var(--gradient-secondary); }
+        .stat-icon.gradient-3 { background: var(--gradient-danger); }
+        .stat-icon.gradient-4 { background: var(--gradient-warning); }
+        
+        .table th {
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+        
+        .badge-draft {
+            background: var(--gradient-warning);
+            color: white;
+        }
+        
+        .btn-material {
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-material-primary {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            box-shadow: var(--elevation-2);
+        }
+        
+        .btn-material-primary:hover {
+            box-shadow: var(--elevation-4);
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .nav-tabs-material .nav-link {
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs-material .nav-link.active {
+            color: var(--mdb-primary);
+            border-bottom-color: var(--mdb-primary);
+            background: transparent;
+        }
+        
+        .tool-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--elevation-4);
+        }
+        
+        .tool-card .material-icons {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                min-height: auto;
+                padding: 1rem 0;
+            }
+            .content-area { padding: 1rem; }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark navbar-material">
+        <div class="container-fluid">
+            <span class="navbar-brand d-flex align-items-center gap-2">
+                <span class="material-icons">admin_panel_settings</span>
+                Admin Dashboard
+            </span>
+            <a href="/" class="btn btn-outline-light btn-sm">
+                <span class="material-icons me-1">visibility</span> View Blog
+            </a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-2 col-md-3 p-0 sidebar">
+                <nav class="sidebar-nav">
+                    <a href="#articles" class="nav-link active" data-mdb-toggle="tab">
+                        <span class="material-icons">article</span> Articles
+                    </a>
+                    <a href="/admin/users" class="nav-link">
+                        <span class="material-icons">people</span> Users
+                    </a>
+                    <a href="#tools" class="nav-link" data-mdb-toggle="tab">
+                        <span class="material-icons">build</span> Tools
+                    </a>
+                    <a href="/admin/edit" class="nav-link">
+                        <span class="material-icons">add_circle</span> New Article
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9 content-area">
+                <div class="tab-content">
+                    <!-- Articles Tab -->
+                    <div class="tab-pane fade show active" id="articles">
+                        <!-- Stats -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card stat-card">
+                                    <div class="card-body d-flex align-items-center gap-3">
+                                        <div class="stat-icon gradient-1">
+                                            <span class="material-icons">article</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="mb-0" id="total-articles">0</h3>
+                                            <small class="text-muted">Total Articles</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card stat-card">
+                                    <div class="card-body d-flex align-items-center gap-3">
+                                        <div class="stat-icon gradient-2">
+                                            <span class="material-icons">publish</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="mb-0" id="published-count">0</h3>
+                                            <small class="text-muted">Published</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card stat-card">
+                                    <div class="card-body d-flex align-items-center gap-3">
+                                        <div class="stat-icon gradient-3">
+                                            <span class="material-icons">drafts</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="mb-0" id="drafts-count">0</h3>
+                                            <small class="text-muted">Drafts</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card stat-card">
+                                    <div class="card-body d-flex align-items-center gap-3">
+                                        <div class="stat-icon gradient-4">
+                                            <span class="material-icons">category</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="mb-0" id="categories-count">0</h3>
+                                            <small class="text-muted">Categories</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Articles Card -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><span class="material-icons me-2">library_books</span>Articles</h5>
+                                <a href="/admin/edit" class="btn btn-material btn-material-primary">
+                                    <span class="material-icons me-1">add</span> New Article
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <ul class="nav nav-tabs nav-tabs-material mb-4" role="tablist">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" data-mdb-toggle="tab" data-mdb-target="#published-tab">Published</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" data-mdb-toggle="tab" data-mdb-target="#drafts-tab">Drafts</button>
+                                    </li>
+                                </ul>
+                                
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="published-tab">
+                                        <div id="published-list">
+                                            <div class="text-center py-5">
+                                                <div class="spinner-border text-primary" role="status"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="drafts-tab">
+                                        <div id="drafts-list">
+                                            <div class="text-center py-5">
+                                                <div class="spinner-border text-primary" role="status"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tools Tab -->
+                    <div class="tab-pane fade" id="tools">
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card tool-card">
+                                    <span class="material-icons text-success">download</span>
+                                    <h6>Export</h6>
+                                    <p class="text-muted small">Download all articles</p>
+                                    <button onclick="exportArticles()" class="btn btn-success btn-sm">Export</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card tool-card">
+                                    <span class="material-icons text-primary">upload</span>
+                                    <h6>Import</h6>
+                                    <p class="text-muted small">Upload JSON backup</p>
+                                    <button onclick="openImportModal()" class="btn btn-primary btn-sm">Import</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card tool-card">
+                                    <span class="material-icons text-warning">bug_report</span>
+                                    <h6>Debug</h6>
+                                    <p class="text-muted small">View system info</p>
+                                    <button onclick="showDebugInfo()" class="btn btn-warning btn-sm">Debug</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card tool-card">
+                                    <span class="material-icons text-info">rss_feed</span>
+                                    <h6>RSS Feed</h6>
+                                    <p class="text-muted small">View RSS feed</p>
+                                    <a href="/rss.xml" target="_blank" class="btn btn-info btn-sm">Open</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Articles</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="file" id="importFile" accept=".json" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="importArticles()">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"></script>
+    <script>
+        async function loadArticles() {
+            try {
+                const response = await fetch('/api/articles');
+                const articles = await response.json();
+                
+                document.getElementById('published-count').textContent = articles.length;
+                document.getElementById('total-articles').textContent = articles.length;
+                
+                const container = document.getElementById('published-list');
+                if (articles.length === 0) {
+                    container.innerHTML = '<div class="text-center py-4"><span class="material-icons display-4 text-muted">inbox</span><p class="text-muted">No published articles</p></div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead>
+                            <tbody>
+                                ${articles.map(a => `
+                                    <tr>
+                                        <td><strong>${a.title}</strong><br><small class="text-muted">/${a.permalink}</small></td>
+                                        <td><span class="badge bg-primary">${a.label}</span></td>
+                                        <td>${new Date(a.createDate).toLocaleDateString()}</td>
+                                        <td>
+                                            <a href="/admin/edit?permalink=${a.permalink}" class="btn btn-sm btn-outline-primary"><span class="material-icons" style="font-size:18px">edit</span></a>
+                                            <button onclick="deleteArticle('${a.permalink}')" class="btn btn-sm btn-outline-danger"><span class="material-icons" style="font-size:18px">delete</span></button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                loadCategories();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadDrafts() {
+            try {
+                const response = await fetch('/api/articles?drafts=true');
+                const drafts = await response.json();
+                
+                document.getElementById('drafts-count').textContent = drafts.length;
+                
+                const container = document.getElementById('drafts-list');
+                if (drafts.length === 0) {
+                    container.innerHTML = '<div class="text-center py-4"><span class="material-icons display-4 text-muted">drafts</span><p class="text-muted">No drafts</p></div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead>
+                            <tbody>
+                                ${drafts.map(d => `
+                                    <tr>
+                                        <td><span class="badge badge-draft me-2">Draft</span><strong>${d.title}</strong></td>
+                                        <td><span class="badge bg-secondary">${d.label}</span></td>
+                                        <td>${new Date(d.createDate).toLocaleDateString()}</td>
+                                        <td>
+                                            <a href="/admin/edit?permalink=${d.permalink}" class="btn btn-sm btn-outline-primary"><span class="material-icons" style="font-size:18px">edit</span></a>
+                                            <button onclick="publishDraft('${d.permalink}')" class="btn btn-sm btn-outline-success"><span class="material-icons" style="font-size:18px">publish</span></button>
+                                            <button onclick="deleteArticle('${d.permalink}')" class="btn btn-sm btn-outline-danger"><span class="material-icons" style="font-size:18px">delete</span></button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/categories');
+                const categories = await response.json();
+                document.getElementById('categories-count').textContent = Object.keys(categories).length;
+            } catch (error) {}
+        }
+
+        async function deleteArticle(permalink) {
+            if (!confirm('Delete this article?')) return;
+            try {
+                await fetch('/api/articles/' + permalink, { method: 'DELETE' });
+                loadArticles();
+                loadDrafts();
+            } catch (error) {
+                alert('Error deleting article');
+            }
+        }
+
+        async function publishDraft(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                const draft = await response.json();
+                draft.status = 'published';
+                await fetch('/api/articles/' + permalink, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(draft)
+                });
+                loadArticles();
+                loadDrafts();
+            } catch (error) {
+                alert('Error publishing draft');
+            }
+        }
+
+        async function exportArticles() {
+            try {
+                const response = await fetch('/api/export');
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `blog-export-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+            } catch (error) {
+                alert('Error exporting');
+            }
+        }
+
+        function openImportModal() {
+            new mdb.Modal(document.getElementById('importModal')).show();
+        }
+
+        async function importArticles() {
+            const file = document.getElementById('importFile').files[0];
+            if (!file) return alert('Select a file');
+            
+            try {
+                const text = await file.text();
+                const response = await fetch('/api/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: text
+                });
+                const result = await response.json();
+                alert(`Imported ${result.imported} articles`);
+                mdb.Modal.getInstance(document.getElementById('importModal')).hide();
+                loadArticles();
+            } catch (error) {
+                alert('Import error');
+            }
+        }
+
+        async function showDebugInfo() {
+            try {
+                const response = await fetch('/api/debug');
+                const data = await response.json();
+                alert(`Total: ${data.total}\nIndex: ${data.systemIndexNum}`);
+            } catch (error) {
+                alert('Debug error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadArticles();
+            loadDrafts();
+        });
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
