@@ -16,31 +16,33 @@
     
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         }
         
         .article-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
         }
         
         .article-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+            border-color: #c7d2fe;
         }
         
         .bookmark-btn {
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
         
         .bookmark-btn.bookmarked {
@@ -63,6 +65,19 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+        
+        .card-image {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-image img {
+            transition: transform 0.3s ease;
+        }
+        
+        .article-card:hover .card-image img {
+            transform: scale(1.03);
         }
     </style>
     
@@ -90,10 +105,10 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="gradient-bg text-white py-10 sm:py-12">
+    <section class="gradient-bg text-white py-14 sm:py-16">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold mb-2 leading-tight">{{siteName}}</h1>
-            <p class="text-sm sm:text-base text-blue-100 max-w-2xl mx-auto leading-relaxed">{{siteDescription}}</p>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 leading-tight tracking-tight">{{siteName}}</h1>
+            <p class="text-base sm:text-lg text-indigo-100 max-w-2xl mx-auto leading-relaxed opacity-95">{{siteDescription}}</p>
         </div>
     </section>
 
@@ -200,34 +215,31 @@
                     const safeExcerpt = escapeHtml(article.excerpt);
 
                     const imgHtml = article.img ? 
-                        `<img src="${safeImg}" class="w-full h-32 object-cover rounded-t-lg" alt="${safeTitle}" loading="lazy">` : 
-                        `<div class="w-full h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-lg flex items-center justify-center">
-                            <i class="ri-article-line text-xl text-white"></i>
+                        `<img src="${safeImg}" class="w-full h-40 object-cover" alt="${safeTitle}" loading="lazy">` : 
+                        `<div class="w-full h-40 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <i class="ri-article-line text-2xl text-white opacity-80"></i>
                          </div>`;
                     
                     return `
-                    <article class="article-card bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
-                        <div class="relative flex-shrink-0">
+                    <article class="article-card bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
+                        <div class="card-image relative flex-shrink-0">
                             ${imgHtml}
-                            <button class="bookmark-btn absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1 rounded-full ${isBookmarked ? 'bookmarked' : 'text-gray-500'}" 
+                            <button class="bookmark-btn absolute top-3 right-3 bg-white/95 backdrop-blur-sm p-1.5 rounded-lg shadow-sm ${isBookmarked ? 'bookmarked' : 'text-gray-400'}" 
                                     onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                     title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                <i class="ri-bookmark-${isBookmarked ? 'fill' : 'line'} text-xs"></i>
+                                <i class="ri-bookmark-${isBookmarked ? 'fill' : 'line'} text-sm"></i>
                             </button>
                         </div>
-                        <div class="p-3 flex flex-col flex-grow">
-                            <h3 class="font-bold text-xs text-gray-900 mb-1.5 line-clamp-2 leading-snug">${safeTitle}</h3>
-                            <div class="flex items-center text-xs text-gray-500 mb-2 flex-wrap gap-1">
-                                <div class="flex items-center">
-                                    <i class="ri-calendar-line mr-1"></i>
-                                    <span class="whitespace-nowrap">${new Date(article.createDate).toLocaleDateString()}</span>
-                                </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <div class="flex items-center text-xs text-gray-500 mb-2 gap-2">
+                                <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md font-medium">${safeLabel}</span>
                                 <span class="text-gray-300">•</span>
-                                <span class="bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5 rounded-full whitespace-nowrap">${safeLabel}</span>
+                                <span class="whitespace-nowrap">${new Date(article.createDate).toLocaleDateString()}</span>
                             </div>
-                            <p class="text-gray-600 text-xs mb-2 line-clamp-3 flex-grow leading-relaxed">${safeExcerpt}</p>
-                            <div class="flex justify-between items-center pt-2 border-t border-gray-100 mt-auto">
-                                <a href="/article/${safePermalink}" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors text-xs whitespace-nowrap">
+                            <h3 class="font-bold text-sm text-gray-900 mb-2 line-clamp-2 leading-snug">${safeTitle}</h3>
+                            <p class="text-gray-500 text-sm mb-3 line-clamp-3 flex-grow leading-relaxed">${safeExcerpt}</p>
+                            <div class="flex justify-between items-center pt-3 border-t border-gray-100 mt-auto">
+                                <a href="/article/${safePermalink}" class="inline-flex items-center text-indigo-600 font-semibold hover:text-indigo-700 transition-colors text-sm whitespace-nowrap">
                                     Read More
                                     <i class="ri-arrow-right-line ml-1"></i>
                                 </a>

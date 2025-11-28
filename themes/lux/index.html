@@ -17,58 +17,73 @@
     <style>
         body {
             font-family: 'Nunito Sans', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f5f5f5;
         }
         
         .navbar {
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
         
         .navbar-brand {
             font-weight: 800;
             font-size: 1.25rem;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
         .hero-section {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #fff;
-            padding: 3.5rem 0;
+            padding: 5rem 0;
+            position: relative;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
         }
         
         .hero-title {
-            font-size: 2.25rem;
+            font-size: 3rem;
             font-weight: 800;
-            margin-bottom: 0.75rem;
-            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            letter-spacing: 4px;
             text-transform: uppercase;
+            position: relative;
         }
         
         .hero-subtitle {
-            font-size: 0.95rem;
-            opacity: 0.8;
+            font-size: 1.1rem;
+            opacity: 0.85;
             max-width: 550px;
             margin: 0 auto;
             font-weight: 300;
+            letter-spacing: 0.5px;
+            position: relative;
         }
         
         .section-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             text-align: center;
-            color: #1a1a2e;
+            color: #0f172a;
         }
         
         .section-title::after {
             content: '';
             display: block;
-            width: 50px;
-            height: 2px;
-            background: #1a1a2e;
-            margin: 0.75rem auto 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #0f172a, #475569);
+            margin: 1rem auto 0;
         }
         
         .article-card {
@@ -76,90 +91,94 @@
             border: none;
             border-radius: 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             height: 100%;
         }
         
         .article-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
         }
         
         .article-card .card-img-top {
-            height: 160px;
+            height: 200px;
             object-fit: cover;
             border-radius: 0;
         }
         
         .article-card .card-body {
-            padding: 1.25rem;
+            padding: 1.5rem;
         }
         
         .article-card .card-title {
             font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+            margin-bottom: 0.625rem;
+            letter-spacing: 0.3px;
         }
         
         .article-card .card-text {
-            color: #666;
-            font-size: 0.8rem;
-            line-height: 1.5;
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
         
         .category-badge {
-            background: #1a1a2e;
+            background: #0f172a;
             color: #fff;
             text-transform: uppercase;
-            font-size: 0.6rem;
-            padding: 0.3rem 0.6rem;
-            letter-spacing: 1.5px;
-            font-weight: 600;
+            font-size: 0.65rem;
+            padding: 0.35rem 0.75rem;
+            letter-spacing: 2px;
+            font-weight: 700;
         }
         
         .meta-info {
-            font-size: 0.75rem;
-            color: #999;
-            font-weight: 300;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 400;
         }
         
         .btn-elegant {
-            background: #1a1a2e;
+            background: #0f172a;
             color: #fff;
             border: none;
-            padding: 0.4rem 1.25rem;
+            padding: 0.5rem 1.5rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             font-size: 0.7rem;
-            font-weight: 600;
+            font-weight: 700;
             border-radius: 0;
+            transition: all 0.2s ease;
         }
         
         .btn-elegant:hover {
-            background: #0f3460;
+            background: #1e40af;
             color: #fff;
+            transform: translateY(-2px);
         }
         
         .bookmark-btn {
             border: none;
             background: transparent;
-            color: #ccc;
-            transition: color 0.2s ease;
+            color: #cbd5e1;
+            transition: color 0.15s ease;
         }
         
         .bookmark-btn:hover, .bookmark-btn.bookmarked {
-            color: #ffc107;
+            color: #eab308;
         }
         
         .footer {
-            background: #1a1a2e;
-            color: rgba(255,255,255,0.8);
-            padding: 2rem 0;
-            margin-top: 2.5rem;
+            background: #0f172a;
+            color: rgba(255,255,255,0.7);
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+            letter-spacing: 0.5px;
         }
         
         .footer a {
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.5);
         }
         
         .footer a:hover {
@@ -167,8 +186,8 @@
         }
         
         @media (max-width: 768px) {
-            .hero-title { font-size: 1.5rem; }
-            .hero-section { padding: 2.5rem 0; }
+            .hero-title { font-size: 2rem; letter-spacing: 2px; }
+            .hero-section { padding: 3.5rem 0; }
         }
     </style>
     
