@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chinese Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <!-- Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <style>
+        :root {
+            --chinese-red: #c41e3a;
+            --chinese-gold: #d4af37;
+            --chinese-dark: #2c1810;
+            --chinese-cream: #f5f0e6;
+            --chinese-light: #faf7f2;
+            --ink-black: #1a1a1a;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', 'Songti SC', serif;
+            background: var(--chinese-light);
+            color: var(--ink-black);
+        }
+        
+        /* Navbar */
+        .navbar-chinese {
+            background: linear-gradient(180deg, var(--chinese-dark) 0%, #3d261c 100%);
+            border-bottom: 3px solid var(--chinese-gold);
+        }
+        
+        .site-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 1.6rem;
+            color: var(--chinese-gold) !important;
+            letter-spacing: 3px;
+        }
+        
+        .navbar-chinese .navbar-item {
+            color: var(--chinese-cream) !important;
+        }
+        
+        .navbar-chinese .navbar-item:hover {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--chinese-gold) !important;
+        }
+        
+        .navbar-chinese .navbar-burger span {
+            background: var(--chinese-gold);
+        }
+        
+        /* Article Container */
+        .article-container {
+            max-width: 900px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+        
+        .article-wrapper {
+            background: white;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        /* Article Header */
+        .article-header {
+            background: linear-gradient(135deg, var(--chinese-dark) 0%, #4a3328 100%);
+            padding: 60px 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .article-header::before {
+            content: '文';
+            position: absolute;
+            right: -30px;
+            bottom: -30px;
+            font-size: 200px;
+            color: rgba(212, 175, 55, 0.05);
+            font-family: 'ZCOOL XiaoWei', serif;
+        }
+        
+        .article-header h1 {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 2.2rem;
+            color: var(--chinese-gold);
+            margin-bottom: 25px;
+            letter-spacing: 4px;
+            line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        
+        .article-meta span {
+            color: var(--chinese-cream);
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .category-badge {
+            background: var(--chinese-red);
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+        
+        /* Featured Image */
+        .featured-image {
+            width: 100%;
+            max-height: 450px;
+            object-fit: cover;
+        }
+        
+        /* Article Body */
+        .article-body {
+            padding: 60px;
+        }
+        
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 2;
+            color: #333;
+        }
+        
+        .article-content h1 {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 1.8rem;
+            color: var(--chinese-dark);
+            margin: 50px 0 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--chinese-red);
+            letter-spacing: 2px;
+        }
+        
+        .article-content h2 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            color: var(--chinese-dark);
+            margin: 40px 0 20px;
+            padding-left: 20px;
+            border-left: 4px solid var(--chinese-red);
+        }
+        
+        .article-content h3 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.3rem;
+            color: var(--chinese-dark);
+            margin: 35px 0 18px;
+        }
+        
+        .article-content p {
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 30px 0;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .article-content blockquote {
+            border-left: 4px solid var(--chinese-gold);
+            padding: 25px 30px;
+            margin: 35px 0;
+            background: var(--chinese-cream);
+            font-style: italic;
+            color: #555;
+        }
+        
+        .article-content code {
+            background: #f1f1f1;
+            padding: 3px 8px;
+            font-family: 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--chinese-red);
+        }
+        
+        .article-content pre {
+            background: var(--chinese-dark);
+            padding: 25px;
+            overflow-x: auto;
+            margin: 30px 0;
+        }
+        
+        .article-content pre code {
+            background: none;
+            color: var(--chinese-cream);
+            padding: 0;
+        }
+        
+        .article-content ul, .article-content ol {
+            padding-left: 30px;
+            margin: 25px 0;
+        }
+        
+        .article-content li {
+            margin: 10px 0;
+        }
+        
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+        
+        .article-content table th,
+        .article-content table td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        
+        .article-content table th {
+            background: var(--chinese-cream);
+            font-weight: 600;
+        }
+        
+        .article-content a {
+            color: var(--chinese-red);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--chinese-red);
+        }
+        
+        .article-content a:hover {
+            border-bottom-style: solid;
+        }
+        
+        /* Share Section */
+        .share-section {
+            padding: 40px 60px;
+            background: var(--chinese-cream);
+            text-align: center;
+        }
+        
+        .share-section h4 {
+            font-family: 'ZCOOL XiaoWei', serif;
+            color: var(--chinese-dark);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .share-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .share-twitter { background: #1da1f2; }
+        .share-facebook { background: #1877f2; }
+        .share-linkedin { background: #0a66c2; }
+        .share-copy { background: #6c757d; }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: var(--chinese-red);
+            font-weight: 500;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: var(--chinese-dark);
+            letter-spacing: 2px;
+        }
+        
+        /* Footer */
+        .footer-chinese {
+            background: linear-gradient(180deg, var(--chinese-dark) 0%, #1a0f0a 100%);
+            color: var(--chinese-cream);
+            padding: 30px;
+            border-top: 3px solid var(--chinese-gold);
+            text-align: center;
+        }
+        
+        #raw-content {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .article-header {
+                padding: 40px 25px;
+            }
+            
+            .article-header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .article-body {
+                padding: 40px 25px;
+            }
+            
+            .share-section {
+                padding: 30px 25px;
+            }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-chinese is-fixed-top">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item site-title" href="/">
+                    <i class="fas fa-yin-yang mr-2"></i>{{siteName}}
+                </a>
+                <a role="button" class="navbar-burger" data-target="mainNav">
+                    <span></span><span></span><span></span>
+                </a>
+            </div>
+            <div id="mainNav" class="navbar-menu">
+                <div class="navbar-end">
+                    <a class="navbar-item" href="/"><i class="fas fa-home mr-2"></i> 首页</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article -->
+    <div class="article-container">
+        <article class="article-wrapper">
+            <!-- Header -->
+            <header class="article-header">
+                <h1>{{title}}</h1>
+                <div class="article-meta">
+                    <span><i class="far fa-calendar-alt"></i> {{createDate}}</span>
+                    <span class="category-badge"><i class="fas fa-tag mr-1"></i> {{label}}</span>
+                </div>
+            </header>
+            
+            <!-- Featured Image -->
+            {{#img}}<img src="{{img}}" class="featured-image" alt="{{title}}">{{/img}}
+            
+            <!-- Hidden raw content -->
+            <div id="raw-content">{{content}}</div>
+            
+            <!-- Article Body -->
+            <div class="article-body">
+                <div class="article-content" id="article-content">
+                    <div class="has-text-centered py-5">
+                        <span class="icon is-large"><i class="fas fa-spinner fa-spin fa-3x has-text-danger"></i></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Share Section -->
+            <div class="share-section">
+                <h4>喜欢这篇文章？</h4>
+                <p class="has-text-grey">分享给您的朋友</p>
+                <div class="share-buttons">
+                    <button onclick="shareOnTwitter()" class="share-btn share-twitter" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                    <button onclick="shareOnFacebook()" class="share-btn share-facebook" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </button>
+                    <button onclick="shareOnLinkedIn()" class="share-btn share-linkedin" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </button>
+                    <button onclick="copyShareLink()" class="share-btn share-copy" title="复制链接">
+                        <i class="fas fa-link"></i>
+                    </button>
+                </div>
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left mr-2"></i>返回首页
+                </a>
+            </div>
+        </article>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-chinese">
+        <p>{{copyRight}}</p>
+    </footer>
+
+    <script>
+        // Navbar burger
+        document.addEventListener('DOMContentLoaded', () => {
+            const burger = document.querySelector('.navbar-burger');
+            const menu = document.getElementById('mainNav');
+            if (burger) {
+                burger.addEventListener('click', () => {
+                    burger.classList.toggle('is-active');
+                    menu.classList.toggle('is-active');
+                });
+            }
+        });
+
+        function getShareUrl() { return window.location.href; }
+        function getShareTitle() { return document.title.replace(` - ${'{{siteName}}'}`, ''); }
+
+        function shareOnTwitter() {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareTitle())}&url=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnLinkedIn() {
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400');
+        }
+
+        async function copyShareLink() {
+            try {
+                await navigator.clipboard.writeText(getShareUrl());
+                showNotification('链接已复制！', 'success');
+            } catch (err) {
+                const textArea = document.createElement('textarea');
+                textArea.value = getShareUrl();
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('链接已复制！', 'success');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification is-${type} is-light`;
+            notification.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000;';
+            notification.innerHTML = `<button class="delete" onclick="this.parentElement.remove()"></button>${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function renderMarkdown() {
+            const contentElement = document.getElementById('article-content');
+            const rawContentElement = document.getElementById('raw-content');
+            
+            let rawContent = rawContentElement.textContent;
+            rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+            
+            if (!rawContent || rawContent.trim() === '') {
+                contentElement.innerHTML = '<div class="notification is-warning">暂无内容</div>';
+                return;
+            }
+            
+            if (window.marked && window.hljs) {
+                try {
+                    marked.setOptions({
+                        highlight: function(code, lang) {
+                            if (lang && hljs.getLanguage(lang)) {
+                                return hljs.highlight(code, { language: lang }).value;
+                            }
+                            return hljs.highlightAuto(code).value;
+                        },
+                        breaks: true,
+                        gfm: true
+                    });
+                    contentElement.innerHTML = marked.parse(rawContent);
+                } catch (error) {
+                    contentElement.innerHTML = `<pre style="white-space: pre-wrap;">${rawContent}</pre>`;
+                }
+            } else {
+                contentElement.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${rawContent}</pre>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderMarkdown);
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>

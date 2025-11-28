@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}} Article - Admin</title>
+    
+    <!-- MDB UI Kit CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.2.0/css/mdb.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- EasyMDE -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --gradient-primary: linear-gradient(45deg, #3b71ca, #6d5dfc);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f6f9;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            z-index: 1000;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-brand {
+            padding: 0 25px;
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-brand h4 {
+            color: white;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .sidebar-brand small {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu-header {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px 25px 10px;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu li {
+            margin: 3px 12px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 18px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-menu a i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .main-header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .page-title {
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        
+        /* Form Content */
+        .form-content {
+            padding: 30px;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .form-card-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .form-card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        
+        .form-card-body {
+            padding: 30px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #3b71ca;
+            box-shadow: 0 0 0 4px rgba(59, 113, 202, 0.1);
+        }
+        
+        .input-group .btn {
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .input-group .form-control {
+            border-radius: 10px 0 0 10px;
+        }
+        
+        /* Editor */
+        .EasyMDEContainer {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .EasyMDEContainer .editor-toolbar {
+            border-radius: 12px 12px 0 0;
+            background: #f8f9fa;
+            padding: 10px;
+        }
+        
+        .EasyMDEContainer .CodeMirror {
+            border-radius: 0 0 12px 12px;
+            min-height: 350px;
+        }
+        
+        .EasyMDEContainer .editor-toolbar button {
+            border-radius: 8px;
+        }
+        
+        .EasyMDEContainer .editor-toolbar button:hover {
+            background: #e9ecef;
+        }
+        
+        .EasyMDEContainer .editor-toolbar button.active {
+            background: #3b71ca;
+            color: white;
+        }
+        
+        /* Buttons */
+        .btn-rounded-lg {
+            border-radius: 12px;
+            padding: 12px 28px;
+            font-weight: 500;
+        }
+        
+        .btn-primary-gradient {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+        
+        .btn-primary-gradient:hover {
+            box-shadow: 0 5px 20px rgba(59, 113, 202, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h4><i class="fas fa-blog me-2"></i>{{siteName}}</h4>
+            <small>Admin Dashboard</small>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-header">Navigation</li>
+            <li>
+                <a href="/admin/">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/admin/edit" class="active">
+                    <i class="fas fa-edit"></i> {{action}} Article
+                </a>
+            </li>
+            <li>
+                <a href="/admin/users">
+                    <i class="fas fa-users"></i> Users
+                </a>
+            </li>
+            <li class="sidebar-menu-header">Quick Links</li>
+            <li>
+                <a href="/" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> View Blog
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="main-header">
+            <h4 class="page-title"><i class="fas fa-edit me-2"></i>{{action}} Article</h4>
+            <a href="/admin/" class="btn btn-outline-secondary btn-rounded">
+                <i class="fas fa-arrow-left me-2"></i>Back
+            </a>
+        </header>
+
+        <!-- Form Content -->
+        <div class="form-content">
+            <div class="form-card">
+                <div class="form-card-header">
+                    <h5><i class="fas fa-file-alt me-2"></i>Article Details</h5>
+                </div>
+                <div class="form-card-body">
+                    <form id="article-form">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Permalink *</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="permalink" required 
+                                           pattern="[a-z0-9-]+" title="Only lowercase letters, numbers, and hyphens">
+                                    <button class="btn btn-outline-primary" type="button" id="generate-slug-btn" title="Generate from title">
+                                        <i class="fas fa-magic"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">URL-friendly identifier (e.g., "my-article")</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Category *</label>
+                                <select class="form-select" id="label" required>
+                                    <option value="">Choose category...</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Lifestyle">Lifestyle</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Food">Food</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Health">Health</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Title *</label>
+                                <input type="text" class="form-control form-control-lg" id="title" required placeholder="Enter article title...">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Featured Image URL</label>
+                                <input type="url" class="form-control" id="img" placeholder="https://example.com/image.jpg">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Publish Date *</label>
+                                <input type="datetime-local" class="form-control" id="createDate" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="status">
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Content *</label>
+                                <textarea id="content"></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <hr class="my-4">
+                                <div class="d-flex gap-3 justify-content-end">
+                                    <button type="button" class="btn btn-secondary btn-rounded-lg" onclick="window.history.back()">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary-gradient btn-rounded-lg">
+                                        <i class="fas fa-save me-2"></i>Save Article
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MDB UI Kit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.2.0/js/mdb.umd.min.js"></script>
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    
+    <script>
+        let easyMDE;
+        let isEditing = false;
+        let currentPermalink = '';
+
+        // Initialize EasyMDE
+        easyMDE = new EasyMDE({ 
+            element: document.getElementById('content'),
+            spellChecker: false,
+            status: false,
+            autosave: { enabled: false },
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ]
+        });
+
+        // Check if editing
+        const urlParams = new URLSearchParams(window.location.search);
+        const permalink = urlParams.get('permalink');
+        
+        if (permalink) {
+            isEditing = true;
+            currentPermalink = permalink;
+            document.title = 'Edit Article - Admin';
+            document.querySelector('.page-title').innerHTML = '<i class="fas fa-edit me-2"></i>Edit Article';
+            document.querySelector('.form-card-header h5').textContent = 'Edit Article';
+            loadArticle(permalink);
+        }
+
+        async function loadArticle(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) throw new Error('Article not found');
+                
+                const article = await response.json();
+                
+                document.getElementById('permalink').value = article.permalink;
+                document.getElementById('permalink').readOnly = true;
+                document.getElementById('title').value = article.title;
+                document.getElementById('img').value = article.img || '';
+                document.getElementById('label').value = article.label;
+                document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+                
+                if (article.status) {
+                    document.getElementById('status').value = article.status;
+                }
+                
+                easyMDE.value(article.content);
+            } catch (error) {
+                console.error('Error loading article:', error);
+                alert('Error loading article');
+                window.location.href = '/admin/';
+            }
+        }
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+
+            const formData = {
+                permalink: document.getElementById('permalink').value,
+                title: document.getElementById('title').value,
+                img: document.getElementById('img').value,
+                label: document.getElementById('label').value,
+                createDate: document.getElementById('createDate').value,
+                content: easyMDE.value(),
+                status: document.getElementById('status').value
+            };
+
+            try {
+                const url = isEditing ? '/api/articles/' + currentPermalink : '/api/articles';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const message = isEditing ? 'Article updated!' : 'Article created!';
+                    alert(message);
+                    window.location.href = '/admin/';
+                } else {
+                    throw new Error(await response.text());
+                }
+            } catch (error) {
+                alert('Error saving article: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save Article';
+            }
+        });
+
+        // Set default date
+        document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+
+        // Generate slug
+        function generateSlugLocal(title) {
+            if (!title) return '';
+            return title.toLowerCase().trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        document.getElementById('generate-slug-btn').addEventListener('click', async () => {
+            const title = document.getElementById('title').value;
+            if (!title) {
+                alert('Please enter a title first');
+                return;
+            }
+
+            const btn = document.getElementById('generate-slug-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const response = await fetch('/api/generate-slug', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('permalink').value = data.slug;
+                } else {
+                    document.getElementById('permalink').value = generateSlugLocal(title);
+                }
+            } catch (error) {
+                document.getElementById('permalink').value = generateSlugLocal(title);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-magic"></i>';
+            }
+        });
+
+        document.getElementById('title').addEventListener('blur', () => {
+            const permalinkField = document.getElementById('permalink');
+            if (!permalinkField.value && !isEditing) {
+                const title = document.getElementById('title').value;
+                if (title) {
+                    permalinkField.value = generateSlugLocal(title);
+                }
+            }
+        });
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
