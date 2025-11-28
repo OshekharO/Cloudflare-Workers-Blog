@@ -7,61 +7,186 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            pink: '#fce4ec',
+                            purple: '#e8daef',
+                            blue: '#d6eaf8',
+                            mint: '#d5f5e3',
+                            peach: '#fdebd0',
+                            lavender: '#e8e0f0',
+                            rose: '#f8e1e7',
+                            sky: '#e0f2fe',
+                            cream: '#fef9e7',
+                            sage: '#e8f5e9'
+                        },
+                        accent: {
+                            primary: '#7c6f9f',
+                            secondary: '#e89bb0',
+                            tertiary: '#7fb8c9'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #e8daef 50%, #d6eaf8 100%);
+            background-attachment: fixed;
         }
         
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
         }
         
         .floating {
-            animation: floating 3s ease-in-out infinite;
+            animation: floating 4s ease-in-out infinite;
         }
         
         @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
         }
         
-        .pulse-slow {
-            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        @keyframes pulseGlow {
+            0%, 100% { 
+                opacity: 1;
+                filter: drop-shadow(0 0 10px rgba(124, 111, 159, 0.3));
+            }
+            50% { 
+                opacity: 0.8;
+                filter: drop-shadow(0 0 20px rgba(232, 155, 176, 0.5));
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6b5f8e 0%, #8a7eb1 100%);
+            box-shadow: 0 10px 30px rgba(124, 111, 159, 0.4);
+            transform: translateY(-3px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e8daef;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            border-color: #7c6f9f;
+            transform: translateY(-3px);
+        }
+        
+        .quick-link {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(124, 111, 159, 0.15);
+        }
+        
+        .footer-glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+        
+        .shape-1 {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #fce4ec, #e8daef);
+            top: 10%;
+            left: 5%;
+            animation: floating 6s ease-in-out infinite;
+        }
+        
+        .shape-2 {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #d6eaf8, #e0f2fe);
+            bottom: 20%;
+            right: 10%;
+            animation: floating 8s ease-in-out infinite reverse;
+        }
+        
+        .shape-3 {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #d5f5e3, #e8f5e9);
+            top: 50%;
+            right: 5%;
+            animation: floating 5s ease-in-out infinite;
         }
     </style>
     
     {{codeBeforHead}}
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
+    <!-- Floating Shapes -->
+    <div class="floating-shape shape-1 hidden md:block"></div>
+    <div class="floating-shape shape-2 hidden md:block"></div>
+    <div class="floating-shape shape-3 hidden md:block"></div>
+
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-100">
+    <nav class="glass-nav sticky top-0 z-50 border-b border-white/30">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-xl font-bold gradient-text">{{siteName}}</a>
-                <div class="flex space-x-3">
-                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
-                        <i class="ri-bookmark-line mr-1"></i>Bookmarks
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <a href="/" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                        <i class="ri-quill-pen-line text-white text-lg md:text-xl"></i>
+                    </div>
+                    <span class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">{{siteName}}</span>
+                </a>
+                <div class="flex space-x-2 md:space-x-3">
+                    <a href="/bookmarks" class="p-2.5 rounded-xl bg-pastel-lavender text-accent-primary hover:bg-pastel-purple transition-colors">
+                        <i class="ri-bookmark-line text-lg"></i>
                     </a>
-                    <a href="/admin/" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200">
-                        <i class="ri-admin-line mr-1"></i>Admin
+                    <a href="/admin/" class="btn-primary text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center shadow-md">
+                        <i class="ri-dashboard-line mr-2"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
                     </a>
                 </div>
             </div>
@@ -69,42 +194,50 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 flex items-center justify-center py-12">
+    <main class="flex-1 flex items-center justify-center py-12 relative">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <!-- Animated 404 Illustration -->
             <div class="relative mb-8">
-                <div class="floating text-9xl font-bold text-gray-300 mb-4">404</div>
+                <div class="floating">
+                    <div class="text-8xl md:text-9xl font-bold bg-gradient-to-br from-accent-primary via-accent-secondary to-accent-tertiary bg-clip-text text-transparent mb-4">
+                        404
+                    </div>
+                </div>
                 <div class="absolute inset-0 flex items-center justify-center">
-                    <i class="ri-search-eye-line text-6xl text-blue-500 pulse-slow"></i>
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-pastel-lavender to-pastel-pink flex items-center justify-center pulse-glow">
+                        <i class="ri-search-eye-line text-4xl text-accent-primary"></i>
+                    </div>
                 </div>
             </div>
 
             <!-- Error Message -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-4">Page Not Found</h1>
-                <p class="text-lg text-gray-600 mb-6 max-w-md mx-auto">
-                    Oops! The page you're looking for seems to have wandered off into the digital void. 
-                    It might have been moved, deleted, or perhaps it never existed in the first place.
+            <div class="glass-card p-8 md:p-10 mb-8 shadow-xl">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Oops! Page Not Found</h1>
+                <p class="text-gray-600 mb-6 max-w-md mx-auto leading-relaxed">
+                    The page you're looking for seems to have wandered off into the digital void. 
+                    It might have been moved, deleted, or perhaps it never existed.
                 </p>
                 
-                <!-- Search Suggestion -->
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <!-- Suggestion Box -->
+                <div class="bg-gradient-to-br from-pastel-blue/50 to-pastel-lavender/50 rounded-2xl p-5 mb-8">
                     <div class="flex items-start">
-                        <i class="ri-lightbulb-flash-line text-blue-500 text-xl mr-3 mt-1"></i>
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-tertiary to-accent-primary flex items-center justify-center mr-4 flex-shrink-0">
+                            <i class="ri-lightbulb-flash-line text-white"></i>
+                        </div>
                         <div class="text-left">
-                            <h3 class="font-semibold text-blue-800 mb-1">Looking for something specific?</h3>
-                            <p class="text-blue-700 text-sm">Try browsing our articles or use the search to find what you need.</p>
+                            <h3 class="font-semibold text-gray-800 mb-1">Looking for something specific?</h3>
+                            <p class="text-gray-600 text-sm">Try browsing our articles or use the navigation to find what you need.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a href="/" class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all duration-200 flex items-center justify-center">
-                        <i class="ri-home-line mr-2"></i>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/" class="btn-primary text-white px-8 py-3.5 rounded-xl font-semibold flex items-center justify-center shadow-lg">
+                        <i class="ri-home-4-line mr-2"></i>
                         Back to Homepage
                     </a>
-                    <button onclick="window.history.back()" class="w-full sm:w-auto bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                    <button onclick="window.history.back()" class="btn-secondary text-gray-700 px-8 py-3.5 rounded-xl font-semibold flex items-center justify-center">
                         <i class="ri-arrow-left-line mr-2"></i>
                         Go Back
                     </button>
@@ -112,109 +245,57 @@
             </div>
 
             <!-- Quick Links -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto">
-                <a href="/admin/edit" class="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow group">
-                    <i class="ri-edit-line text-2xl text-blue-500 mb-2 group-hover:text-blue-600 transition-colors"></i>
-                    <h3 class="font-semibold text-gray-900 text-sm">Write Article</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                <a href="/admin/edit" class="quick-link p-5 group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pastel-blue to-pastel-sky mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="ri-edit-line text-xl text-accent-tertiary"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 text-sm">Write Article</h3>
                     <p class="text-gray-500 text-xs mt-1">Create new content</p>
                 </a>
                 
-                <a href="/admin/" class="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow group">
-                    <i class="ri-article-line text-2xl text-green-500 mb-2 group-hover:text-green-600 transition-colors"></i>
-                    <h3 class="font-semibold text-gray-900 text-sm">Manage Articles</h3>
+                <a href="/admin/" class="quick-link p-5 group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pastel-mint to-pastel-sage mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="ri-article-line text-xl text-green-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 text-sm">Manage</h3>
                     <p class="text-gray-500 text-xs mt-1">View all posts</p>
                 </a>
                 
-                <a href="/bookmarks" class="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow group">
-                    <i class="ri-bookmark-line text-2xl text-yellow-500 mb-2 group-hover:text-yellow-600 transition-colors"></i>
-                    <h3 class="font-semibold text-gray-900 text-sm">Bookmarks</h3>
+                <a href="/bookmarks" class="quick-link p-5 group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pastel-cream to-pastel-peach mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="ri-bookmark-line text-xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 text-sm">Bookmarks</h3>
                     <p class="text-gray-500 text-xs mt-1">Saved articles</p>
                 </a>
             </div>
 
             <!-- Fun Message -->
-            <div class="mt-8 text-center">
-                <div class="inline-flex items-center bg-orange-50 border border-orange-200 rounded-full px-4 py-2">
-                    <i class="ri-emotion-happy-line text-orange-500 mr-2"></i>
-                    <span class="text-orange-700 text-sm">Don't worry, even the best websites get lost sometimes!</span>
-                </div>
+            <div class="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-5 py-2.5 shadow-sm">
+                <i class="ri-emotion-happy-line text-accent-secondary mr-2"></i>
+                <span class="text-gray-600 text-sm">Don't worry, even the best websites get lost sometimes!</span>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-8">
+    <footer class="footer-glass border-t border-white/30 py-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-600">{{copyRight}}</p>
+            <p class="text-gray-500 text-sm">{{copyRight}}</p>
         </div>
     </footer>
 
     <script>
-        // Add some interactive elements
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add click animation to buttons
-            const buttons = document.querySelectorAll('button, a[href]');
-            buttons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    if (this.getAttribute('href') !== '#' && !this.getAttribute('href').startsWith('javascript:')) {
-                        const ripple = document.createElement('span');
-                        const rect = this.getBoundingClientRect();
-                        const size = Math.max(rect.width, rect.height);
-                        const x = e.clientX - rect.left - size / 2;
-                        const y = e.clientY - rect.top - size / 2;
-                        
-                        ripple.style.cssText = `
-                            position: absolute;
-                            border-radius: 50%;
-                            background: rgba(255, 255, 255, 0.6);
-                            transform: scale(0);
-                            animation: ripple 600ms linear;
-                            width: ${size}px;
-                            height: ${size}px;
-                            left: ${x}px;
-                            top: ${y}px;
-                        `;
-                        
-                        this.style.position = 'relative';
-                        this.style.overflow = 'hidden';
-                        this.appendChild(ripple);
-                        
-                        setTimeout(() => {
-                            ripple.remove();
-                        }, 600);
-                    }
-                });
-            });
-
-            // Add keyboard navigation
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    window.history.back();
-                }
-                if (e.key === 'h' || e.key === 'H') {
-                    window.location.href = '/';
-                }
-            });
-
-            // Add some console fun
-            console.log(
-                `%c🚨 404 Alert! %c\nLooks like someone took a wrong turn...\nDon't worry, even developers get lost sometimes! 😄`,
-                'color: #ef4444; font-weight: bold; font-size: 16px;',
-                'color: #6b7280; font-size: 14px;'
-            );
-        });
-
-        // Add ripple animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.history.back();
             }
-        `;
-        document.head.appendChild(style);
+            if ((e.key === 'h' || e.key === 'H') && !e.ctrlKey && !e.metaKey) {
+                window.location.href = '/';
+            }
+        });
     </script>
     
     {{codeBeforBody}}

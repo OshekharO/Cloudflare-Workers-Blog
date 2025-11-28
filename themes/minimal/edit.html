@@ -7,76 +7,204 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            pink: '#fce4ec',
+                            purple: '#e8daef',
+                            blue: '#d6eaf8',
+                            mint: '#d5f5e3',
+                            peach: '#fdebd0',
+                            lavender: '#e8e0f0',
+                            rose: '#f8e1e7',
+                            sky: '#e0f2fe',
+                            cream: '#fef9e7',
+                            sage: '#e8f5e9'
+                        },
+                        accent: {
+                            primary: '#7c6f9f',
+                            secondary: '#e89bb0',
+                            tertiary: '#7fb8c9'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <!-- EasyMDE -->
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     
     <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #e8daef 50%, #d6eaf8 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
         }
         
         .EasyMDEContainer .CodeMirror {
-            border: 1px solid #e5e7eb;
-            border-radius: 0 0 0.75rem 0.75rem;
+            border: 2px solid #e8daef;
+            border-radius: 0 0 16px 16px;
             font-size: 0.9375rem;
-            min-height: 320px;
+            min-height: 350px;
+            font-family: 'Poppins', sans-serif;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .EasyMDEContainer .CodeMirror:focus-within {
+            border-color: #7c6f9f;
+            box-shadow: 0 0 0 3px rgba(124, 111, 159, 0.15);
         }
         
         .EasyMDEContainer .editor-toolbar {
-            border: 1px solid #e5e7eb;
+            border: 2px solid #e8daef;
             border-bottom: none;
-            border-radius: 0.75rem 0.75rem 0 0;
-            padding: 0.5rem;
-            background: #f9fafb;
+            border-radius: 16px 16px 0 0;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #fce4ec 0%, #e8daef 100%);
         }
         
         .EasyMDEContainer .editor-toolbar button {
-            border-radius: 0.375rem;
-            transition: all 0.2s ease;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            color: #7c6f9f;
         }
         
         .EasyMDEContainer .editor-toolbar button:hover {
-            background: #e5e7eb;
+            background: rgba(124, 111, 159, 0.15);
         }
         
         .EasyMDEContainer .editor-toolbar button.active {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
             color: white;
         }
         
-        /* Form improvements */
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        .form-input {
+            border: 2px solid #e8daef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
         }
         
-        /* Button transitions */
-        button, a {
-            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        .form-input:focus {
+            outline: none;
+            border-color: #7c6f9f;
+            box-shadow: 0 0 0 3px rgba(124, 111, 159, 0.15);
+            background: white;
+        }
+        
+        .form-select {
+            border: 2px solid #e8daef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: #7c6f9f;
+            box-shadow: 0 0 0 3px rgba(124, 111, 159, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6b5f8e 0%, #8a7eb1 100%);
+            box-shadow: 0 8px 25px rgba(124, 111, 159, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e8daef;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            border-color: #7c6f9f;
+            transform: translateY(-2px);
+        }
+        
+        .magic-btn {
+            background: linear-gradient(135deg, #e89bb0 0%, #f0b8c7 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .magic-btn:hover {
+            background: linear-gradient(135deg, #d88a9f 0%, #e9a8b8 100%);
+            transform: scale(1.05);
+        }
+        
+        .form-label {
+            color: #4b5563;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-label i {
+            color: #7c6f9f;
+            margin-right: 0.5rem;
         }
     </style>
     
     {{codeBeforHead}}
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body>
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <i class="ri-edit-line text-2xl text-blue-600 mr-3"></i>
-                    <h1 class="text-xl font-bold text-gray-900">{{action}} Article</h1>
-                </div>
+    <nav class="glass-nav sticky top-0 z-50 border-b border-white/30">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
                 <div class="flex items-center space-x-3">
-                    <a href="/admin/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
-                        <i class="ri-arrow-left-line mr-1"></i>Back
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
+                        <i class="ri-edit-2-line text-white text-lg md:text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold text-gray-800">{{action}} Article</h1>
+                        <p class="text-xs text-gray-500 hidden sm:block">Create amazing content</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 md:space-x-3">
+                    <a href="/admin/" class="btn-secondary px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-sm font-medium text-gray-700 flex items-center">
+                        <i class="ri-arrow-left-line mr-1"></i>
+                        <span class="hidden sm:inline">Back</span>
                     </a>
-                    <a href="/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
-                        <i class="ri-eye-line mr-1"></i>View
+                    <a href="/" class="btn-secondary px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-sm font-medium text-gray-700 flex items-center">
+                        <i class="ri-eye-line mr-1"></i>
+                        <span class="hidden sm:inline">View</span>
                     </a>
                 </div>
             </div>
@@ -84,33 +212,45 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="border-b border-gray-200 px-6 py-4">
-                <h2 class="text-lg font-semibold text-gray-900">
-                    <i class="ri-article-line mr-2"></i>{{action}} Article
-                </h2>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="glass-card overflow-hidden shadow-xl">
+            <div class="bg-gradient-to-r from-pastel-lavender/50 to-pastel-pink/50 border-b border-gray-100/80 px-6 py-5">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
+                        <i class="ri-article-line text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">{{action}} Article</h2>
+                        <p class="text-sm text-gray-500">Fill in the details below</p>
+                    </div>
+                </div>
             </div>
             
-            <form id="article-form" class="p-6">
+            <form id="article-form" class="p-6 md:p-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <label for="permalink" class="block text-sm font-medium text-gray-700 mb-2">Permalink *</label>
+                        <label for="permalink" class="form-label">
+                            <i class="ri-link"></i>Permalink *
+                        </label>
                         <div class="flex">
                             <input type="text" id="permalink" required pattern="[a-z0-9-]+" 
-                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                   class="form-input flex-1 rounded-r-none" placeholder="article-url-slug">
                             <button type="button" id="generate-slug-btn" title="Generate from title"
-                                    class="px-3 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg hover:bg-gray-200 transition-colors">
-                                <i class="ri-magic-line"></i>
+                                    class="magic-btn px-4 rounded-l-none rounded-r-xl text-white">
+                                <i class="ri-magic-line text-lg"></i>
                             </button>
                         </div>
-                        <p class="mt-1 text-sm text-gray-500">URL-friendly identifier - Click magic wand to auto-generate</p>
+                        <p class="mt-2 text-xs text-gray-500 flex items-center">
+                            <i class="ri-information-line mr-1"></i>URL-friendly identifier • Click magic wand to auto-generate
+                        </p>
                     </div>
                     
                     <div>
-                        <label for="label" class="block text-sm font-medium text-gray-700 mb-2">Label *</label>
-                        <select id="label" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Choose a label...</option>
+                        <label for="label" class="form-label">
+                            <i class="ri-price-tag-3-line"></i>Category *
+                        </label>
+                        <select id="label" required class="form-select w-full">
+                            <option value="">Choose a category...</option>
                             <option value="Technology">Technology</option>
                             <option value="Lifestyle">Lifestyle</option>
                             <option value="Travel">Travel</option>
@@ -124,47 +264,57 @@
                 </div>
                 
                 <div class="mb-6">
-                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                    <label for="title" class="form-label">
+                        <i class="ri-heading"></i>Title *
+                    </label>
                     <input type="text" id="title" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                           class="form-input w-full" placeholder="Enter your article title...">
                 </div>
                 
                 <div class="mb-6">
-                    <label for="img" class="block text-sm font-medium text-gray-700 mb-2">Featured Image URL</label>
+                    <label for="img" class="form-label">
+                        <i class="ri-image-line"></i>Featured Image URL
+                    </label>
                     <input type="url" id="img" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           class="form-input w-full"
                            placeholder="https://example.com/image.jpg">
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <label for="createDate" class="block text-sm font-medium text-gray-700 mb-2">Publish Date *</label>
+                        <label for="createDate" class="form-label">
+                            <i class="ri-calendar-line"></i>Publish Date *
+                        </label>
                         <input type="datetime-local" id="createDate" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                               class="form-input w-full">
                     </div>
                     
                     <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                        <select id="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <label for="status" class="form-label">
+                            <i class="ri-toggle-line"></i>Status
+                        </label>
+                        <select id="status" class="form-select w-full">
                             <option value="published">Published</option>
                             <option value="draft">Draft</option>
                         </select>
                     </div>
                 </div>
                 
-                <div class="mb-6">
-                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content *</label>
+                <div class="mb-8">
+                    <label for="content" class="form-label mb-3">
+                        <i class="ri-file-text-line"></i>Content *
+                    </label>
                     <textarea id="content"></textarea>
                 </div>
                 
-                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-100">
                     <button type="button" onclick="window.history.back()" 
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                        <i class="ri-close-line mr-1"></i>Cancel
+                            class="btn-secondary px-6 py-3 rounded-xl text-gray-700 font-medium order-2 sm:order-1">
+                        <i class="ri-close-line mr-2"></i>Cancel
                     </button>
                     <button type="submit" 
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        <i class="ri-check-line mr-1"></i>Save Article
+                            class="btn-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg order-1 sm:order-2">
+                        <i class="ri-check-line mr-2"></i>Save Article
                     </button>
                 </div>
             </form>
@@ -219,6 +369,7 @@
                 
                 document.getElementById('permalink').value = article.permalink;
                 document.getElementById('permalink').readOnly = true;
+                document.getElementById('permalink').classList.add('bg-gray-100');
                 document.getElementById('title').value = article.title;
                 document.getElementById('img').value = article.img || '';
                 document.getElementById('label').value = article.label;
@@ -231,8 +382,10 @@
                 easyMDE.value(article.content);
             } catch (error) {
                 console.error('Error loading article:', error);
-                alert('Error loading article: ' + error.message);
-                window.location.href = '/admin/';
+                showNotification('Error loading article: ' + error.message, 'error');
+                setTimeout(() => {
+                    window.location.href = '/admin/';
+                }, 2000);
             }
         }
 
@@ -242,7 +395,7 @@
             const submitBtn = e.target.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-1"></i>Saving...';
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Saving...';
 
             const formData = {
                 permalink: document.getElementById('permalink').value,
@@ -268,19 +421,17 @@
 
                 if (response.ok) {
                     const message = isEditing ? 'Article updated successfully!' : 'Article created successfully!';
-                    if (formData.status === 'draft') {
-                        alert(message + ' (Saved as draft)');
-                    } else {
-                        alert(message);
-                    }
-                    window.location.href = '/admin/';
+                    showNotification(message + (formData.status === 'draft' ? ' (Saved as draft)' : ''), 'success');
+                    setTimeout(() => {
+                        window.location.href = '/admin/';
+                    }, 1500);
                 } else {
                     const error = await response.text();
                     throw new Error(error);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error saving article: ' + error.message);
+                showNotification('Error saving article: ' + error.message, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
@@ -302,14 +453,14 @@
         document.getElementById('generate-slug-btn').addEventListener('click', async () => {
             const title = document.getElementById('title').value;
             if (!title) {
-                alert('Please enter a title first');
+                showNotification('Please enter a title first', 'warning');
                 return;
             }
 
             const btn = document.getElementById('generate-slug-btn');
             const originalHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
+            btn.innerHTML = '<i class="ri-loader-4-line animate-spin text-lg"></i>';
 
             try {
                 const response = await fetch('/api/generate-slug', {
@@ -321,11 +472,14 @@
                 if (response.ok) {
                     const data = await response.json();
                     document.getElementById('permalink').value = data.slug;
+                    showNotification('Slug generated!', 'success');
                 } else {
                     document.getElementById('permalink').value = generateSlugLocal(title);
+                    showNotification('Slug generated locally', 'success');
                 }
             } catch (error) {
                 document.getElementById('permalink').value = generateSlugLocal(title);
+                showNotification('Slug generated locally', 'success');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
@@ -342,6 +496,38 @@
                 }
             }
         });
+
+        function showNotification(message, type = 'success') {
+            document.querySelectorAll('.notification').forEach(el => el.remove());
+            
+            const colors = {
+                success: 'from-green-400 to-emerald-500',
+                warning: 'from-yellow-400 to-orange-500',
+                error: 'from-red-400 to-rose-500'
+            };
+            
+            const icons = {
+                success: 'ri-check-line',
+                warning: 'ri-alert-line',
+                error: 'ri-error-warning-line'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-24 right-6 px-5 py-3.5 rounded-2xl shadow-xl text-white font-medium z-50 flex items-center gap-2 bg-gradient-to-r ${colors[type] || colors.success} transform transition-all duration-500`;
+            notification.innerHTML = `<i class="${icons[type] || icons.success} text-lg"></i>${message}`;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(120%)';
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
+        }
     </script>
     
     {{codeBeforBody}}

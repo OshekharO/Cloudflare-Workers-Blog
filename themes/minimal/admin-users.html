@@ -5,113 +5,315 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Users - {{siteName}}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            pink: '#fce4ec',
+                            purple: '#e8daef',
+                            blue: '#d6eaf8',
+                            mint: '#d5f5e3',
+                            peach: '#fdebd0',
+                            lavender: '#e8e0f0',
+                            rose: '#f8e1e7',
+                            sky: '#e0f2fe',
+                            cream: '#fef9e7',
+                            sage: '#e8f5e9'
+                        },
+                        accent: {
+                            primary: '#7c6f9f',
+                            secondary: '#e89bb0',
+                            tertiary: '#7fb8c9'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
     <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #e8daef 50%, #d6eaf8 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
         
-        /* Improved focus states */
-        input:focus, select:focus, button:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         
-        /* Better button transitions */
-        button, a {
-            transition: all 0.2s ease;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
         }
         
-        button:hover {
-            transform: translateY(-1px);
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            transition: all 0.3s ease;
         }
         
-        /* Card hover effects */
-        .hover-shadow {
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(124, 111, 159, 0.15);
         }
         
-        .hover-shadow:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        .user-row {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .user-row:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(232, 155, 176, 0.3);
+            box-shadow: 0 8px 20px rgba(124, 111, 159, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6b5f8e 0%, #8a7eb1 100%);
+            box-shadow: 0 8px 25px rgba(124, 111, 159, 0.4);
             transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #e89bb0 0%, #f0b8c7 100%);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #d88a9f 0%, #e9a8b8 100%);
+            box-shadow: 0 8px 25px rgba(232, 155, 176, 0.4);
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .icon-btn:hover {
+            transform: scale(1.15);
+        }
+        
+        .icon-btn.edit {
+            background: linear-gradient(135deg, #d6eaf8 0%, #e0f2fe 100%);
+            color: #2980b9;
+        }
+        
+        .icon-btn.delete {
+            background: linear-gradient(135deg, #f8e1e7 0%, #fce4ec 100%);
+            color: #c0392b;
+        }
+        
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .role-badge.superadmin {
+            background: linear-gradient(135deg, #fdebd0 0%, #fef9e7 100%);
+            color: #d68910;
+        }
+        
+        .role-badge.admin {
+            background: linear-gradient(135deg, #d6eaf8 0%, #e0f2fe 100%);
+            color: #2980b9;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-badge.active {
+            background: linear-gradient(135deg, #d5f5e3 0%, #e8f5e9 100%);
+            color: #27ae60;
+        }
+        
+        .status-badge.inactive {
+            background: linear-gradient(135deg, #eaecee 0%, #f4f6f7 100%);
+            color: #7f8c8d;
+        }
+        
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+        }
+        
+        .form-input {
+            border: 2px solid #e8daef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #7c6f9f;
+            box-shadow: 0 0 0 3px rgba(124, 111, 159, 0.15);
+            background: white;
+        }
+        
+        .form-select {
+            border: 2px solid #e8daef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: #7c6f9f;
+            box-shadow: 0 0 0 3px rgba(124, 111, 159, 0.15);
+        }
+        
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
         }
     </style>
     {{codeBeforHead}}
   </head>
-  <body class="bg-gray-50 min-h-screen">
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+  <body>
+    <!-- Navigation -->
+    <nav class="glass-nav sticky top-0 z-50 border-b border-white/30">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <i class="ri-user-settings-line text-2xl text-blue-600 mr-3"></i>
-            <h1 class="text-xl font-bold text-gray-900">Admin Users</h1>
+        <div class="flex justify-between items-center h-16 md:h-20">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
+              <i class="ri-user-settings-line text-white text-lg md:text-xl"></i>
+            </div>
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-gray-800">Admin Users</h1>
+              <p class="text-xs text-gray-500 hidden sm:block">Manage team access</p>
+            </div>
           </div>
-          <div class="flex space-x-3">
-            <a href="/admin/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"> <i class="ri-article-line mr-1"></i>Articles </a>
-          </div>
+          <a href="/admin/" class="flex items-center space-x-2 bg-white/80 hover:bg-white px-4 py-2.5 rounded-xl text-sm font-medium text-gray-700 transition-all shadow-sm hover:shadow-md">
+            <i class="ri-article-line text-accent-primary"></i>
+            <span class="hidden sm:inline">Articles</span>
+          </a>
         </div>
       </div>
     </nav>
 
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Quick Actions -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <button onclick="openAddAdminModal()" class="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow text-center">
-          <i class="ri-user-add-line text-xl text-blue-600 mb-2 block"></i>
-          <h3 class="font-semibold text-gray-900 text-sm">Add Admin</h3>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
+        <button onclick="openAddAdminModal()" class="stat-card p-5 text-center group">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pastel-blue to-pastel-sky mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <i class="ri-user-add-line text-2xl text-accent-tertiary"></i>
+          </div>
+          <h3 class="font-bold text-gray-800">Add Admin</h3>
+          <p class="text-xs text-gray-500 mt-1">Create new user</p>
         </button>
 
-        <div class="bg-white p-4 rounded-lg border border-gray-200 text-center">
-          <i class="ri-group-line text-xl text-green-600 mb-2 block"></i>
-          <h3 class="font-semibold text-gray-900 text-sm" id="total-admins">Loading...</h3>
-          <p class="text-gray-500 text-xs">Total Admins</p>
+        <div class="stat-card p-5 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pastel-mint to-pastel-sage mx-auto mb-3 flex items-center justify-center">
+            <i class="ri-group-line text-2xl text-green-600"></i>
+          </div>
+          <h3 class="font-bold text-gray-800 text-2xl" id="total-admins">-</h3>
+          <p class="text-xs text-gray-500 mt-1">Total Admins</p>
         </div>
 
-        <div class="bg-white p-4 rounded-lg border border-gray-200 text-center">
-          <i class="ri-shield-keyhole-line text-xl text-purple-600 mb-2 block"></i>
-          <h3 class="font-semibold text-gray-900 text-sm" id="superadmin-count">Loading...</h3>
-          <p class="text-gray-500 text-xs">Super Admins</p>
+        <div class="stat-card p-5 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pastel-lavender to-pastel-purple mx-auto mb-3 flex items-center justify-center">
+            <i class="ri-shield-keyhole-line text-2xl text-accent-primary"></i>
+          </div>
+          <h3 class="font-bold text-gray-800 text-2xl" id="superadmin-count">-</h3>
+          <p class="text-xs text-gray-500 mt-1">Super Admins</p>
         </div>
       </div>
 
       <!-- Users Management -->
-      <div class="bg-white rounded-lg border border-gray-200">
-        <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+      <div class="glass-card overflow-hidden mb-8">
+        <div class="border-b border-gray-100/80 px-5 sm:px-6 py-5 bg-gradient-to-r from-white/50 to-transparent">
           <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <h2 class="text-lg font-semibold text-gray-900">Admin Users</h2>
+            <div>
+              <h2 class="text-lg md:text-xl font-bold text-gray-800">Admin Users</h2>
+              <p class="text-sm text-gray-500">Manage user access and permissions</p>
+            </div>
             <div class="flex space-x-3">
               <div class="relative">
-                <input type="text" id="search-admins" placeholder="Search admins..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                <input type="text" id="search-admins" placeholder="Search admins..." 
+                       class="form-input pl-10 pr-4 py-2.5 w-full sm:w-auto" />
                 <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
               </div>
-              <button onclick="loadAdmins()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"><i class="ri-refresh-line mr-1"></i></button>
+              <button onclick="loadAdmins()" class="w-11 h-11 rounded-xl bg-white/80 hover:bg-white flex items-center justify-center text-gray-600 transition-all shadow-sm hover:shadow-md">
+                <i class="ri-refresh-line text-lg"></i>
+              </button>
             </div>
           </div>
         </div>
-        <div class="p-4 sm:p-6">
+        <div class="p-5 sm:p-6">
           <div id="admins-list">
-            <div class="flex justify-center items-center py-12">
-              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div class="flex flex-col justify-center items-center py-12">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center animate-pulse mb-4">
+                <i class="ri-loader-4-line text-white text-2xl animate-spin"></i>
+              </div>
+              <p class="text-gray-500 font-medium">Loading admins...</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- User Guide -->
-      <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <div class="glass-card p-6 bg-gradient-to-br from-pastel-blue/50 to-pastel-lavender/50">
         <div class="flex items-start">
-          <i class="ri-information-line text-blue-600 text-xl mr-3 mt-1"></i>
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-tertiary to-accent-primary flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="ri-information-line text-white text-xl"></i>
+          </div>
           <div>
-            <h3 class="font-semibold text-blue-900 mb-2">Admin Roles Guide</h3>
+            <h3 class="font-bold text-gray-800 mb-3">Admin Roles Guide</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span class="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium mr-2">Super Admin</span>
-                <span class="text-blue-800">Full system access, can manage other admins</span>
+              <div class="flex items-center space-x-3">
+                <span class="role-badge superadmin"><i class="ri-shield-keyhole-line mr-1"></i>Super Admin</span>
+                <span class="text-gray-600">Full system access, can manage users</span>
               </div>
-              <div>
-                <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium mr-2">Admin</span>
-                <span class="text-blue-800">Content management only, cannot manage users</span>
+              <div class="flex items-center space-x-3">
+                <span class="role-badge admin"><i class="ri-user-line mr-1"></i>Admin</span>
+                <span class="text-gray-600">Content management only</span>
               </div>
             </div>
           </div>
@@ -120,34 +322,39 @@
     </div>
 
     <!-- Add Admin Modal -->
-    <div id="add-admin-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-      <div class="bg-white rounded-lg p-6 w-full max-w-md">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold">Add New Admin</h3>
-          <button onclick="closeAddAdminModal()" class="text-gray-400 hover:text-gray-600">
-            <i class="ri-close-line text-xl"></i>
+    <div id="add-admin-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+      <div class="glass-modal p-6 w-full max-w-md shadow-2xl">
+        <div class="flex justify-between items-center mb-5">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pastel-blue to-pastel-sky flex items-center justify-center">
+              <i class="ri-user-add-line text-accent-tertiary"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800">Add New Admin</h3>
+          </div>
+          <button onclick="closeAddAdminModal()" class="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
+            <i class="ri-close-line text-gray-600"></i>
           </button>
         </div>
 
         <form id="add-admin-form" class="space-y-4">
           <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username *</label>
-            <input type="text" id="username" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Username *</label>
+            <input type="text" id="username" required class="form-input w-full" placeholder="Enter username" />
           </div>
 
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
-            <input type="password" id="password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Password *</label>
+            <input type="password" id="password" required class="form-input w-full" placeholder="Enter password" />
           </div>
 
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-            <input type="email" id="email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+            <input type="email" id="email" required class="form-input w-full" placeholder="Enter email" />
           </div>
 
           <div>
-            <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-            <select id="role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Role *</label>
+            <select id="role" required class="form-select w-full">
               <option value="admin">Admin</option>
               <option value="superadmin">Super Admin</option>
             </select>
@@ -155,21 +362,28 @@
         </form>
 
         <div class="flex space-x-3 mt-6">
-          <button onclick="closeAddAdminModal()" class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+          <button onclick="closeAddAdminModal()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-xl font-medium hover:bg-gray-200 transition-all">
             Cancel
           </button>
-          <button onclick="addAdmin()" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"><i class="ri-user-add-line mr-1"></i>Add Admin</button>
+          <button onclick="addAdmin()" class="flex-1 btn-primary text-white py-3 px-4 rounded-xl font-medium">
+            <i class="ri-user-add-line mr-2"></i>Add Admin
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Edit Admin Modal -->
-    <div id="edit-admin-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-      <div class="bg-white rounded-lg p-6 w-full max-w-md">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-semibold">Edit Admin</h3>
-          <button onclick="closeEditAdminModal()" class="text-gray-400 hover:text-gray-600">
-            <i class="ri-close-line text-xl"></i>
+    <div id="edit-admin-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+      <div class="glass-modal p-6 w-full max-w-md shadow-2xl">
+        <div class="flex justify-between items-center mb-5">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pastel-lavender to-pastel-purple flex items-center justify-center">
+              <i class="ri-edit-line text-accent-primary"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800">Edit Admin</h3>
+          </div>
+          <button onclick="closeEditAdminModal()" class="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
+            <i class="ri-close-line text-gray-600"></i>
           </button>
         </div>
 
@@ -177,26 +391,26 @@
           <input type="hidden" id="edit-admin-id" />
 
           <div>
-            <label for="edit-username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-            <input type="text" id="edit-username" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500" />
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+            <input type="text" id="edit-username" readonly class="form-input w-full bg-gray-100 text-gray-500" />
           </div>
 
           <div>
-            <label for="edit-email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-            <input type="email" id="edit-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+            <input type="email" id="edit-email" required class="form-input w-full" />
           </div>
 
           <div>
-            <label for="edit-role" class="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-            <select id="edit-role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Role *</label>
+            <select id="edit-role" required class="form-select w-full">
               <option value="admin">Admin</option>
               <option value="superadmin">Super Admin</option>
             </select>
           </div>
 
           <div>
-            <label for="edit-status" class="block text-sm font-medium text-gray-700 mb-1">Status *</label>
-            <select id="edit-status" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Status *</label>
+            <select id="edit-status" required class="form-select w-full">
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
@@ -204,20 +418,22 @@
         </form>
 
         <div class="flex space-x-3 mt-6">
-          <button onclick="closeEditAdminModal()" class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+          <button onclick="closeEditAdminModal()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-xl font-medium hover:bg-gray-200 transition-all">
             Cancel
           </button>
-          <button onclick="updateAdmin()" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"><i class="ri-save-line mr-1"></i>Save Changes</button>
+          <button onclick="updateAdmin()" class="flex-1 btn-primary text-white py-3 px-4 rounded-xl font-medium">
+            <i class="ri-save-line mr-2"></i>Save Changes
+          </button>
         </div>
       </div>
     </div>
+
     <script>
       let currentAdmins = [];
 
       document.addEventListener("DOMContentLoaded", function () {
         loadAdmins();
 
-        // Search functionality
         document.getElementById("search-admins").addEventListener("input", function (e) {
           filterAdmins(e.target.value);
         });
@@ -251,81 +467,65 @@
 
         if (admins.length === 0) {
           container.innerHTML = `
-                <div class="text-center py-12">
-                    <i class="ri-user-search-line text-4xl text-gray-300 mb-3"></i>
-                    <h3 class="text-lg font-semibold text-gray-600 mb-2">No Admin Users</h3>
-                    <p class="text-gray-500 mb-4">Get started by adding your first admin user</p>
-                    <button onclick="openAddAdminModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                        <i class="ri-user-add-line mr-1"></i>Add Admin
-                    </button>
-                </div>
-            `;
+            <div class="text-center py-12">
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pastel-lavender to-pastel-pink mx-auto flex items-center justify-center mb-4">
+                <i class="ri-user-search-line text-3xl text-accent-primary"></i>
+              </div>
+              <h3 class="text-lg font-bold text-gray-800 mb-2">No Admin Users</h3>
+              <p class="text-gray-500 mb-4">Get started by adding your first admin user</p>
+              <button onclick="openAddAdminModal()" class="btn-primary text-white px-5 py-2.5 rounded-xl inline-flex items-center text-sm font-medium">
+                <i class="ri-user-add-line mr-2"></i>Add Admin
+              </button>
+            </div>
+          `;
           return;
         }
 
-        container.innerHTML = admins
-          .map(
-            (admin) => `
-            <div class="border-b border-gray-100 last:border-0 py-4 admin-item">
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="flex-shrink-0">
-                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                    ${admin.username.charAt(0).toUpperCase()}
-                                </div>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <h3 class="font-medium text-gray-900 truncate">${admin.username}</h3>
-                                <p class="text-gray-500 text-sm truncate">${admin.email}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-2 flex-wrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${admin.role === "superadmin" ? "bg-orange-100 text-orange-800" : "bg-blue-100 text-blue-800"}">
-                                <i class="ri-${admin.role === "superadmin" ? "shield-keyhole-line" : "user-line"} mr-1"></i>
-                                ${admin.role}
-                            </span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${admin.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}">
-                                <i class="ri-${admin.status === "active" ? "check-line" : "close-line"} mr-1"></i>
-                                ${admin.status}
-                            </span>
-                            <span class="text-gray-500 text-sm">
-                                <i class="ri-calendar-line mr-1"></i>
-                                Joined ${new Date(admin.createdAt).toLocaleDateString()}
-                            </span>
-                            ${
-                              admin.lastLogin
-                                ? `
-                                <span class="text-gray-500 text-sm">
-                                    <i class="ri-login-box-line mr-1"></i>
-                                    Last login ${new Date(admin.lastLogin).toLocaleDateString()}
-                                </span>
-                            `
-                                : ""
-                            }
-                        </div>
-                    </div>
-                    <div class="flex space-x-2 sm:ml-4">
-                        <button onclick="editAdmin('${admin.id}')" class="text-blue-600 hover:text-blue-700 p-2" title="Edit">
-                            <i class="ri-edit-line"></i>
-                        </button>
-                        <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
-                                class="text-red-600 hover:text-red-700 p-2" 
-                                title="Delete"
-                                ${admin.role === "superadmin" ? "disabled" : ""}>
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>
+        const colors = ['from-accent-primary to-accent-secondary', 'from-accent-secondary to-accent-tertiary', 'from-accent-tertiary to-accent-primary'];
+
+        container.innerHTML = admins.map((admin, index) => `
+          <div class="user-row">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <div class="flex items-center space-x-4">
+                <div class="avatar bg-gradient-to-br ${colors[index % colors.length]}">
+                  ${admin.username.charAt(0).toUpperCase()}
                 </div>
+                <div class="min-w-0 flex-1">
+                  <h3 class="font-semibold text-gray-800">${admin.username}</h3>
+                  <p class="text-gray-500 text-sm truncate">${admin.email}</p>
+                </div>
+              </div>
+              <div class="flex items-center flex-wrap gap-2 ml-14 sm:ml-0">
+                <span class="role-badge ${admin.role === "superadmin" ? "superadmin" : "admin"}">
+                  <i class="ri-${admin.role === "superadmin" ? "shield-keyhole-line" : "user-line"} mr-1"></i>
+                  ${admin.role}
+                </span>
+                <span class="status-badge ${admin.status === "active" ? "active" : "inactive"}">
+                  <i class="ri-${admin.status === "active" ? "checkbox-circle-line" : "close-circle-line"} mr-1"></i>
+                  ${admin.status}
+                </span>
+              </div>
+              <div class="flex space-x-2 ml-14 sm:ml-4">
+                <button onclick="editAdmin('${admin.id}')" class="icon-btn edit" title="Edit">
+                  <i class="ri-edit-line"></i>
+                </button>
+                <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
+                        class="icon-btn delete" 
+                        title="Delete"
+                        ${admin.role === "superadmin" ? "disabled style='opacity: 0.5; cursor: not-allowed;'" : ""}>
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
             </div>
-        `
-          )
-          .join("");
+          </div>
+        `).join("");
       }
 
       function filterAdmins(searchTerm) {
         const filteredAdmins = currentAdmins.filter(
-          (admin) => admin.username.toLowerCase().includes(searchTerm.toLowerCase()) || admin.email.toLowerCase().includes(searchTerm.toLowerCase()) || admin.role.toLowerCase().includes(searchTerm.toLowerCase())
+          (admin) => admin.username.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                     admin.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                     admin.role.toLowerCase().includes(searchTerm.toLowerCase())
         );
         displayAdmins(filteredAdmins);
       }
@@ -338,7 +538,6 @@
         document.getElementById("superadmin-count").textContent = superadminCount;
       }
 
-      // Modal functions
       function openAddAdminModal() {
         document.getElementById("add-admin-modal").classList.remove("hidden");
         document.getElementById("add-admin-form").reset();
@@ -356,7 +555,6 @@
         document.getElementById("edit-admin-modal").classList.add("hidden");
       }
 
-      // Admin management functions
       async function addAdmin() {
         const formData = {
           username: document.getElementById("username").value,
@@ -368,9 +566,7 @@
         try {
           const response = await fetch("/api/admins", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData),
           });
 
@@ -379,16 +575,12 @@
             closeAddAdminModal();
             loadAdmins();
           } else {
-            if (response.status === 401) {
-              showNotification("Authentication required. Please log in again.", "error");
-              return;
-            }
             if (response.status === 403) {
               showNotification("Access denied. Only superadmins can manage users.", "error");
               return;
             }
-            const error = await response.text();
-            throw new Error(error);
+            const error = await response.json();
+            throw new Error(error.error || "Failed to create admin");
           }
         } catch (error) {
           console.error("Error creating admin:", error);
@@ -420,9 +612,7 @@
         try {
           const response = await fetch("/api/admins/" + adminId, {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updateData),
           });
 
@@ -431,16 +621,12 @@
             closeEditAdminModal();
             loadAdmins();
           } else {
-            if (response.status === 401) {
-              showNotification("Authentication required. Please log in again.", "error");
-              return;
-            }
             if (response.status === 403) {
               showNotification("Access denied. Only superadmins can manage users.", "error");
               return;
             }
-            const error = await response.text();
-            throw new Error(error);
+            const error = await response.json();
+            throw new Error(error.error || "Failed to update admin");
           }
         } catch (error) {
           console.error("Error updating admin:", error);
@@ -452,24 +638,18 @@
         if (!confirm(`Are you sure you want to delete admin "${username}"? This action cannot be undone.`)) return;
 
         try {
-          const response = await fetch("/api/admins/" + adminId, {
-            method: "DELETE",
-          });
+          const response = await fetch("/api/admins/" + adminId, { method: "DELETE" });
 
           if (response.ok) {
             showNotification("Admin deleted successfully");
             loadAdmins();
           } else {
-            if (response.status === 401) {
-              showNotification("Authentication required. Please log in again.", "error");
-              return;
-            }
             if (response.status === 403) {
               showNotification("Access denied. Only superadmins can manage users.", "error");
               return;
             }
-            const error = await response.text();
-            throw new Error(error);
+            const error = await response.json();
+            throw new Error(error.error || "Failed to delete admin");
           }
         } catch (error) {
           console.error("Error deleting admin:", error);
@@ -478,20 +658,34 @@
       }
 
       function showNotification(message, type = "success") {
-        // Remove existing notifications
         document.querySelectorAll(".notification").forEach((el) => el.remove());
 
+        const colors = {
+          success: 'from-green-400 to-emerald-500',
+          warning: 'from-yellow-400 to-orange-500',
+          error: 'from-red-400 to-rose-500'
+        };
+
+        const icons = {
+          success: 'ri-check-line',
+          warning: 'ri-alert-line',
+          error: 'ri-error-warning-line'
+        };
+
         const notification = document.createElement("div");
-        notification.className = `notification fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white font-medium z-50 ${type === "error" ? "bg-red-500" : type === "warning" ? "bg-yellow-500" : "bg-green-500"}`;
-        notification.textContent = message;
+        notification.className = `notification fixed top-24 right-6 px-5 py-3.5 rounded-2xl shadow-xl text-white font-medium z-50 flex items-center gap-2 bg-gradient-to-r ${colors[type] || colors.success} transform transition-all duration-500`;
+        notification.innerHTML = `<i class="${icons[type] || icons.success} text-lg"></i>${message}`;
 
         document.body.appendChild(notification);
 
         setTimeout(() => {
-          notification.style.transform = "translateX(100%)";
+          notification.style.transform = "translateX(120%)";
+          notification.style.opacity = "0";
           setTimeout(() => {
-            document.body.removeChild(notification);
-          }, 300);
+            if (document.body.contains(notification)) {
+              document.body.removeChild(notification);
+            }
+          }, 500);
         }, 3000);
       }
     </script>

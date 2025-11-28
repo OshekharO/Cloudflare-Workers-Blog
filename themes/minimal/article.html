@@ -7,8 +7,35 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            pink: '#fce4ec',
+                            purple: '#e8daef',
+                            blue: '#d6eaf8',
+                            mint: '#d5f5e3',
+                            peach: '#fdebd0',
+                            lavender: '#e8e0f0',
+                            rose: '#f8e1e7',
+                            sky: '#e0f2fe',
+                            cream: '#fef9e7',
+                            sage: '#e8f5e9'
+                        },
+                        accent: {
+                            primary: '#7c6f9f',
+                            secondary: '#e89bb0',
+                            tertiary: '#7fb8c9'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <!-- Marked.js -->
@@ -18,67 +45,118 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     
     <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #e8daef 50%, #d6eaf8 100%);
+            background-attachment: fixed;
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #e89bb0, #7c6f9f);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .nav-link:hover::after {
+            width: 80%;
         }
         
         .article-content {
-            line-height: 1.7;
+            line-height: 1.8;
             max-width: 100%;
             overflow-wrap: break-word;
+            color: #374151;
         }
         
-        /* Mobile-first typography */
         .article-content h1 {
-            font-size: 1.75rem;
+            font-size: 2rem;
             font-weight: 700;
-            margin: 1.5rem 0 1rem;
+            margin: 2rem 0 1rem;
             line-height: 1.3;
+            color: #1f2937;
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .article-content h2 {
             font-size: 1.5rem;
             font-weight: 600;
-            margin: 1.5rem 0 0.8rem;
-            border-left: 3px solid #3b82f6;
-            padding-left: 0.75rem;
+            margin: 1.8rem 0 1rem;
+            border-left: 4px solid #e89bb0;
+            padding-left: 1rem;
+            color: #374151;
         }
         
         .article-content h3 {
             font-size: 1.25rem;
             font-weight: 600;
-            margin: 1.25rem 0 0.6rem;
+            margin: 1.5rem 0 0.8rem;
+            color: #4b5563;
         }
         
         .article-content p {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
         
         .article-content blockquote {
-            border-left: 3px solid #3b82f6;
-            padding: 0.75rem 1rem;
-            margin: 1.25rem 0;
+            border-left: 4px solid #7c6f9f;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
             font-style: italic;
-            background: #f8fafc;
-            border-radius: 0 0.375rem 0.375rem 0;
+            background: linear-gradient(135deg, #e8daef 0%, #fce4ec 100%);
+            border-radius: 0 16px 16px 0;
+            color: #4b5563;
         }
         
         .article-content code {
-            background: #f1f5f9;
-            padding: 0.15rem 0.3rem;
-            border-radius: 0.25rem;
-            font-size: 0.85em;
-            color: #dc2626;
+            background: linear-gradient(135deg, #e8daef 0%, #d6eaf8 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.875em;
+            color: #7c6f9f;
+            font-family: 'Fira Code', monospace;
         }
         
         .article-content pre {
-            background: #1f2937;
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
             color: #f9fafb;
-            padding: 1rem;
-            border-radius: 0.5rem;
+            padding: 1.5rem;
+            border-radius: 16px;
             overflow-x: auto;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
             font-size: 0.875rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
         
         .article-content pre code {
@@ -88,114 +166,141 @@
         }
         
         .article-content ul, .article-content ol {
-            padding-left: 1.25rem;
+            padding-left: 1.5rem;
             margin: 1rem 0;
         }
         
         .article-content li {
-            margin: 0.375rem 0;
+            margin: 0.5rem 0;
+        }
+        
+        .article-content li::marker {
+            color: #e89bb0;
         }
         
         .article-content table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.25rem 0;
-            font-size: 0.875rem;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(124, 111, 159, 0.1);
         }
         
         .article-content table th,
         .article-content table td {
-            padding: 0.5rem;
-            border: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e8daef;
             text-align: left;
         }
         
         .article-content table th {
-            background: #f9fafb;
+            background: linear-gradient(135deg, #e8daef 0%, #fce4ec 100%);
             font-weight: 600;
+            color: #7c6f9f;
+        }
+        
+        .article-content table tr:nth-child(even) {
+            background: rgba(232, 218, 239, 0.2);
         }
         
         .article-content img {
             max-width: 100%;
             height: auto;
-            border-radius: 0.5rem;
-            margin: 1.25rem 0;
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 30px rgba(124, 111, 159, 0.15);
         }
         
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .article-content a {
+            color: #7c6f9f;
+            text-decoration: none;
+            border-bottom: 2px solid #e89bb0;
+            transition: all 0.3s ease;
+        }
+        
+        .article-content a:hover {
+            color: #e89bb0;
+            border-bottom-color: #7c6f9f;
+        }
+        
+        .category-tag {
+            background: linear-gradient(135deg, #e8daef 0%, #fce4ec 100%);
+            color: #7c6f9f;
         }
 
-        /* Desktop enhancements */
+        .btn-share {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(124, 111, 159, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-share:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(124, 111, 159, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6b5f8e 0%, #8a7eb1 100%);
+            box-shadow: 0 8px 25px rgba(124, 111, 159, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .footer-glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
         @media (min-width: 768px) {
             .article-content h1 {
-                font-size: 2.25rem;
-                margin: 2rem 0 1rem;
+                font-size: 2.5rem;
             }
             
             .article-content h2 {
                 font-size: 1.875rem;
-                margin: 1.8rem 0 1rem;
-                border-left: 4px solid #3b82f6;
-                padding-left: 1rem;
             }
             
             .article-content h3 {
                 font-size: 1.5rem;
-                margin: 1.5rem 0 0.8rem;
-            }
-            
-            .article-content p {
-                margin-bottom: 1.2rem;
-            }
-            
-            .article-content blockquote {
-                padding: 1rem 1.5rem;
-                margin: 1.5rem 0;
-                border-left: 4px solid #3b82f6;
-            }
-            
-            .article-content pre {
-                padding: 1.2rem;
-                margin: 1.2rem 0;
-                font-size: 0.9rem;
-            }
-            
-            .article-content table {
-                font-size: 0.95rem;
-            }
-            
-            .article-content table th,
-            .article-content table td {
-                padding: 0.75rem;
             }
         }
 
         @media (min-width: 1024px) {
             .article-content h1 {
-                font-size: 2.5rem;
+                font-size: 2.75rem;
             }
         }
     </style>
     
     {{codeBeforHead}}
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-100">
+    <nav class="glass-nav sticky top-0 z-50 border-b border-white/30">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-lg sm:text-xl font-bold gradient-text truncate">{{siteName}}</a>
-                <div class="flex items-center space-x-2 sm:space-x-4">
-                    <a href="/bookmarks" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center">
-                        <i class="ri-bookmark-line sm:mr-1"></i>
-                        <span class="hidden sm:inline">Fav</span>
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <!-- Logo -->
+                <a href="/" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                        <i class="ri-quill-pen-line text-white text-lg md:text-xl"></i>
+                    </div>
+                    <span class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">{{siteName}}</span>
+                </a>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <a href="/bookmarks" class="p-2.5 rounded-xl bg-pastel-lavender text-accent-primary hover:bg-pastel-purple transition-colors">
+                        <i class="ri-bookmark-line text-lg"></i>
                     </a>
-                    <a href="/" class="text-gray-600 hover:text-gray-900 transition-colors flex items-center px-3 py-2 rounded-lg hover:bg-gray-100">
-                        <i class="ri-home-line sm:mr-1"></i>
+                    <a href="/" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white/80 hover:bg-white text-gray-700 font-medium transition-all shadow-sm hover:shadow-md">
+                        <i class="ri-home-4-line text-accent-primary"></i>
                         <span class="hidden sm:inline">Home</span>
                     </a>
                 </div>
@@ -204,60 +309,64 @@
     </nav>
 
     <!-- Article Content -->
-    <main class="flex-1 py-4 sm:py-8">
+    <main class="flex-1 py-6 md:py-10">
         <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="glass-card overflow-hidden shadow-xl">
                 <!-- Article Header -->
-                <div class="border-b border-gray-100 px-4 py-6 sm:px-6 sm:py-8">
-                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">{{title}}</h1>
-                    <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-gray-600 text-sm sm:text-base">
-                        <div class="flex items-center">
-                            <i class="ri-calendar-line mr-2 text-base"></i>
-                            <span>{{createDate}}</span>
+                <div class="bg-gradient-to-br from-white/80 to-transparent border-b border-gray-100/80 px-5 py-8 sm:px-8 sm:py-10">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-5 leading-tight">{{title}}</h1>
+                    <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+                        <div class="flex items-center space-x-2 text-gray-600">
+                            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-pastel-blue to-pastel-sky flex items-center justify-center">
+                                <i class="ri-calendar-line text-accent-tertiary text-sm"></i>
+                            </div>
+                            <span class="text-sm font-medium">{{createDate}}</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="bg-blue-100 text-blue-800 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium">{{label}}</span>
-                        </div>
+                        <span class="category-tag px-4 py-1.5 rounded-xl text-sm font-semibold">{{label}}</span>
                     </div>
                     {{#img}}
-                    <img src="{{img}}" alt="{{title}}" class="w-full h-48 sm:h-64 md:h-80 object-cover rounded-lg mt-4 sm:mt-6">
+                    <div class="mt-6 sm:mt-8 -mx-5 sm:-mx-8">
+                        <img src="{{img}}" alt="{{title}}" class="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover">
+                    </div>
                     {{/img}}
                 </div>
 
                 <!-- Article Content -->
-                <div class="px-4 py-6 sm:px-6 sm:py-8">
+                <div class="px-5 py-8 sm:px-8 sm:py-10">
                     <div id="raw-content" class="hidden">{{content}}</div>
                     <div id="article-content" class="article-content">
                         <!-- Loading State -->
-                        <div class="flex justify-center items-center py-8 sm:py-12">
-                            <div class="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
+                        <div class="flex flex-col justify-center items-center py-12">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center animate-pulse mb-4">
+                                <i class="ri-loader-4-line text-white text-2xl animate-spin"></i>
+                            </div>
+                            <p class="text-gray-500 font-medium">Loading content...</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Article Footer -->
-                <div class="border-t border-gray-100 px-4 py-4 sm:px-6 sm:py-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-                        <a href="/" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm sm:text-base w-full sm:w-auto justify-center sm:justify-start py-2 sm:py-0">
+                <div class="bg-gradient-to-br from-pastel-lavender/30 to-pastel-pink/30 border-t border-gray-100/80 px-5 py-6 sm:px-8 sm:py-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-5">
+                        <a href="/" class="btn-primary text-white px-6 py-3 rounded-xl font-medium inline-flex items-center shadow-md">
                             <i class="ri-arrow-left-line mr-2"></i>
                             Back to Home
                         </a>
                         
-                        <div class="flex items-center justify-center sm:justify-end w-full sm:w-auto">
-                            <span class="text-sm text-gray-600 mr-3 hidden sm:inline">Share:</span>
-                            <span class="text-sm text-gray-600 mr-3 sm:hidden">Share</span>
-                            <div class="flex items-center space-x-1 sm:space-x-2">
-                                <button onclick="shareOnTwitter()" class="bg-blue-400 text-white p-2 rounded-lg hover:bg-blue-500 transition-colors text-sm" title="Share on Twitter">
-                                    <i class="ri-twitter-fill text-base"></i>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-600 mr-4 font-medium">Share this article</span>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="shareOnTwitter()" class="btn-share w-10 h-10 rounded-xl flex items-center justify-center text-blue-400" title="Share on Twitter">
+                                    <i class="ri-twitter-fill text-lg"></i>
                                 </button>
-                                <button onclick="shareOnFacebook()" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors text-sm" title="Share on Facebook">
-                                    <i class="ri-facebook-fill text-base"></i>
+                                <button onclick="shareOnFacebook()" class="btn-share w-10 h-10 rounded-xl flex items-center justify-center text-blue-600" title="Share on Facebook">
+                                    <i class="ri-facebook-fill text-lg"></i>
                                 </button>
-                                <button onclick="shareOnLinkedIn()" class="bg-blue-800 text-white p-2 rounded-lg hover:bg-blue-900 transition-colors text-sm" title="Share on LinkedIn">
-                                    <i class="ri-linkedin-fill text-base"></i>
+                                <button onclick="shareOnLinkedIn()" class="btn-share w-10 h-10 rounded-xl flex items-center justify-center text-blue-800" title="Share on LinkedIn">
+                                    <i class="ri-linkedin-fill text-lg"></i>
                                 </button>
-                                <button onclick="copyShareLink()" class="bg-gray-600 text-white p-2 rounded-lg hover:bg-gray-700 transition-colors text-sm" title="Copy link">
-                                    <i class="ri-links-line text-base"></i>
+                                <button onclick="copyShareLink()" class="btn-share w-10 h-10 rounded-xl flex items-center justify-center text-accent-primary" title="Copy link">
+                                    <i class="ri-links-line text-lg"></i>
                                 </button>
                             </div>
                         </div>
@@ -268,14 +377,22 @@
     </main>
 
     <!-- Share Notification -->
-    <div id="share-notification" class="fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg bg-green-500 text-white font-medium z-50 transform translate-y-16 transition-transform duration-300 hidden text-sm sm:text-base max-w-xs sm:max-w-none">
-        Link copied to clipboard!
+    <div id="share-notification" class="fixed bottom-6 right-6 px-5 py-3.5 rounded-2xl shadow-xl bg-gradient-to-r from-green-400 to-emerald-500 text-white font-medium z-50 transform translate-y-20 transition-all duration-500 hidden text-sm flex items-center gap-2">
+        <i class="ri-check-line text-lg"></i>Link copied to clipboard!
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-6 sm:py-8">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-600 text-sm sm:text-base">{{copyRight}}</p>
+    <footer class="footer-glass border-t border-white/30 py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
+                        <i class="ri-quill-pen-line text-white"></i>
+                    </div>
+                    <span class="text-gray-700 font-semibold">{{siteName}}</span>
+                </div>
+                <p class="text-gray-500 text-sm">{{copyRight}}</p>
+            </div>
         </div>
     </footer>
 
@@ -308,7 +425,6 @@
                 await navigator.clipboard.writeText(getShareUrl());
                 showShareNotification();
             } catch (err) {
-                // Fallback for older browsers
                 const textArea = document.createElement('textarea');
                 textArea.value = getShareUrl();
                 document.body.appendChild(textArea);
@@ -322,14 +438,14 @@
         function showShareNotification() {
             const notification = document.getElementById('share-notification');
             notification.classList.remove('hidden');
-            notification.classList.remove('translate-y-16');
+            notification.classList.remove('translate-y-20');
             
             setTimeout(() => {
-                notification.classList.add('translate-y-16');
+                notification.classList.add('translate-y-20');
                 setTimeout(() => {
                     notification.classList.add('hidden');
-                }, 300);
-            }, 2000);
+                }, 500);
+            }, 2500);
         }
 
         function renderMarkdown() {
@@ -340,7 +456,14 @@
             rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
             
             if (!rawContent || rawContent.trim() === '') {
-                contentElement.innerHTML = '<div class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm sm:text-base">No content available.</div>';
+                contentElement.innerHTML = `
+                    <div class="bg-gradient-to-br from-pastel-rose to-pastel-pink rounded-2xl p-6 text-center">
+                        <div class="w-14 h-14 rounded-xl bg-white/80 flex items-center justify-center mx-auto mb-4">
+                            <i class="ri-file-text-line text-2xl text-accent-secondary"></i>
+                        </div>
+                        <p class="text-gray-700 font-medium">No content available for this article.</p>
+                    </div>
+                `;
                 return;
             }
             
@@ -364,7 +487,6 @@
                     const htmlContent = marked.parse(rawContent);
                     contentElement.innerHTML = htmlContent;
                     
-                    // Apply syntax highlighting
                     const codeBlocks = document.querySelectorAll('pre code');
                     codeBlocks.forEach(block => {
                         if (!block.classList.contains('hljs')) {
@@ -372,7 +494,6 @@
                         }
                     });
 
-                    // Improve mobile code block experience
                     const preBlocks = document.querySelectorAll('pre');
                     preBlocks.forEach(block => {
                         block.style.webkitOverflowScrolling = 'touch';
@@ -380,20 +501,22 @@
                 } catch (error) {
                     console.error('Error parsing markdown:', error);
                     contentElement.innerHTML = `
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700 mb-4 text-sm sm:text-base">
-                            Error rendering content. Showing raw text.
+                        <div class="bg-gradient-to-br from-pastel-cream to-pastel-peach rounded-2xl p-6 mb-4">
+                            <div class="flex items-center gap-3 text-yellow-700 mb-2">
+                                <i class="ri-alert-line text-xl"></i>
+                                <span class="font-semibold">Error rendering content</span>
+                            </div>
+                            <p class="text-gray-600 text-sm">Showing raw text instead.</p>
                         </div>
-                        <pre class="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg text-sm sm:text-base overflow-x-auto">${rawContent}</pre>
+                        <pre class="whitespace-pre-wrap bg-white/80 p-6 rounded-2xl text-sm overflow-x-auto border border-gray-100">${rawContent}</pre>
                     `;
                 }
             } else {
-                contentElement.innerHTML = `<pre class="whitespace-pre-wrap bg-gray-100 p-4 rounded-lg text-sm sm:text-base overflow-x-auto">${rawContent}</pre>`;
+                contentElement.innerHTML = `<pre class="whitespace-pre-wrap bg-white/80 p-6 rounded-2xl text-sm overflow-x-auto border border-gray-100">${rawContent}</pre>`;
             }
         }
         
-        // Improve mobile touch experience
         document.addEventListener('touchstart', function() {}, { passive: true });
-        
         document.addEventListener('DOMContentLoaded', renderMarkdown);
     </script>
     
