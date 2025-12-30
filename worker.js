@@ -382,7 +382,7 @@ class Blog {
                 article.status = 'published';
             }
             
-            article.contentMarkdown = article.contentMarkdown || article.content || '';
+            article.contentMarkdown = article.content || article.contentMarkdown || '';
         
             const plainText = this.stripMarkdown(article.contentMarkdown);
             article.excerpt = plainText.substring(0, OPT.readMoreLength) + (plainText.length > OPT.readMoreLength ? '...' : '');
