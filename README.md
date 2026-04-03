@@ -1,323 +1,395 @@
 # CF Workers Blog
 
-A modern, serverless blog platform built with Cloudflare Workers and KV storage. Features remote theme support, Markdown editing, multi-admin support, and a clean responsive interface with **dark/light mode toggle**.
+> A serverless blog platform built entirely on Cloudflare Workers and KV storage — no servers, no databases, no maintenance.
 
-## ✨ New in Latest Update
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange?logo=cloudflare)](https://workers.cloudflare.com/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-purple?logo=bootstrap)](https://getbootstrap.com/)
 
-- 🌓 **Dark/Light Mode Toggle** - System preference detection with manual toggle
-- 🎨 **Font Awesome 6.5.1 Icons** - Modern, scalable vector icons
-- 📱 **Enhanced Responsive Design** - Perfectly aligned components across all devices
-- ✨ **Smooth Animations** - CSS transitions and keyframe animations
-- 🎭 **Professional Color Scheme** - Modern gradient-based design language
-- 🔧 **Bootstrap 5.3.3** - Latest Bootstrap version with improved components
-- 💅 **Custom CSS Improvements** - Glass-morphism effects and modern styling
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Available Themes](#available-themes)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Create KV Namespace](#create-kv-namespace)
+  - [Configure Wrangler](#configure-wrangler)
+  - [Deploy](#deploy)
+  - [Configure the Worker](#configure-the-worker)
+- [Project Structure](#project-structure)
+- [API Reference](#api-reference)
+- [Theme System](#theme-system)
+  - [Template Variables](#template-variables)
+- [Admin Guide](#admin-guide)
+  - [Roles & Permissions](#roles--permissions)
+  - [Managing Articles](#managing-articles)
+  - [Export & Import](#export--import)
+- [SEO & Feeds](#seo--feeds)
+- [Security](#security)
+- [Credits](#credits)
+- [License](#license)
+
+---
+
+## Overview
+
+CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudflare Worker — articles are stored in KV, themes are loaded from a remote GitHub repository, and there is nothing to provision or scale. It is designed to be deployed in minutes and customized without touching infrastructure.
+
+---
 
 ## Features
 
-- 🚀 **Serverless** - Built on Cloudflare Workers edge computing
-- 💾 **KV Storage** - Articles stored in Cloudflare KV
-- 🎨 **Beautiful Themes** - Default, Minimal, Modern, Journal, Lux, MDB Pro, Chinese
-- 📝 **Markdown Support** - Easy content creation with EasyMDE editor
-- 🔐 **Multi-Admin Support** - Role-based admin management (superadmin/admin)
-- 📱 **Responsive Design** - Mobile-first, perfectly aligned interface
-- ⚡ **Fast** - Edge computing with global CDN
-- 📊 **Export/Import** - Backup and migrate your content easily
-- 📡 **RSS Feed** - Automatic RSS 2.0 feed generation
-- 🗺️ **Sitemap** - SEO-friendly XML sitemap with image support
-- 📚 **Draft Posts** - Save articles as drafts before publishing
-- 🔖 **Bookmarks** - Client-side article bookmarking with localStorage
-- 📤 **Social Sharing** - Share articles on Twitter/X, Facebook, LinkedIn
-- 🌓 **Dark/Light Mode** - Theme toggle with system preference detection
+| Category | Details |
+|---|---|
+| **Runtime** | Cloudflare Workers (edge computing, global CDN) |
+| **Storage** | Cloudflare KV — persistent key-value store |
+| **Editor** | EasyMDE — full Markdown editing experience |
+| **Themes** | 5 built-in themes; remote theme loading from GitHub |
+| **Admin** | Role-based multi-admin system (superadmin / admin) |
+| **Content** | Published articles and drafts, category labels, featured images |
+| **SEO** | RSS 2.0 feed, XML sitemap with image support, configurable robots.txt |
+| **UI** | Dark/light mode toggle with system-preference detection |
+| **Sharing** | Twitter/X, Facebook, LinkedIn, copy-link buttons |
+| **Bookmarks** | Client-side bookmarking via `localStorage` |
+| **Backup** | JSON export and import for full content portability |
+| **Styling** | Bootstrap 5.3.3, Font Awesome 6.5.1, Inter typography |
 
-## 🎨 UI/UX Improvements
+---
 
-### Theme Toggle
-The blog now includes a beautiful dark/light mode toggle that:
-- Detects system preference on first visit
-- Remembers user preference in localStorage
-- Features smooth 180° rotation animation on hover
-- Persists across all pages
+## Screenshots
 
-### Modern Design Elements
-- **Glass-morphism cards** with backdrop blur effects
-- **Gradient backgrounds** for visual depth
-- **Smooth hover animations** on interactive elements
-- **Professional typography** with Inter font family
-- **Consistent spacing and alignment** across components
+| Home | Article | Admin Dashboard | Editor |
+|------|---------|-----------------|--------|
+| ![Home](https://github.com/user-attachments/assets/82fe91bf-2a51-41d3-a876-ead0725244f7) | ![Article](https://github.com/user-attachments/assets/5260718c-bba7-4bc5-b79c-a96b24a47be9) | ![Admin](https://github.com/user-attachments/assets/a612caef-40f9-423a-9e1d-0b0dcf5594d4) | ![Editor](https://github.com/user-attachments/assets/22707b8e-a11b-4757-8217-a2dd5b6d92e0) |
 
-### Admin Dashboard
-- **Modern sidebar navigation** with gradient background
-- **Stats cards** with hover lift effects
-- **Tabbed interface** for articles and drafts
-- **Tool cards** with icon wrappers
-- **Responsive table layouts** for user management
+---
 
 ## Available Themes
 
-| Theme | Description | Inspiration |
-|-------|-------------|-------------|
-| **default** | Modern Bootstrap-based theme with glass-morphism effects | Original design |
-| **minimal** | Clean, lightweight Tailwind theme with subtle animations | Minimalist design |
-| **modern** | Professional Bootstrap theme with Playfair Display typography | Magazine layouts |
-| **journal** | Newspaper-style theme with clean serif typography | [Bootswatch Journal](https://bootswatch.com/journal/) |
-| **lux** | Elegant, premium theme with uppercase headings and dark accents | [Bootswatch Lux](https://bootswatch.com/lux/) |
-| **mdbpro** | Material Design theme using MDB UI Kit with gradient cards and modern dashboard | [MDB UI Kit](https://mdbootstrap.com/) |
-| **chinese** | Traditional Chinese aesthetic with Bulma CSS, calligraphy fonts, and red/gold color scheme | Chinese calligraphy & traditional art |
+| Theme | Description |
+|-------|-------------|
+| `default` | Bootstrap-based theme with glass-morphism cards and gradient accents |
+| `minimal` | Lightweight Tailwind theme with clean typography and subtle animations |
+| `modern` | Professional Bootstrap theme using Playfair Display, inspired by magazine layouts |
+| `journal` | Newspaper-style serif theme, based on [Bootswatch Journal](https://bootswatch.com/journal/) |
+| `lux` | Elegant premium theme with uppercase headings, based on [Bootswatch Lux](https://bootswatch.com/lux/) |
 
-Switch themes using URL parameter: `?theme=theme-name`
+Switch the active theme by appending `?theme=<theme-name>` to any URL, for example:
 
-## Screenshot
+```
+https://your-blog.workers.dev/?theme=minimal
+```
 
-![Screenshot_2025-10-12-21-58-19-42_40deb401b9ffe8e1df2f1cc5ba480b12](https://github.com/user-attachments/assets/82fe91bf-2a51-41d3-a876-ead0725244f7)
-![Screenshot_2025-10-12-21-58-35-03_40deb401b9ffe8e1df2f1cc5ba480b12](https://github.com/user-attachments/assets/5260718c-bba7-4bc5-b79c-a96b24a47be9)
-![Screenshot_2025-10-12-21-59-00-15_40deb401b9ffe8e1df2f1cc5ba480b12](https://github.com/user-attachments/assets/a612caef-40f9-423a-9e1d-0b0dcf5594d4)
-![Screenshot_2025-10-12-21-59-29-20_40deb401b9ffe8e1df2f1cc5ba480b12](https://github.com/user-attachments/assets/22707b8e-a11b-4757-8217-a2dd5b6d92e0)
+---
 
-## Setup Instructions
+## Getting Started
 
-### 1. Prerequisites
+### Prerequisites
 
-- Cloudflare account with Workers access
-- Wrangler CLI installed (`npm install -g wrangler`)
-
-### 2. Create KV Namespace
+- A [Cloudflare account](https://dash.cloudflare.com/sign-up) with Workers access
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- Wrangler CLI
 
 ```bash
-# Create production namespace
+npm install -g wrangler
+```
+
+---
+
+### Create KV Namespace
+
+```bash
+# Production namespace
 wrangler kv:namespace create "BLOG_STORE"
 
-# Create preview namespace for development
+# Preview namespace for local development
 wrangler kv:namespace create "BLOG_STORE" --preview
 ```
 
-### 3. Configure Wrangler
+Both commands print a namespace ID. Copy them — you will need them in the next step.
 
-Update `wrangler.toml` with your KV namespace IDs:
+---
+
+### Configure Wrangler
+
+Create a `wrangler.toml` file in the project root:
 
 ```toml
-name = "cf-blog"
+name            = "cf-blog"
+main            = "worker.js"
 compatibility_date = "2024-04-01"
 
 [[kv_namespaces]]
-binding = "BLOG_STORE"
-id = "your-production-namespace-id"
+binding    = "BLOG_STORE"
+id         = "your-production-namespace-id"
 preview_id = "your-preview-namespace-id"
 ```
 
-### 4. Deploy
+---
+
+### Deploy
 
 ```bash
-# Login to Cloudflare
+# Authenticate with Cloudflare
 wrangler login
 
-# Deploy to production
+# Publish the worker
 wrangler deploy
 ```
 
-### 5. Configuration
+---
 
-Update the `OPT` object in `worker.js` with your settings:
+### Configure the Worker
+
+Open `worker.js` and update the `OPT` object near the top of the file:
 
 ```javascript
 const OPT = {
-    "user": "admin",                    // Default admin username
-    "password": "admin",                // Default admin password
-    "siteDomain": "your-domain.workers.dev",
-    "siteName": "Your Blog Name",
-    "siteDescription": "Your blog description",
-    "themeURL": "https://raw.githubusercontent.com/yourusername/your-repo/main/themes/default/",
-    // ... other options
+    "user":            "admin",                          // Default superadmin username
+    "password":        "your-secure-password",           // Default superadmin password
+    "siteDomain":      "your-blog.workers.dev",          // Your worker domain
+    "siteName":        "My Blog",                        // Blog title
+    "siteDescription": "My personal blog on the edge",   // Meta description
+    "keyWords":        "cloudflare,workers,blog",        // Meta keywords
+    "pageSize":        10,                               // Articles per page
+    "recentlySize":    6,                                // Recent posts in sidebar
+    "readMoreLength":  150,                              // Excerpt length (characters)
+    "cacheTime":       43200,                            // HTTP cache TTL in seconds
+    "themeURL":        "https://raw.githubusercontent.com/<user>/<repo>/main/themes/default/",
+    "copyRight":       "Powered by CF Workers Blog",
+    "robots":          "User-agent: *\nDisallow: /admin",
+    "codeBeforHead":   "",                               // Custom HTML injected into <head>
+    "codeBeforBody":   "",                               // Custom HTML injected before </body>
+    "commentCode":     "",                               // Comment system embed code
+    "widgetOther":     "",                               // Extra sidebar widget HTML
+    "draftPrefix":     "DRAFT_"                          // KV prefix for draft articles
 };
 ```
+
+> **Security note:** Change the default `password` before deploying to production. The default credentials (`admin` / `admin`) are intentionally simple for first-run setup only.
+
+---
 
 ## Project Structure
 
 ```
-your-repo/
+Cloudflare-Workers-Blog/
 ├── themes/
 │   ├── default/
-│   │   ├── index.html          # Homepage template
-│   │   ├── article.html        # Article page template
-│   │   ├── admin.html          # Admin dashboard template
-│   │   ├── edit.html           # Article editor template
-│   │   ├── admin-users.html    # Admin management template
-│   │   ├── bookmarks.html      # Bookmarks page template
-│   │   └── 404.html            # 404 error page template
-│   └── theme1/                 # Additional themes
-├── worker.js                   # Main worker script
-└── wrangler.toml              # Wrangler configuration
+│   │   ├── index.html        # Homepage template
+│   │   ├── article.html      # Article page template
+│   │   ├── admin.html        # Admin dashboard template
+│   │   ├── edit.html         # Article editor template
+│   │   ├── admin-users.html  # Admin user management template
+│   │   ├── bookmarks.html    # Bookmarks page template
+│   │   └── 404.html          # 404 error page template
+│   ├── minimal/
+│   ├── modern/
+│   ├── journal/
+│   └── lux/
+├── Screenshot/               # Repository screenshots
+├── worker.js                 # Single-file Cloudflare Worker (all backend logic)
+├── wrangler.toml             # Wrangler deployment configuration
+└── LICENSE
 ```
 
-## API Endpoints
-
-### Article Management
-- `GET /` - Blog homepage
-- `GET /article/{permalink}` - Individual article page
-- `GET /admin/` - Admin dashboard
-- `GET /admin/edit` - Article editor
-- `GET /admin/users` - Admin user management (superadmin only)
-- `GET /api/articles` - Get all articles (JSON)
-- `GET /api/articles?drafts=true` - Get draft articles
-- `POST /api/articles` - Create new article
-- `PUT /api/articles/{permalink}` - Update article
-- `DELETE /api/articles/{permalink}` - Delete article
-
-### Export/Import
-- `GET /api/export` - Export all articles as JSON (admin only)
-- `POST /api/import` - Import articles from JSON (admin only)
-
-### Admin Management
-- `GET /api/admins` - List all admins (superadmin only)
-- `POST /api/admins` - Create new admin (superadmin only)
-- `PUT /api/admins/{id}` - Update admin (superadmin only)
-- `DELETE /api/admins/{id}` - Delete admin (superadmin only)
-
-### SEO & Syndication
-- `GET /rss.xml` - RSS feed for subscribers
-- `GET /sitemap.xml` - XML sitemap for search engines
-- `GET /api/categories` - Get all categories with counts
-
-### Utilities
-- `GET /bookmarks` - User bookmarks page
-- `GET /api/debug` - Debug information
-- `POST /api/fix-missing-articles` - Fix corrupted articles (admin only)
-
-## Theme System
-
-The blog supports remote themes from GitHub repositories. Create theme folders with these template files:
-
-- `index.html` - Homepage
-- `article.html` - Article page  
-- `admin.html` - Admin dashboard
-- `edit.html` - Article editor
-- `admin-users.html` - Admin management
-- `bookmarks.html` - Bookmarks page
-- `404.html` - Error page
-
-Switch themes using URL parameter: `?theme=theme-name`
-
-## Template Variables
-
-Available variables for theme templates:
-
-- `{{siteName}}` - Blog name
-- `{{siteDescription}}` - Blog description
-- `{{title}}` - Article title
-- `{{content}}` - Article content (Markdown)
-- `{{createDate}}` - Article publish date
-- `{{label}}` - Article category/label
-- `{{img}}` - Featured image URL
-- `{{copyRight}}` - Copyright text
-- `{{codeBeforHead}}` - Custom head code
-- `{{codeBeforBody}}` - Custom body code
-- `{{action}}` - Editor action ("New" or "Edit")
-
-## Multi-Admin System
-
-### Admin Roles
-- **Super Admin**: Full access including user management
-- **Admin**: Content management only (create, edit, delete articles)
-
-### Default Admin Account
-- **Username**: `admin`
-- **Password**: `admin`
-- **Role**: `superadmin`
-
-### Managing Admins
-1. Log in as a superadmin
-2. Visit `/admin/users`
-3. Click "Add Admin" to create new admin accounts
-4. Set appropriate roles and permissions
-
-## Managing Articles
-
-### Creating Articles
-1. Visit `/admin/` and enter credentials
-2. Click "New Article" to create content
-3. Use the Markdown editor for content
-4. Set permalink, title, label, and publish date
-5. Choose status: "Published" or "Draft"
-6. Save to publish or save as draft
-
-### Draft Management
-- Drafts are only visible in admin area
-- Use the publish button to convert drafts to published articles
-- Drafts are excluded from public site and RSS feeds
-
-## Export/Import Features
-
-### Export Articles
-```bash
-curl -u admin:password https://your-blog.com/api/export > backup.json
-```
-
-### Import Articles
-```bash
-curl -X POST -u admin:password -H "Content-Type: application/json" -d @backup.json https://your-blog.com/api/import
-```
-
-## SEO Features
-
-### RSS Feed
-- Available at `/rss.xml`
-- Includes all published articles
-- Proper RSS 2.0 format with enclosures
-
-### Sitemap
-- Available at `/sitemap.xml`
-- Includes homepage and all published articles
-- Image sitemap support for featured images
-
-## User Features
-
-### Bookmarks
-- Client-side bookmarking using localStorage
-- Access bookmarks at `/bookmarks`
-- Bookmarks persist across browser sessions
-
-### Social Sharing
-- Share buttons on article pages
-- Support for Twitter, Facebook, LinkedIn
-- Copy link functionality
-
-## Security Features
-
-- Basic authentication for admin areas
-- Role-based access control
-- Safe admin operations (cannot delete self)
-- Draft article protection
-- Input sanitization and validation
-
-## Browser Support
-
-- Modern browsers with ES6+ support
-- LocalStorage for bookmark functionality
-- Clipboard API for social sharing
-
-## Credits
-
-This project is based on initial code from [gdtool/cloudflare-workers-blog](https://github.com/gdtool/cloudflare-workers-blog).
-
-Special thanks to:
-- [gdtool](https://github.com/gdtool) for the original implementation
-- [Cloudflare](https://cloudflare.com) for Workers and KV storage
-- [Bootstrap](https://getbootstrap.com) for UI framework (v5.3.3)
-- [Font Awesome](https://fontawesome.com) for icons (v6.5.1)
-- [Marked.js](https://marked.js.org) for Markdown parsing
-- [EasyMDE](https://github.com/Ionaru/easy-markdown-editor) for Markdown editor
-- [Highlight.js](https://highlightjs.org) for syntax highlighting
-
-## License
-
-MIT License - feel free to use and modify for your projects.
-
-## Support
-
-For issues and questions:
-1. Check the [original repository](https://github.com/gdtool/cloudflare-workers-blog)
-2. Create an issue in this repository
-3. Check Cloudflare Workers documentation
+The entire backend is contained in `worker.js`. Themes are HTML templates loaded remotely at runtime from the URL configured in `OPT.themeURL`.
 
 ---
 
-**Happy Blogging!** 🚀
+## API Reference
+
+All API endpoints require HTTP Basic Authentication unless otherwise noted.
+
+### Pages (public)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/` | Blog homepage |
+| `GET` | `/article/{permalink}` | Single article page |
+| `GET` | `/bookmarks` | Saved bookmarks page |
+| `GET` | `/rss.xml` | RSS 2.0 feed |
+| `GET` | `/sitemap.xml` | XML sitemap |
+| `GET` | `/robots.txt` | Robots file |
+
+### Admin Pages (auth required)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/admin/` | Admin dashboard |
+| `GET` | `/admin/edit` | Article editor (create / update) |
+| `GET` | `/admin/users` | Admin user management *(superadmin only)* |
+
+### Articles API (auth required)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/articles` | List all published articles |
+| `GET` | `/api/articles?drafts=true` | List draft articles |
+| `POST` | `/api/articles` | Create a new article |
+| `PUT` | `/api/articles/{permalink}` | Update an existing article |
+| `DELETE` | `/api/articles/{permalink}` | Delete an article |
+
+### Admin Management API *(superadmin only)*
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/admins` | List all admin accounts |
+| `POST` | `/api/admins` | Create a new admin account |
+| `PUT` | `/api/admins/{id}` | Update an admin account |
+| `DELETE` | `/api/admins/{id}` | Delete an admin account |
+
+### Utilities
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/categories` | Article counts per category |
+| `GET` | `/api/export` | Export all articles as JSON *(auth required)* |
+| `POST` | `/api/import` | Import articles from JSON *(auth required)* |
+| `GET` | `/api/debug` | Runtime debug information *(auth required)* |
+| `POST` | `/api/fix-missing-articles` | Repair corrupted article index *(auth required)* |
+
+---
+
+## Theme System
+
+Themes are plain HTML files hosted in a public GitHub repository. The worker fetches them on demand via the raw URL set in `OPT.themeURL`. You can host your own themes by forking this repository or creating a new one.
+
+### Required Template Files
+
+Each theme directory must contain:
+
+```
+themes/<theme-name>/
+├── index.html        # Homepage
+├── article.html      # Article view
+├── admin.html        # Admin dashboard
+├── edit.html         # Article editor
+├── admin-users.html  # Admin user management
+├── bookmarks.html    # Bookmarks page
+└── 404.html          # Not-found page
+```
+
+### Template Variables
+
+The worker replaces the following placeholders before serving a page:
+
+| Variable | Description |
+|----------|-------------|
+| `{{siteName}}` | Blog name |
+| `{{siteDescription}}` | Blog meta description |
+| `{{title}}` | Article title |
+| `{{content}}` | Rendered HTML from Markdown source |
+| `{{createDate}}` | Article publish date |
+| `{{label}}` | Article category / label |
+| `{{img}}` | Featured image URL |
+| `{{copyRight}}` | Copyright text |
+| `{{codeBeforHead}}` | Custom HTML injected into `<head>` |
+| `{{codeBeforBody}}` | Custom HTML injected before `</body>` |
+| `{{action}}` | Editor context — `"New"` or `"Edit"` |
+
+---
+
+## Admin Guide
+
+### Roles & Permissions
+
+| Role | Permissions |
+|------|-------------|
+| `superadmin` | Full access: articles, drafts, admin user management |
+| `admin` | Content access only: create, edit, and delete articles |
+
+**Default credentials (change before going live):**
+
+| Field | Value |
+|-------|-------|
+| Username | `admin` |
+| Password | `admin` |
+| Role | `superadmin` |
+
+To add more admins:
+1. Log in as `superadmin` at `/admin/`
+2. Navigate to `/admin/users`
+3. Click **Add Admin**, fill in the form, and assign a role
+
+---
+
+### Managing Articles
+
+**Create a new article:**
+1. Go to `/admin/` and authenticate
+2. Click **New Article**
+3. Write content using the Markdown editor
+4. Fill in the permalink, title, category label, and publish date
+5. Set the status to **Published** or **Draft**
+6. Click **Save**
+
+**Drafts:**
+- Drafts are only visible inside the admin dashboard
+- Drafts do not appear in the public site, RSS feed, or sitemap
+- Click **Publish** on a draft to make it public
+
+---
+
+### Export & Import
+
+Export all articles to a JSON file:
+
+```bash
+curl -u admin:password https://your-blog.workers.dev/api/export > backup.json
+```
+
+Import articles from a previously exported file:
+
+```bash
+curl -X POST \
+  -u admin:password \
+  -H "Content-Type: application/json" \
+  -d @backup.json \
+  https://your-blog.workers.dev/api/import
+```
+
+---
+
+## SEO & Feeds
+
+| Feature | URL | Notes |
+|---------|-----|-------|
+| RSS Feed | `/rss.xml` | RSS 2.0, published articles only, with media enclosures |
+| XML Sitemap | `/sitemap.xml` | Includes homepage, all published articles, and featured images |
+| Robots.txt | `/robots.txt` | Configured via `OPT.robots` in `worker.js` |
+
+---
+
+## Security
+
+- Admin routes are protected with HTTP Basic Authentication
+- Superadmin-only routes enforce role checks on every request
+- An admin account cannot delete its own account
+- Draft articles are never exposed to unauthenticated requests
+- All user input is sanitized before storage
+
+---
+
+## Credits
+
+CF Workers Blog is a heavily extended fork of [gdtool/cloudflare-workers-blog](https://github.com/gdtool/cloudflare-workers-blog).
+
+| Dependency | Purpose |
+|-----------|---------|
+| [Cloudflare Workers & KV](https://workers.cloudflare.com/) | Edge runtime and persistent storage |
+| [Bootstrap 5.3.3](https://getbootstrap.com/) | UI framework |
+| [Font Awesome 6.5.1](https://fontawesome.com/) | Icon library |
+| [Marked.js](https://marked.js.org/) | Markdown-to-HTML rendering |
+| [EasyMDE](https://github.com/Ionaru/easy-markdown-editor) | In-browser Markdown editor |
+| [Highlight.js](https://highlightjs.org/) | Syntax highlighting for code blocks |
+
+---
+
+## License
+
+This project is released under the [MIT License](LICENSE). You are free to use, modify, and distribute it for any purpose.
