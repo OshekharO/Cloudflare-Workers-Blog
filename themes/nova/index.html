@@ -467,16 +467,45 @@
 
         .article-card:hover .card-img-wrap img { transform: scale(1.06); }
 
+        @keyframes shimmer {
+            0%   { background-position: -800px 0; }
+            100% { background-position:  800px 0; }
+        }
+
         .card-placeholder {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--surface-2) 0%, var(--border) 100%);
+            background: linear-gradient(90deg, var(--surface-2) 0%, var(--border) 40%, var(--surface-2) 100%);
+            background-size: 1600px 100%;
+            animation: shimmer 2s ease-in-out infinite;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: var(--text-3);
         }
+
+        .sidebar-img-ph {
+            width: 80px;
+            height: 60px;
+            border-radius: 10px;
+            background: rgba(99,102,241,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--brand);
+            font-size: 1.2rem;
+        }
+
+        .sidebar-article {
+            border-radius: 10px;
+            padding: 0.5rem;
+            transition: background 0.2s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-article:hover { background: var(--surface-2); }
 
         .card-body-nova {
             padding: 1.25rem;
@@ -1062,6 +1091,22 @@
             .replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"')
             .replace(/\n/g,'\\n').replace(/\r/g,'\\r') : '';
 
+        // ── Image helpers with broken-image fallback ──────────────────────
+        function cardImgHtml(src, alt) {
+            if (!src) return `<div class="card-placeholder"><i class="fa-solid fa-file-lines"></i></div>`;
+            return `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.closest('.card-img-wrap').innerHTML='<div class=&quot;card-placeholder&quot;><i class=&quot;fa-solid fa-file-lines&quot;></i></div>'">`;
+        }
+
+        function featuredImgHtml(src, alt) {
+            if (!src) return `<div class="featured-placeholder"><i class="fa-solid fa-file-lines"></i></div>`;
+            return `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.outerHTML='<div class=&quot;featured-placeholder&quot;><i class=&quot;fa-solid fa-file-lines&quot;></i></div>'">`;
+        }
+
+        function sidebarImgHtml(src, alt) {
+            if (!src) return `<div class="sidebar-img-ph"><i class="fa-solid fa-file-lines"></i></div>`;
+            return `<img src="${esc(src)}" alt="${esc(alt)}" style="width:80px;height:60px;object-fit:cover;border-radius:10px;flex-shrink:0;" onerror="this.onerror=null;this.outerHTML='<div class=&quot;sidebar-img-ph&quot;><i class=&quot;fa-solid fa-file-lines&quot;></i></div>'">`;
+        }
+
         // ── Reading time estimate ─────────────────────────────────────────
         const readTime = text => Math.max(1, Math.round((text || '').split(/\s+/).length / 200));
 
@@ -1172,14 +1217,10 @@
             const fe = document.getElementById('featuredArticle');
             const fs = document.getElementById('featuredSidebar');
 
-            const imgHtml = a.img
-                ? `<img src="${esc(a.img)}" alt="${esc(a.title)}" loading="lazy">`
-                : `<div class="featured-placeholder"><i class="fa-solid fa-file-lines"></i></div>`;
-
             fe.innerHTML = `
             <a href="/article/${esc(a.permalink)}" class="featured-card" data-aos="fade-up">
                 <div class="featured-img-wrap">
-                    ${imgHtml}
+                    ${featuredImgHtml(a.img, a.title)}
                     <span class="featured-badge"><i class="fa-solid fa-star me-1"></i>Featured</span>
                 </div>
                 <div class="featured-body">
@@ -1195,12 +1236,8 @@
 
             // Sidebar: next 3 articles
             fs.innerHTML = sidebar.map((s, i) => `
-            <a href="/article/${esc(s.permalink)}" class="d-flex gap-3 text-decoration-none mb-3 p-2 rounded-3" 
-               style="transition: background 0.2s ease;" 
-               onmouseenter="this.style.background='var(--surface-2)'" 
-               onmouseleave="this.style.background=''" data-aos="fade-left" data-aos-delay="${i * 100}">
-                ${s.img ? `<img src="${esc(s.img)}" alt="${esc(s.title)}" style="width:80px;height:60px;object-fit:cover;border-radius:10px;flex-shrink:0;">` :
-                    `<div style="width:80px;height:60px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--brand);font-size:1.2rem;"><i class="fa-solid fa-file-lines"></i></div>`}
+            <a href="/article/${esc(s.permalink)}" class="d-flex gap-3 mb-3 sidebar-article" data-aos="fade-left" data-aos-delay="${i * 100}">
+                ${sidebarImgHtml(s.img, s.title)}
                 <div>
                     <p style="font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:700;color:var(--text);line-height:1.35;margin:0 0 0.3rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${esc(s.title)}</p>
                     <span style="font-size:0.75rem;color:var(--text-3);">${new Date(s.createDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
@@ -1210,15 +1247,12 @@
 
         function articleCardHTML(a, i) {
             const bm = isBookmarked(a.permalink);
-            const imgHtml = a.img
-                ? `<img src="${esc(a.img)}" alt="${esc(a.title)}" loading="lazy">`
-                : `<div class="card-placeholder"><i class="fa-solid fa-file-lines"></i></div>`;
             const jP = escJs(a.permalink), jT = escJs(a.title), jI = escJs(a.img), jL = escJs(a.label);
             return `
             <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="${(i % 3) * 80}">
                 <div class="article-card">
                     <a href="/article/${esc(a.permalink)}" class="card-img-wrap d-block text-decoration-none">
-                        ${imgHtml}
+                        ${cardImgHtml(a.img, a.title)}
                     </a>
                     <div class="card-body-nova">
                         <span class="card-tag">${esc(a.label || 'Article')}</span>

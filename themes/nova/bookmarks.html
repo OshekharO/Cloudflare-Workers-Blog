@@ -233,14 +233,21 @@
 
         .article-card:hover .card-img-wrap img { transform: scale(1.06); }
 
+        @keyframes shimmer {
+            0%   { background-position: -800px 0; }
+            100% { background-position:  800px 0; }
+        }
+
         .card-placeholder {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--surface-2) 0%, var(--border) 100%);
+            background: linear-gradient(90deg, var(--surface-2) 0%, var(--border) 40%, var(--surface-2) 100%);
+            background-size: 1600px 100%;
+            animation: shimmer 2s ease-in-out infinite;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: var(--text-3);
         }
 
@@ -306,7 +313,7 @@
             transition: gap 0.2s ease;
         }
 
-        .read-more-link:hover { gap: 0.6rem; }
+        .read-more-link:hover { gap: 0.6rem; color: var(--brand-dark); }
 
         .remove-btn {
             width: 32px;
@@ -397,6 +404,11 @@
                 width: 100%;
                 justify-content: center;
             }
+        }
+
+        @media (max-width: 768px) {
+            .page-header { padding: 80px 0 2rem; }
+            .page-header-title { font-size: 1.5rem; }
         }
 
         /* ── Toast ───────────────────────────────────────── */
@@ -628,7 +640,7 @@
                     <div class="article-card">
                         <a href="/article/${esc(b.permalink)}" class="card-img-wrap d-block text-decoration-none">
                             ${b.img
-                                ? `<img src="${esc(b.img)}" alt="${esc(b.title)}" loading="lazy">`
+                                ? `<img src="${esc(b.img)}" alt="${esc(b.title)}" loading="lazy" onerror="this.onerror=null;this.closest('.card-img-wrap').innerHTML='<div class=&quot;card-placeholder&quot;><i class=&quot;fa-solid fa-file-lines&quot;></i></div>'">`
                                 : `<div class="card-placeholder"><i class="fa-solid fa-file-lines"></i></div>`
                             }
                         </a>

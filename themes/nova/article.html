@@ -92,14 +92,18 @@
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
         }
+
+        .nav-nova.scrolled { box-shadow: var(--shadow-md); }
 
         .nav-brand {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--brand) !important;
             text-decoration: none;
+            letter-spacing: -0.3px;
         }
 
         .btn-nova-outline {
@@ -135,6 +139,7 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
         .theme-btn:hover {
@@ -163,6 +168,12 @@
             border-radius: 50px;
             margin-bottom: 1rem;
             text-decoration: none;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .article-tag:hover {
+            background: var(--brand);
+            color: #fff;
         }
 
         .article-title {
@@ -541,7 +552,7 @@
     <div id="readingProgress"></div>
 
     <!-- Navbar -->
-    <nav class="navbar nav-nova fixed-top py-2">
+    <nav class="navbar nav-nova fixed-top py-2" id="mainNav">
         <div class="container d-flex align-items-center gap-3">
             <a class="nav-brand me-auto" href="/">
                 <i class="fa-solid fa-feather-pointed me-2" style="color: var(--brand)"></i>{{siteName}}
@@ -578,7 +589,7 @@
                 <!-- Article Content -->
                 <div class="col-lg-8">
                     {{#img}}
-                    <img src="{{img}}" alt="{{title}}" class="article-hero-img">
+                    <img src="{{img}}" alt="{{title}}" class="article-hero-img" onerror="this.style.display='none'">
                     {{/img}}
 
                     <div class="article-body" id="articleBody">
@@ -693,14 +704,15 @@
 
         setTheme(getTheme());
 
-        // ── Reading progress ───────────────────────────────────────────────
+        // ── Navbar scroll effect + reading progress + back to top ──────────
         window.addEventListener('scroll', () => {
+            document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 20);
+
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
             const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
             document.getElementById('readingProgress').style.width = `${progress}%`;
 
-            const btt = document.getElementById('backToTop');
-            btt.classList.toggle('visible', scrollY > 400);
+            document.getElementById('backToTop').classList.toggle('visible', scrollY > 400);
         });
 
         // ── Toast ─────────────────────────────────────────────────────────
