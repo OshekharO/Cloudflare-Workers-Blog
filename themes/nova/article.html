@@ -467,18 +467,35 @@
         /* ── Footer ─────────────────────────────────────────── */
         .footer-nova {
             background: var(--footer-bg);
-            color: rgba(255,255,255,0.5);
-            padding: 2rem 0;
+            color: rgba(255,255,255,0.7);
+            padding: 2.5rem 0 1.5rem;
             margin-top: 4rem;
         }
 
-        .footer-nova a {
-            color: rgba(255,255,255,0.4);
+        .footer-brand {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
             text-decoration: none;
             transition: color 0.2s ease;
         }
 
-        .footer-nova a:hover { color: var(--brand-light); }
+        .footer-links a:hover { color: var(--brand-light); }
+
+        .footer-copy {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
 
         /* ── Toast ───────────────────────────────────────────── */
         .toast-nova {
@@ -527,7 +544,7 @@
     <nav class="navbar nav-nova fixed-top py-2">
         <div class="container d-flex align-items-center gap-3">
             <a class="nav-brand me-auto" href="/">
-                <i class="fa-solid fa-feather-pointed me-2"></i>{{siteName}}
+                <i class="fa-solid fa-feather-pointed me-2" style="color: var(--brand)"></i>{{siteName}}
             </a>
             <a href="/" class="btn-nova-outline d-none d-sm-inline-flex">
                 <i class="fa-solid fa-arrow-left"></i>Back
@@ -624,14 +641,27 @@
 
     <!-- Footer -->
     <footer class="footer-nova">
-        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-            <div>
-                <span style="color:rgba(255,255,255,0.7);font-size:0.85rem;">{{copyRight}}</span>
+        <div class="container">
+            <div class="row align-items-start g-4">
+                <div class="col-md-6">
+                    <div class="footer-brand">
+                        <i class="fa-solid fa-feather-pointed me-2" style="color: var(--brand-light)"></i>{{siteName}}
+                    </div>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.45); max-width: 320px; line-height: 1.65; margin-top: 0.5rem;">
+                        {{siteDescription}}
+                    </p>
+                </div>
+                <div class="col-md-6 d-flex flex-column align-items-md-end">
+                    <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); margin-bottom: 0.75rem; font-weight: 600;">Links</p>
+                    <div class="footer-links d-flex flex-column align-items-md-end gap-2">
+                        <a href="/bookmarks"><i class="fa-regular fa-bookmark me-2"></i>Bookmarks</a>
+                        <a href="/rss.xml"><i class="fa-solid fa-rss me-2"></i>RSS Feed</a>
+                        <a href="/sitemap.xml"><i class="fa-solid fa-sitemap me-2"></i>Sitemap</a>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex gap-3">
-                <a href="/rss.xml" title="RSS Feed"><i class="fa-solid fa-rss"></i></a>
-                <a href="/sitemap.xml" title="Sitemap"><i class="fa-solid fa-sitemap"></i></a>
-                <a href="/admin/" title="Admin"><i class="fa-solid fa-gauge-high"></i></a>
+            <div class="footer-copy text-center">
+                {{copyRight}}
             </div>
         </div>
     </footer>
