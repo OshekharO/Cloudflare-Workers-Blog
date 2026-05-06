@@ -616,11 +616,16 @@ class Blog {
 
     renderTemplate(template, data) {
         let html = template;
+
+        // These keys contain raw HTML and must not be entity-escaped
+        const rawKeys = new Set(['content', 'codeBeforHead', 'codeBeforBody', 'commentCode', 'widgetOther']);
         
         for (const [key, value] of Object.entries(data)) {
             const regex = new RegExp(`{{${key}}}`, 'g');
-            const replacement = key === 'content' ? value : this.escapeHtml(value.toString());
-            html = html.replace(regex, replacement || '');
+            const replacement = rawKeys.has(key)
+                ? (value != null ? String(value) : '')
+                : this.escapeHtml(value != null ? String(value) : '');
+            html = html.replace(regex, replacement);
         }
         
         if (data.img) {
@@ -646,8 +651,11 @@ function authenticate(request) {
 
     try {
         const base64 = authHeader.substring(6);
-        const credentials = atob(base64).split(':');
-        return credentials;
+        const decoded = atob(base64);
+        // Split on the FIRST colon only — passwords may contain colons
+        const colonIndex = decoded.indexOf(':');
+        if (colonIndex === -1) return null;
+        return [decoded.slice(0, colonIndex), decoded.slice(colonIndex + 1)];
     } catch (error) {
         return null;
     }
@@ -703,6 +711,18 @@ export default {
         }
 
         if (path.startsWith('/api/')) {
+            // Handle CORS preflight
+            if (request.method === 'OPTIONS') {
+                return new Response(null, {
+                    status: 204,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                        'Access-Control-Max-Age': '86400'
+                    }
+                });
+            }
             return handleAPI(request, path);
         }
 
@@ -1014,6 +1034,36 @@ export default {
                     });
                 }
 
+                if (path === '/api/fix-missing-articles' && method === 'POST') {
+                    const index = await blog.listArticles();
+                    const removed = [];
+                    const kept = [];
+
+                    for (const item of index) {
+                        const full = await blog.getArticle(item.id);
+                        if (full) {
+                            kept.push(item);
+                        } else {
+                            removed.push({ id: item.id, title: item.title, permalink: item.permalink });
+                        }
+                    }
+
+                    if (removed.length > 0) {
+                        await blog.put('SYSTEM_INDEX_LIST', kept);
+                        blog.clearCache();
+                    }
+
+                    return jsonResponse({
+                        success: true,
+                        checked: index.length,
+                        removed: removed.length,
+                        removedArticles: removed,
+                        message: removed.length > 0
+                            ? `Removed ${removed.length} orphaned index entries.`
+                            : 'Index is clean — no orphaned entries found.'
+                    });
+                }
+
                 return jsonResponse({ error: 'Not found' }, 404);
             } catch (error) {
                 console.error('API Error:', error);
@@ -1138,13 +1188,18 @@ export default {
                     siteDescription: OPT.siteDescription,
                     keyWords: OPT.keyWords,
                     copyRight: OPT.copyRight,
+                    commentCode: OPT.commentCode || '',
+                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: { 'Content-Type': 'text/html' }
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8',
+                        'Cache-Control': 'public, max-age=300'
+                    }
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
@@ -1156,14 +1211,20 @@ export default {
                 const template = await blog.fetchThemeTemplate('admin');
                 const data = {
                     siteName: OPT.siteName,
+                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
+                    commentCode: OPT.commentCode || '',
+                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: { 'Content-Type': 'text/html' }
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8',
+                        'Cache-Control': 'no-store'
+                    }
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
@@ -1175,14 +1236,20 @@ export default {
                 const template = await blog.fetchThemeTemplate('admin-users');
                 const data = {
                     siteName: OPT.siteName,
+                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
+                    commentCode: OPT.commentCode || '',
+                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: { 'Content-Type': 'text/html' }
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8',
+                        'Cache-Control': 'no-store'
+                    }
                 });
             } catch (error) {
                 return new Response('Error loading admin users template', { status: 500 });
@@ -1199,14 +1266,20 @@ export default {
                 const data = {
                     action: action,
                     siteName: OPT.siteName,
+                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
+                    commentCode: OPT.commentCode || '',
+                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: { 'Content-Type': 'text/html' }
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8',
+                        'Cache-Control': 'no-store'
+                    }
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
@@ -1218,14 +1291,20 @@ export default {
                 const template = await blog.fetchThemeTemplate('bookmarks');
                 const data = {
                     siteName: OPT.siteName,
+                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
+                    commentCode: OPT.commentCode || '',
+                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: { 'Content-Type': 'text/html' }
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8',
+                        'Cache-Control': 'public, max-age=300'
+                    }
                 });
             } catch (error) {
                 return new Response('Error loading bookmarks page', { status: 500 });
@@ -1235,31 +1314,37 @@ export default {
         async function renderArticle(path) {
             try {
                 const template = await blog.fetchThemeTemplate('article');
-                const permalink = path.split('/').pop();
-                const articles = await blog.listPublishedArticles();
-                const article = articles.find(a => a.permalink === permalink);
+                // Extract the permalink segment from /article/<permalink>, trimming any trailing slash
+                const permalink = path.replace(/^\/article\//, '').replace(/\/$/, '');
                 
-                if (!article) {
+                const fullArticle = await blog.getArticleByPermalink(permalink);
+                
+                if (!fullArticle || fullArticle.status === 'draft') {
                     return render404();
                 }
-                
-                const fullArticle = await blog.getArticle(article.id);
                 
                 const data = {
                     title: fullArticle.title,
                     siteName: OPT.siteName,
+                    siteDescription: OPT.siteDescription,
+                    excerpt: fullArticle.excerpt || '',
                     createDate: new Date(fullArticle.createDate).toLocaleDateString(),
                     label: fullArticle.label,
                     img: fullArticle.img || '',
-                    content: fullArticle.contentMarkdown || fullArticle.content,
+                    content: fullArticle.contentMarkdown || fullArticle.content || '',
                     copyRight: OPT.copyRight,
+                    commentCode: OPT.commentCode || '',
+                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: { 'Content-Type': 'text/html' }
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8',
+                        'Cache-Control': 'public, max-age=300'
+                    }
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
@@ -1271,7 +1356,10 @@ export default {
                 const template = await blog.fetchThemeTemplate('404');
                 const data = {
                     siteName: OPT.siteName,
+                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
+                    commentCode: OPT.commentCode || '',
+                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
@@ -1279,7 +1367,10 @@ export default {
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
                     status: 404,
-                    headers: { 'Content-Type': 'text/html' }
+                    headers: {
+                        'Content-Type': 'text/html; charset=utf-8',
+                        'Cache-Control': 'no-store'
+                    }
                 });
             } catch (error) {
                 return new Response('404 - Page Not Found', {

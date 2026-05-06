@@ -48,7 +48,7 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 | **Runtime** | Cloudflare Workers (edge computing, global CDN) |
 | **Storage** | Cloudflare KV — persistent key-value store |
 | **Editor** | EasyMDE — full Markdown editing experience |
-| **Themes** | 5 built-in themes; remote theme loading from GitHub |
+| **Themes** | 1 built-in theme (nova); remote theme loading from any GitHub repository |
 | **Admin** | Role-based multi-admin system (superadmin / admin) |
 | **Content** | Published articles and drafts, category labels, featured images |
 | **SEO** | RSS 2.0 feed, XML sitemap with image support, configurable robots.txt |
@@ -72,17 +72,15 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 
 | Theme | Description |
 |-------|-------------|
-| `default` | Bootstrap-based theme with glass-morphism cards and gradient accents |
-| `minimal` | Lightweight Tailwind theme with clean typography and subtle animations |
-| `modern` | Professional Bootstrap theme using Playfair Display, inspired by magazine layouts |
-| `journal` | Newspaper-style serif theme, based on [Bootswatch Journal](https://bootswatch.com/journal/) |
-| `lux` | Elegant premium theme with uppercase headings, based on [Bootswatch Lux](https://bootswatch.com/lux/) |
+| `nova` | Modern, responsive theme with shimmer skeletons, dark/light mode, animated cards, and a magazine-style layout |
 
-Switch the active theme by appending `?theme=<theme-name>` to any URL, for example:
+The theme is loaded remotely from the URL set in `OPT.themeURL`. You can switch to any self-hosted theme by appending `?theme=<theme-name>` to any URL (the worker will load it from `OPT.themeURL` with the theme name substituted):
 
 ```
-https://your-blog.workers.dev/?theme=minimal
+https://your-blog.workers.dev/?theme=nova
 ```
+
+> **Note:** The `?theme=` switcher resolves to a separate hosted repository. Set `OPT.themeURL` to point at your own theme repository for custom themes.
 
 ---
 
@@ -159,7 +157,8 @@ const OPT = {
     "recentlySize":    6,                                // Recent posts in sidebar
     "readMoreLength":  150,                              // Excerpt length (characters)
     "cacheTime":       43200,                            // HTTP cache TTL in seconds
-    "themeURL":        "https://raw.githubusercontent.com/<user>/<repo>/main/themes/default/",
+    "themeURL":        "https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/nova/",
+    "html404":         ``,                               // Custom 404 HTML (leave empty to use theme template)
     "copyRight":       "Powered by CF Workers Blog",
     "robots":          "User-agent: *\nDisallow: /admin",
     "codeBeforHead":   "",                               // Custom HTML injected into <head>
@@ -179,21 +178,16 @@ const OPT = {
 ```
 Cloudflare-Workers-Blog/
 ├── themes/
-│   ├── default/
-│   │   ├── index.html        # Homepage template
-│   │   ├── article.html      # Article page template
-│   │   ├── admin.html        # Admin dashboard template
-│   │   ├── edit.html         # Article editor template
-│   │   ├── admin-users.html  # Admin user management template
-│   │   ├── bookmarks.html    # Bookmarks page template
-│   │   └── 404.html          # 404 error page template
-│   ├── minimal/
-│   ├── modern/
-│   ├── journal/
-│   └── lux/
+│   └── nova/
+│       ├── index.html        # Homepage template
+│       ├── article.html      # Article page template
+│       ├── admin.html        # Admin dashboard template
+│       ├── edit.html         # Article editor template
+│       ├── admin-users.html  # Admin user management template
+│       ├── bookmarks.html    # Bookmarks page template
+│       └── 404.html          # 404 error page template
 ├── Screenshot/               # Repository screenshots
 ├── worker.js                 # Single-file Cloudflare Worker (all backend logic)
-├── wrangler.toml             # Wrangler deployment configuration
 └── LICENSE
 ```
 
@@ -230,6 +224,8 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 |--------|------|-------------|
 | `GET` | `/api/articles` | List all published articles |
 | `GET` | `/api/articles?drafts=true` | List draft articles |
+| `GET` | `/api/articles?paginate=true&page=1` | Paginated published articles |
+| `GET` | `/api/articles/{permalink}` | Get a single article by permalink |
 | `POST` | `/api/articles` | Create a new article |
 | `PUT` | `/api/articles/{permalink}` | Update an existing article |
 | `DELETE` | `/api/articles/{permalink}` | Delete an article |
@@ -248,16 +244,17 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/api/categories` | Article counts per category |
+| `POST` | `/api/generate-slug` | Generate a URL-safe slug from a title |
 | `GET` | `/api/export` | Export all articles as JSON *(auth required)* |
 | `POST` | `/api/import` | Import articles from JSON *(auth required)* |
 | `GET` | `/api/debug` | Runtime debug information *(auth required)* |
-| `POST` | `/api/fix-missing-articles` | Repair corrupted article index *(auth required)* |
+| `POST` | `/api/fix-missing-articles` | Remove orphaned index entries whose article data no longer exists *(auth required)* |
 
 ---
 
 ## Theme System
 
-Themes are plain HTML files hosted in a public GitHub repository. The worker fetches them on demand via the raw URL set in `OPT.themeURL`. You can host your own themes by forking this repository or creating a new one.
+Themes are plain HTML files hosted in a public GitHub repository. The worker fetches them on demand via the raw URL set in `OPT.themeURL`. You can host your own themes by forking this repository or creating a new one, then pointing `OPT.themeURL` at your fork.
 
 ### Required Template Files
 
@@ -283,14 +280,18 @@ The worker replaces the following placeholders before serving a page:
 | `{{siteName}}` | Blog name |
 | `{{siteDescription}}` | Blog meta description |
 | `{{title}}` | Article title |
-| `{{content}}` | Rendered HTML from Markdown source |
+| `{{excerpt}}` | Plain-text article excerpt (used for meta descriptions) |
+| `{{content}}` | Raw Markdown source (rendered client-side via Marked.js) |
 | `{{createDate}}` | Article publish date |
 | `{{label}}` | Article category / label |
 | `{{img}}` | Featured image URL |
 | `{{copyRight}}` | Copyright text |
-| `{{codeBeforHead}}` | Custom HTML injected into `<head>` |
-| `{{codeBeforBody}}` | Custom HTML injected before `</body>` |
+| `{{commentCode}}` | Comment system embed code (raw HTML) |
+| `{{widgetOther}}` | Extra sidebar widget HTML (raw HTML) |
+| `{{codeBeforHead}}` | Custom HTML injected into `<head>` (raw HTML) |
+| `{{codeBeforBody}}` | Custom HTML injected before `</body>` (raw HTML) |
 | `{{action}}` | Editor context — `"New"` or `"Edit"` |
+| `{{#img}}…{{/img}}` | Conditional block — rendered only when a featured image exists |
 
 ---
 
