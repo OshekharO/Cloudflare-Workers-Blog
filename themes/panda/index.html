@@ -869,11 +869,19 @@
         </div>
     </nav>
 
+    <section class="panda-strip" style="background:linear-gradient(90deg, rgba(127,176,105,0.18), rgba(43,47,54,0.08)); border-bottom:1px solid var(--border);">
+        <div class="container py-2 d-flex align-items-center justify-content-between flex-wrap gap-2" style="margin-top:56px;">
+            <span style="font-size:0.78rem;font-weight:700;color:var(--text-2);letter-spacing:0.04em;text-transform:uppercase;"><i class="fa-solid fa-paw me-2"></i>Panda Mode</span>
+            <span style="font-size:0.78rem;color:var(--text-3);">Calm monochrome + bamboo accents</span>
+        </div>
+    </section>
+
+
     <!-- Hero -->
     <section class="hero-nova">
         <div class="container" style="position: relative; z-index: 1;">
-            <div class="row align-items-center">
-                <div class="col-lg-8" data-aos="fade-up">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7" data-aos="fade-up">
                     <h1 class="hero-title">{{siteName}}</h1>
                     <p class="hero-sub">{{siteDescription}}</p>
                     <div class="panda-mark" aria-label="Panda theme badge">
@@ -895,6 +903,24 @@
                         <i class="fa-solid fa-magnifying-glass hero-search-icon"></i>
                     </div>
                 </div>
+                <div class="col-lg-5 d-none d-lg-block" data-aos="fade-left">
+                    <div style="background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.28);border-radius:20px;padding:1rem;backdrop-filter:blur(8px);">
+                        <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+                            <rect width="280" height="160" rx="16" fill="rgba(255,255,255,0.1)"/>
+                            <circle cx="140" cy="90" r="44" fill="#ffffff"/>
+                            <circle cx="105" cy="53" r="15" fill="#1f2328"/>
+                            <circle cx="175" cy="53" r="15" fill="#1f2328"/>
+                            <ellipse cx="122" cy="88" rx="13" ry="18" fill="#1f2328"/>
+                            <ellipse cx="158" cy="88" rx="13" ry="18" fill="#1f2328"/>
+                            <circle cx="122" cy="88" r="5" fill="#ffffff"/>
+                            <circle cx="158" cy="88" r="5" fill="#ffffff"/>
+                            <ellipse cx="140" cy="108" rx="14" ry="10" fill="#1f2328"/>
+                            <rect x="42" y="122" width="34" height="10" rx="5" fill="#7fb069"/>
+                            <rect x="204" y="122" width="34" height="10" rx="5" fill="#7fb069"/>
+                        </svg>
+                        <p style="margin:0.75rem 0 0;color:#fff;font-size:0.88rem;">A calmer reading space with panda-inspired layout accents.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -903,7 +929,7 @@
     <section class="filter-section">
         <div class="container">
             <div class="filter-scroll" id="categoryFilter">
-                <button class="filter-pill active" data-cat="all">All Posts</button>
+                <button class="filter-pill active" data-cat="all">Bamboo Feed</button>
             </div>
         </div>
     </section>
@@ -923,7 +949,7 @@
                 <div class="row mb-4" id="featuredWrap" data-aos="fade-up">
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <h2 class="section-title mb-0">Featured</h2>
+                            <h2 class="section-title mb-0">Bamboo Picks</h2>
                         </div>
                     </div>
                     <div class="col-md-8" id="featuredArticle"></div>
@@ -1240,7 +1266,7 @@
             // Count
             document.getElementById('articleCount').textContent = `${articles.length} article${articles.length !== 1 ? 's' : ''}`;
 
-            // Featured (first article overall)
+            // Bamboo Picks (first article overall)
             const featured = articles[0];
             renderFeatured(featured, articles.slice(1, 4));
 
@@ -1265,7 +1291,7 @@
             <a href="/article/${esc(a.permalink)}" class="featured-card" data-aos="fade-up">
                 <div class="featured-img-wrap">
                     ${featuredImgHtml(a.img, a.title)}
-                    <span class="featured-badge"><i class="fa-solid fa-star me-1"></i>Featured</span>
+                    <span class="featured-badge"><i class="fa-solid fa-star me-1"></i>Bamboo Picks</span>
                 </div>
                 <div class="featured-body">
                     <span class="tag">${esc(a.label || 'Article')}</span>
