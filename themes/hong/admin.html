@@ -824,7 +824,7 @@
                             <a href="/admin/edit?permalink=${esc(a.permalink)}" class="action-btn-sm edit" title="Edit">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-                            <button class="action-btn-sm del" onclick="confirmDelete('${esc(a.permalink)}','${esc(a.title).replace(/'/g,"\\'")}')" title="Delete">
+                            <button class="action-btn-sm del" onclick="confirmDelete('${escJs(a.permalink)}','${escJs(a.title)}')" title="Delete">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
