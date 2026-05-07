@@ -743,6 +743,9 @@
         const esc = s => s ? String(s)
             .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
             .replace(/"/g,'&quot;').replace(/'/g,'&#039;') : '';
+        const escJs = s => s ? String(s)
+            .replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"')
+            .replace(/\n/g,'\\n').replace(/\r/g,'\\r') : '';
 
         // ── Load articles ─────────────────────────────────────────────────
         async function loadArticles() {

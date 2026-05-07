@@ -719,7 +719,7 @@ export default {
 
         const themeParam = url.searchParams.get('theme');
         if (themeParam) {
-            OPT.themeURL = `https://raw.githubusercontent.com/OshekharO/CF-BLOG/main/themes/${themeParam}/`;
+            OPT.themeURL = `https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/${themeParam}/`;
         }
 
         // Check authentication for admin routes
