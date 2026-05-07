@@ -50,12 +50,12 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 | **Editor** | EasyMDE — full Markdown editing experience |
 | **Themes** | 1 built-in theme (nova); remote theme loading from any GitHub repository |
 | **Admin** | Role-based multi-admin system (superadmin / admin) |
-| **Content** | Published articles and drafts, category labels, featured images |
+| **Content** | Published articles and drafts, category labels, featured images, optional KV-backed comments |
 | **SEO** | RSS 2.0 feed, XML sitemap with image support, configurable robots.txt |
 | **UI** | Dark/light mode toggle with system-preference detection |
 | **Sharing** | Twitter/X, Facebook, LinkedIn, copy-link buttons |
 | **Bookmarks** | Client-side bookmarking via `localStorage` |
-| **Backup** | JSON export and import for full content portability |
+| **Backup** | JSON export/import plus admin tools for clearing article and comment KV data |
 | **Styling** | Bootstrap 5.3.3, Font Awesome 6.5.1, Inter typography |
 
 ---
@@ -164,7 +164,8 @@ const OPT = {
     "robots":          "User-agent: *\nDisallow: /admin",
     "codeBeforHead":   "",                               // Custom HTML injected into <head>
     "codeBeforBody":   "",                               // Custom HTML injected before </body>
-    "commentCode":     "",                               // Comment system embed code
+    "commentCode":     "",                               // Optional extra comment/embed HTML
+    "commentsEnabled": false,                            // Enable built-in Workers KV comments
     "widgetOther":     "",                               // Extra sidebar widget HTML
     "draftPrefix":     "DRAFT_"                          // KV prefix for draft articles
 };
@@ -245,11 +246,23 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/api/categories` | Article counts per category |
+| `GET` | `/api/comments/{permalink}` | List comments for a published article *(public, requires comments enabled)* |
+| `POST` | `/api/comments/{permalink}` | Post a comment on a published article *(public, requires comments enabled)* |
 | `POST` | `/api/generate-slug` | Generate a URL-safe slug from a title |
 | `GET` | `/api/export` | Export all articles as JSON *(auth required)* |
 | `POST` | `/api/import` | Import articles from JSON *(auth required)* |
 | `GET` | `/api/debug` | Runtime debug information *(auth required)* |
 | `POST` | `/api/fix-missing-articles` | Remove orphaned index entries whose article data no longer exists *(auth required)* |
+| `POST` | `/api/content/clear-all` | Delete all article, draft, and comment KV data *(superadmin required)* |
+
+---
+
+
+### Comments
+
+Set `OPT.commentsEnabled` to `true` to enable the built-in comment system backed by Workers KV. It follows the same simple approach as `simple-static-comments`: each comment is stored as its own KV record under a permalink-based prefix and is loaded through `/api/comments/{permalink}`. When comments are disabled, the public comment UI is hidden and the API returns an error.
+
+The admin dashboard also includes a destructive **Clear Content** tool that removes all article records, draft keys, and stored comment buckets from KV. This action is restricted to superadmins.
 
 ---
 

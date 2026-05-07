@@ -537,6 +537,156 @@
             transform: translateX(-50%) translateY(0);
         }
 
+
+        .comments-section {
+            margin: 2.5rem 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .comments-title {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .comments-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            background: rgba(99,102,241,0.08);
+            color: var(--brand);
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .comments-note,
+        .comments-status {
+            font-size: 0.84rem;
+            color: var(--text-3);
+        }
+
+        .comments-status.error { color: var(--danger, #ef4444); }
+        .comments-status.success { color: var(--success, #10b981); }
+
+        .comments-list {
+            display: grid;
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+
+        .comment-item {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem;
+        }
+
+        .comment-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.55rem;
+            font-size: 0.78rem;
+            color: var(--text-3);
+        }
+
+        .comment-author {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .comment-content {
+            margin: 0;
+            white-space: pre-wrap;
+            color: var(--text-2);
+            line-height: 1.7;
+            font-size: 0.92rem;
+        }
+
+        .comment-form {
+            display: grid;
+            gap: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        .comment-input,
+        .comment-textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface-2);
+            color: var(--text);
+            padding: 0.85rem 1rem;
+            font: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .comment-input:focus,
+        .comment-textarea:focus {
+            outline: none;
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+
+        .comment-textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .comment-form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .comment-submit {
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-dark, var(--brand)));
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.8rem 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        .comment-submit:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .comment-submit:disabled {
+            opacity: 0.75;
+            cursor: wait;
+        }
+
         /* ── Responsive ──────────────────────────────────────── */
         @media (max-width: 768px) {
             .article-header { padding: 5rem 0 2rem; }
@@ -597,6 +747,35 @@
                     </div>
 
                     <!-- Share -->
+
+
+                    <section class="comments-section" id="commentsSection">
+                        <div class="comments-header">
+                            <div>
+                                <h2 class="comments-title"><i class="fa-regular fa-comments" style="color:var(--brand)"></i>Comments</h2>
+                                <div class="comments-note">Join the discussion with a public comment stored in Workers KV.</div>
+                            </div>
+                            <span class="comments-count" id="commentsCount">0</span>
+                        </div>
+
+                        <div class="comments-status" id="commentsStatus" aria-live="polite"></div>
+                        <div class="comments-list" id="commentsList"></div>
+
+                        <form class="comment-form" id="commentForm">
+                            <input type="text" name="subject" tabindex="-1" autocomplete="off" style="display:none">
+                            <input class="comment-input" id="commentAuthor" name="name" maxlength="80" placeholder="Your name" required>
+                            <textarea class="comment-textarea" id="commentContent" name="content" maxlength="4000" placeholder="Share your thoughts…" required></textarea>
+                            <div class="comment-form-actions">
+                                <span class="comments-note">Comments are public and appear newest last.</span>
+                                <button type="submit" class="comment-submit" id="commentSubmit">
+                                    <i class="fa-solid fa-paper-plane"></i>Post Comment
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    {{commentCode}}
+
                     <div class="share-section">
                         <p class="share-title"><i class="fa-solid fa-share-nodes me-2" style="color:var(--brand)"></i>Enjoyed this article?</p>
                         <p style="color:var(--text-3);font-size:0.85rem;margin-bottom:1.25rem;">Share it with your audience.</p>
@@ -807,6 +986,93 @@
             headings.forEach(h => observer.observe(h));
         }
 
+
+
+        // ── Comments ───────────────────────────────────────────────────────
+        const commentConfig = {{commentConfig}};
+        const escComment = s => s ? String(s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#039;') : '';
+
+        function setCommentsStatus(message = '', type = '') {
+            const el = document.getElementById('commentsStatus');
+            el.className = `comments-status${type ? ` ${type}` : ''}`;
+            el.textContent = message;
+        }
+
+        function renderComments(comments) {
+            const list = document.getElementById('commentsList');
+            const count = document.getElementById('commentsCount');
+            count.textContent = comments.length;
+
+            if (!comments.length) {
+                list.innerHTML = '<div class="comment-item"><p class="comment-content">No comments yet. Be the first to start the conversation.</p></div>';
+                return;
+            }
+
+            list.innerHTML = comments.map(comment => `
+                <article class="comment-item">
+                    <div class="comment-meta">
+                        <span class="comment-author">${escComment(comment.author)}</span>
+                        <time datetime="${escComment(comment.createdAt)}">${new Date(comment.createdAt).toLocaleString()}</time>
+                    </div>
+                    <p class="comment-content">${escComment(comment.content)}</p>
+                </article>
+            `).join('');
+        }
+
+        async function loadComments() {
+            if (!commentConfig.enabled) return;
+            setCommentsStatus('Loading comments…');
+            try {
+                const res = await fetch(`/api/comments/${encodeURIComponent(commentConfig.permalink)}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to load comments.');
+                renderComments(data.comments || []);
+                setCommentsStatus((data.comments || []).length ? '' : '');
+            } catch (error) {
+                renderComments([]);
+                setCommentsStatus(error.message || 'Failed to load comments.', 'error');
+            }
+        }
+
+        async function submitComment(event) {
+            event.preventDefault();
+            const form = document.getElementById('commentForm');
+            const author = document.getElementById('commentAuthor').value.trim();
+            const content = document.getElementById('commentContent').value.trim();
+            const btn = document.getElementById('commentSubmit');
+
+            if (author.length < 2 || content.length < 3) {
+                setCommentsStatus('Please enter a name and a longer comment.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>Posting…';
+            setCommentsStatus('Submitting your comment…');
+
+            try {
+                const formData = new FormData(form);
+                const res = await fetch(`/api/comments/${encodeURIComponent(commentConfig.permalink)}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to submit comment.');
+
+                document.getElementById('commentForm').reset();
+                setCommentsStatus('Comment posted successfully.', 'success');
+                toast('Comment posted!');
+                await loadComments();
+            } catch (error) {
+                setCommentsStatus(error.message || 'Failed to submit comment.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>Post Comment';
+            }
+        }
+
         // ── Render article ─────────────────────────────────────────────────
         (function renderArticle() {
             const rawContent = `{{content}}`;
@@ -835,6 +1101,15 @@
             const wordCount = body.textContent.trim().split(/\s+/).length;
             const minutes = Math.max(1, Math.round(wordCount / 200));
             document.getElementById('readTimeVal').textContent = minutes;
+
+
+            const commentsSection = document.getElementById('commentsSection');
+            if (!commentConfig.enabled) {
+                commentsSection.style.display = 'none';
+            } else {
+                document.getElementById('commentForm').addEventListener('submit', submitComment);
+                loadComments();
+            }
         })();
     </script>
 

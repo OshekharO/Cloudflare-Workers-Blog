@@ -648,6 +648,14 @@
                                             <div style="font-size:0.78rem;color:var(--text-3);">View RSS feed</div>
                                         </a>
                                     </div>
+
+                                    <div class="col-6 col-md-3">
+                                        <div class="tool-card" onclick="openClearAllModal()">
+                                            <div class="tool-icon" style="background:rgba(239,68,68,0.1);color:var(--danger);"><i class="fa-solid fa-trash-can"></i></div>
+                                            <div style="font-weight:700;font-size:0.875rem;color:var(--text);margin-bottom:0.25rem;">Clear Content</div>
+                                            <div style="font-size:0.78rem;color:var(--text-3);">Delete all article KV data and comments</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -677,6 +685,32 @@
                 <div class="modal-footer border-0 pt-0">
                     <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button class="btn btn-sm btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Clear All Content Modal -->
+    <div class="modal fade" id="clearAllModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold" style="color:var(--danger)">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Clear All Content
+                    </h6>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:0.875rem;color:var(--text-2);">
+                        Delete <strong style="color:var(--text)">all articles, drafts, and comments</strong> from KV?
+                    </p>
+                    <p style="font-size:0.78rem;color:var(--text-3);">This action cannot be undone and requires a superadmin account.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-sm btn-danger" id="confirmClearAll">Delete everything</button>
                 </div>
             </div>
         </div>
@@ -906,6 +940,35 @@
             }
             e.target.value = '';
         }
+
+
+
+        function openClearAllModal() {
+            new bootstrap.Modal(document.getElementById('clearAllModal')).show();
+        }
+
+        document.getElementById('confirmClearAll').addEventListener('click', async () => {
+            const modalEl = document.getElementById('clearAllModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            const btn = document.getElementById('confirmClearAll');
+            btn.disabled = true;
+            btn.textContent = 'Deleting…';
+
+            try {
+                const res = await fetch('/api/content/clear-all', { method: 'POST' });
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.error || 'Failed to clear content.');
+                modal.hide();
+                await loadArticles();
+                showPanel('articles');
+                alert(result.message || 'All content deleted.');
+            } catch (error) {
+                alert(error.message || 'Failed to clear content.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Delete everything';
+            }
+        });
 
         loadArticles();
     </script>

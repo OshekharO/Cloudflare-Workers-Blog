@@ -16,6 +16,7 @@ const OPT = {
     "codeBeforHead": ``,
     "codeBeforBody": ``,
     "commentCode": ``,
+    "commentsEnabled": false,
     "widgetOther": ``,
     "copyRight": `Powered by OshekharO`,
     "robots": `User-agent: *\nDisallow: /admin`,
@@ -50,6 +51,27 @@ function normalizeCategoryLabel(label) {
 
 function categorySlug(label) {
     return encodeURIComponent(normalizeCategoryLabel(label));
+}
+
+
+const COMMENTS_PREFIX = 'COMMENTS_';
+
+function commentKeyPrefix(permalink) {
+    return `${COMMENTS_PREFIX}${permalink}-`;
+}
+
+function buildCommentKey(permalink, suffix) {
+    return `${commentKeyPrefix(permalink)}${suffix}`;
+}
+
+function normalizeCommentField(value, maxLength) {
+    return value == null
+        ? ''
+        : String(value)
+            .trim()
+            .replace(/\r\n/g, '\n')
+            .replace(/\r/g, '\n')
+            .slice(0, maxLength);
 }
 
 class Blog {
@@ -434,9 +456,12 @@ class Blog {
         }
     }
 
-    async deleteArticle(id) {
+    async deleteArticle(id, permalink = '') {
         try {
             await this.delete(id);
+            if (permalink) {
+                await this.deleteCommentsForPermalink(permalink);
+            }
             const index = await this.listArticles();
             const filtered = index.filter(item => item.id !== id);
             await this.put('SYSTEM_INDEX_LIST', filtered);
@@ -568,6 +593,89 @@ class Blog {
         }
     }
 
+
+    async listKeys(prefix = '') {
+        try {
+            const keys = [];
+            let cursor = undefined;
+
+            do {
+                const result = await this.kv.list({ prefix, cursor });
+                result.keys.forEach(key => keys.push(key.name));
+                cursor = result.list_complete ? undefined : result.cursor;
+            } while (cursor);
+
+            return keys;
+        } catch (error) {
+            console.error(`Error listing keys for prefix ${prefix}:`, error);
+            return [];
+        }
+    }
+
+    async listComments(permalink) {
+        try {
+            const keys = await this.listKeys(commentKeyPrefix(permalink));
+            if (keys.length === 0) return [];
+
+            const comments = await Promise.all(keys.map(key => this.get(key, true)));
+            return comments
+                .filter(Boolean)
+                .sort((a, b) => (a.time || 0) - (b.time || 0));
+        } catch (error) {
+            console.error('Error listing comments:', error);
+            return [];
+        }
+    }
+
+    async addComment(permalink, commentData, request) {
+        const timestamp = Date.now();
+        const comment = {
+            id: this.generateId(),
+            permalink,
+            author: normalizeCommentField(commentData.author, 80),
+            email: normalizeCommentField(commentData.email, 120),
+            content: normalizeCommentField(commentData.content, 4000),
+            createdAt: new Date(timestamp).toISOString(),
+            time: timestamp,
+            user_ip: request.headers.get('cf-connecting-ip') || '',
+            user_agent: request.headers.get('User-Agent') || '',
+            referrer: request.headers.get('Referer') || ''
+        };
+
+        const key = buildCommentKey(permalink, `${timestamp}-${comment.id}`);
+        await this.put(key, comment);
+        return comment;
+    }
+
+    async deleteCommentsForPermalink(permalink) {
+        const keys = await this.listKeys(commentKeyPrefix(permalink));
+        await Promise.all(keys.map(key => this.kv.delete(key)));
+        return keys.length;
+    }
+
+    async clearAllContentAndComments() {
+        const index = await this.listArticles();
+        const commentKeys = await this.listKeys(COMMENTS_PREFIX);
+        const draftKeys = OPT.draftPrefix ? await this.listKeys(OPT.draftPrefix) : [];
+        const keysToDelete = new Set([
+            'SYSTEM_INDEX_LIST',
+            'SYSTEM_INDEX_NUM',
+            ...index.map(article => article.id),
+            ...commentKeys,
+            ...draftKeys
+        ]);
+
+        await Promise.all(Array.from(keysToDelete).map(key => this.kv.delete(key)));
+        this.clearCache();
+
+        return {
+            deletedArticles: index.length,
+            deletedComments: commentKeys.length,
+            deletedDraftKeys: draftKeys.length,
+            deletedKeys: keysToDelete.size
+        };
+    }
+
     /**
      * Fetch theme template with caching and error handling
      * @param {string} templateName - Template name
@@ -644,7 +752,7 @@ class Blog {
         let html = template;
 
         // These keys contain raw HTML and must not be entity-escaped
-        const rawKeys = new Set(['content', 'codeBeforHead', 'codeBeforBody', 'commentCode', 'widgetOther']);
+        const rawKeys = new Set(['content', 'codeBeforHead', 'codeBeforBody', 'commentCode', 'commentConfig', 'widgetOther']);
         
         for (const [key, value] of Object.entries(data)) {
             const regex = new RegExp(`{{${key}}}`, 'g');
@@ -927,6 +1035,84 @@ export default {
                     }
                 }
 
+
+
+                if (path.match(/^\/api\/comments\/[^\/]+$/) && method === 'GET') {
+                    if (!OPT.commentsEnabled) {
+                        return jsonResponse({ error: 'Comments are disabled.' }, 403);
+                    }
+
+                    const permalink = decodeURIComponent(path.split('/').pop());
+                    const article = await blog.getArticleByPermalink(permalink);
+                    if (!article || article.status === 'draft') {
+                        return jsonResponse({ error: 'Article not found' }, 404);
+                    }
+
+                    const comments = await blog.listComments(article.permalink);
+                    return jsonResponse({
+                        enabled: true,
+                        comments: comments.map(comment => ({
+                            id: comment.id,
+                            author: comment.author || '',
+                            content: comment.content || '',
+                            createdAt: comment.createdAt || new Date(comment.time || Date.now()).toISOString(),
+                            time: comment.time || Date.now()
+                        }))
+                    });
+                }
+
+                if (path.match(/^\/api\/comments\/[^\/]+$/) && method === 'POST') {
+                    if (!OPT.commentsEnabled) {
+                        return jsonResponse({ error: 'Comments are disabled.' }, 403);
+                    }
+
+                    const permalink = decodeURIComponent(path.split('/').pop());
+                    const article = await blog.getArticleByPermalink(permalink);
+                    if (!article || article.status === 'draft') {
+                        return jsonResponse({ error: 'Article not found' }, 404);
+                    }
+
+                    const contentType = request.headers.get('Content-Type') || '';
+                    let body = {};
+
+                    if (contentType.includes('application/json')) {
+                        body = await request.json();
+                    } else {
+                        const formData = await request.formData();
+                        for (const [key, value] of formData.entries()) {
+                            body[key] = value;
+                        }
+                    }
+
+                    if (body.subject) {
+                        return jsonResponse({ error: 'Invalid comment submission.' }, 400);
+                    }
+
+                    const author = normalizeCommentField(body.author || body.name, 80);
+                    const email = normalizeCommentField(body.email, 120);
+                    const content = normalizeCommentField(body.content, 4000);
+
+                    if (author.length < 2) {
+                        return jsonResponse({ error: 'Name must be at least 2 characters long.' }, 400);
+                    }
+
+                    if (content.length < 3) {
+                        return jsonResponse({ error: 'Comment must be at least 3 characters long.' }, 400);
+                    }
+
+                    const comment = await blog.addComment(article.permalink, { author, email, content }, request);
+                    return jsonResponse({
+                        success: true,
+                        comment: {
+                            id: comment.id,
+                            author: comment.author,
+                            content: comment.content,
+                            createdAt: comment.createdAt,
+                            time: comment.time
+                        }
+                    }, 201);
+                }
+
                 // Generate slug API endpoint
                 if (path === '/api/generate-slug' && method === 'POST') {
                     try {
@@ -1002,7 +1188,7 @@ export default {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    await blog.deleteArticle(article.id);
+                    await blog.deleteArticle(article.id, article.permalink);
                     return jsonResponse({ success: true });
                 }
 
@@ -1038,6 +1224,22 @@ export default {
                 if (path === '/api/categories' && method === 'GET') {
                     const categories = await blog.getCategories();
                     return jsonResponse(categories);
+                }
+
+
+
+                if (path === '/api/content/clear-all' && method === 'POST') {
+                    const isSuper = await isSuperAdmin(request);
+                    if (!isSuper) {
+                        return jsonResponse({ error: 'Access denied. Superadmin required.' }, 403);
+                    }
+
+                    const result = await blog.clearAllContentAndComments();
+                    return jsonResponse({
+                        success: true,
+                        ...result,
+                        message: `Deleted ${result.deletedArticles} article records and ${result.deletedComments} comments.`
+                    });
                 }
 
                 if (path === '/api/debug' && method === 'GET') {
@@ -1216,6 +1418,7 @@ export default {
                     keyWords: OPT.keyWords,
                     copyRight: OPT.copyRight,
                     commentCode: OPT.commentCode || '',
+                    commentConfig: JSON.stringify({ enabled: !!OPT.commentsEnabled, permalink: fullArticle.permalink }),
                     widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
