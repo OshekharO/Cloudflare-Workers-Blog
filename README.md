@@ -260,7 +260,7 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 
 ### Comments
 
-Set `OPT.commentsEnabled` to `true` to enable the built-in comment system backed by Workers KV. It follows the same simple approach as `simple-static-comments`: each comment is stored as its own KV record under a permalink-based prefix and is loaded through `/api/comments/{permalink}`. When comments are disabled, the public comment UI is hidden and the API returns an error.
+Set `OPT.commentsEnabled` to `true` to enable the built-in comment system backed by Workers KV. It follows the same simple approach as `simple-static-comments`: each comment is stored as its own KV record under a permalink-based prefix and is loaded through `/api/comments/{permalink}`. For efficiency, comment reads are bounded (default 100, capped at 200 via `?limit=`) and cacheable for 5 minutes. When comments are disabled, the public comment UI is hidden and the API returns an error.
 
 The admin dashboard also includes a destructive **Clear Content** tool that removes all article records, draft keys, and stored comment buckets from KV. This action is restricted to superadmins.
 

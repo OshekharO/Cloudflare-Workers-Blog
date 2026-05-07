@@ -594,14 +594,19 @@ class Blog {
     }
 
 
-    async listKeys(prefix = '') {
+    async listKeys(prefix = '', maxKeys = Number.POSITIVE_INFINITY) {
         try {
             const keys = [];
             let cursor = undefined;
 
             do {
-                const result = await this.kv.list({ prefix, cursor });
-                result.keys.forEach(key => keys.push(key.name));
+                const result = await this.kv.list({ prefix, cursor, limit: 1000 });
+                for (const key of result.keys) {
+                    keys.push(key.name);
+                    if (keys.length >= maxKeys) {
+                        return keys;
+                    }
+                }
                 cursor = result.list_complete ? undefined : result.cursor;
             } while (cursor);
 
@@ -612,9 +617,10 @@ class Blog {
         }
     }
 
-    async listComments(permalink) {
+    async listComments(permalink, maxComments = 100) {
         try {
-            const keys = await this.listKeys(commentKeyPrefix(permalink));
+            const safeMax = Math.min(Math.max(parseInt(maxComments, 10) || 100, 1), 200);
+            const keys = await this.listKeys(commentKeyPrefix(permalink), safeMax);
             if (keys.length === 0) return [];
 
             const comments = await Promise.all(keys.map(key => this.get(key, true)));
@@ -1043,13 +1049,14 @@ export default {
                     }
 
                     const permalink = decodeURIComponent(path.split('/').pop());
+                    const limit = parseInt(url.searchParams.get('limit') || '100', 10);
                     const article = await blog.getArticleByPermalink(permalink);
                     if (!article || article.status === 'draft') {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
 
-                    const comments = await blog.listComments(article.permalink);
-                    return jsonResponse({
+                    const comments = await blog.listComments(article.permalink, limit);
+                    return new Response(JSON.stringify({
                         enabled: true,
                         comments: comments.map(comment => ({
                             id: comment.id,
@@ -1058,6 +1065,12 @@ export default {
                             createdAt: comment.createdAt || new Date(comment.time || Date.now()).toISOString(),
                             time: comment.time || Date.now()
                         }))
+                    }), {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*',
+                            'Cache-Control': 'public, max-age=300, s-maxage=300'
+                        }
                     });
                 }
 
