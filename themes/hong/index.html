@@ -24,45 +24,45 @@
 
     <style>
         :root {
-            --brand: #6366f1;
-            --brand-dark: #4f46e5;
-            --brand-light: #a5b4fc;
-            --accent: #f59e0b;
-            --success: #10b981;
-            --danger: #ef4444;
+            --brand: #b51f09;
+            --brand-dark: #871405;
+            --brand-light: #f3cb68;
+            --accent: #f0b429;
+            --success: #2f855a;
+            --danger: #d73c37;
 
             /* Light mode */
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --surface-2: #f1f5f9;
-            --border: #e2e8f0;
-            --text: #0f172a;
-            --text-2: #475569;
-            --text-3: #94a3b8;
-            --nav-bg: rgba(255,255,255,0.92);
-            --footer-bg: #0f172a;
-            --hero-bg: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --bg: #f7efe5;
+            --surface: #fff8ef;
+            --surface-2: #f4e6d4;
+            --border: #e2c9aa;
+            --text: #4b1e12;
+            --text-2: #7a3423;
+            --text-3: #a06a4b;
+            --nav-bg: rgba(255,248,239,0.94);
+            --footer-bg: #5f1208;
+            --hero-bg: radial-gradient(circle at top left, rgba(240,180,41,0.22), transparent 32%), linear-gradient(135deg, #7d1808 0%, #b51f09 52%, #d73c37 100%);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
             --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
-            --shadow-hover: 0 20px 60px rgba(99,102,241,0.18);
+            --shadow-hover: 0 20px 60px rgba(181,31,9,0.18);
         }
 
         [data-bs-theme="dark"] {
-            --bg: #0a0e1a;
-            --surface: #111827;
-            --surface-2: #1f2937;
-            --border: #1f2937;
-            --text: #f1f5f9;
-            --text-2: #cbd5e1;
-            --text-3: #64748b;
-            --nav-bg: rgba(10,14,26,0.95);
-            --footer-bg: #050810;
-            --hero-bg: linear-gradient(135deg, #312e81 0%, #4c1d95 50%, #581c87 100%);
+            --bg: #2f140e;
+            --surface: #432017;
+            --surface-2: #57291c;
+            --border: #7d4b2d;
+            --text: #fdf2df;
+            --text-2: #f2d5aa;
+            --text-3: #d9aa75;
+            --nav-bg: rgba(47,20,14,0.96);
+            --footer-bg: #2c100a;
+            --hero-bg: radial-gradient(circle at top left, rgba(240,180,41,0.18), transparent 30%), linear-gradient(135deg, #40160d 0%, #6d1a0d 48%, #8c2b1b 100%);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
             --shadow-lg: 0 10px 40px rgba(0,0,0,0.6);
-            --shadow-hover: 0 20px 60px rgba(99,102,241,0.25);
+            --shadow-hover: 0 20px 60px rgba(181,31,9,0.22);
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -111,11 +111,11 @@
 
         .nav-link-nova:hover {
             color: var(--brand) !important;
-            background: rgba(99,102,241,0.08);
+            background: rgba(181,31,9,0.09);
         }
 
         .btn-nova-primary {
-            background: linear-gradient(135deg, var(--brand), #8b5cf6);
+            background: linear-gradient(135deg, var(--brand), #d73c37);
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -131,7 +131,7 @@
 
         .btn-nova-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(99,102,241,0.4);
+            box-shadow: 0 8px 24px rgba(181,31,9,0.32);
             color: #fff;
         }
 
@@ -153,7 +153,7 @@
         .btn-nova-outline:hover {
             border-color: var(--brand);
             color: var(--brand);
-            background: rgba(99,102,241,0.06);
+            background: rgba(181,31,9,0.08);
         }
 
         .theme-btn {
@@ -253,8 +253,60 @@
             right: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.78);
             pointer-events: none;
+        }
+
+        .hero-showcase-card {
+            background: rgba(255,248,239,0.12);
+            border: 1px solid rgba(243,203,104,0.35);
+            border-radius: 24px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 20px 50px rgba(60, 10, 4, 0.22);
+        }
+
+        .hero-showcase-card h3 {
+            color: #fff8ef;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            line-height: 1.35;
+            margin: 0.75rem 0;
+        }
+
+        .hero-showcase-card p {
+            color: rgba(255,248,239,0.82);
+            font-size: 0.92rem;
+            line-height: 1.75;
+            margin: 0;
+        }
+
+        .mini-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(240,180,41,0.18);
+            color: #f7d774;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-swatches {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .hero-swatches span {
+            display: block;
+            height: 52px;
+            border-radius: 18px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
         }
 
         /* ── Category Filter ──────────────────────────────── */
@@ -282,7 +334,7 @@
             background: var(--brand);
             border-color: var(--brand);
             color: #fff;
-            box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+            box-shadow: 0 4px 14px rgba(181,31,9,0.24);
         }
 
         .filter-scroll {
@@ -318,7 +370,7 @@
             border-radius: 2px;
         }
 
-        /* Featured Article */
+        /* Editor's Choice Article */
         .featured-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -334,7 +386,7 @@
         .featured-card:hover {
             box-shadow: var(--shadow-hover);
             transform: translateY(-4px);
-            border-color: rgba(99,102,241,0.25);
+            border-color: rgba(181,31,9,0.22);
         }
 
         .featured-img-wrap {
@@ -355,7 +407,7 @@
         .featured-placeholder {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #b51f09 0%, #d73c37 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -384,7 +436,7 @@
 
         .featured-body .tag {
             display: inline-block;
-            background: rgba(99,102,241,0.1);
+            background: rgba(181,31,9,0.11);
             color: var(--brand);
             font-size: 0.72rem;
             font-weight: 700;
@@ -448,7 +500,7 @@
         .article-card:hover {
             box-shadow: var(--shadow-hover);
             transform: translateY(-4px);
-            border-color: rgba(99,102,241,0.2);
+            border-color: rgba(181,31,9,0.18);
         }
 
         .card-img-wrap {
@@ -489,7 +541,7 @@
             width: 80px;
             height: 60px;
             border-radius: 10px;
-            background: rgba(99,102,241,0.1);
+            background: rgba(181,31,9,0.11);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -516,7 +568,7 @@
 
         .card-tag {
             display: inline-block;
-            background: rgba(99,102,241,0.1);
+            background: rgba(181,31,9,0.11);
             color: var(--brand);
             font-size: 0.68rem;
             font-weight: 700;
@@ -602,7 +654,7 @@
         }
 
         .action-btn.bookmarked {
-            background: rgba(99,102,241,0.1);
+            background: rgba(181,31,9,0.11);
             color: var(--brand);
             border-color: var(--brand);
         }
@@ -641,10 +693,10 @@
         }
 
         .page-btn.active {
-            background: linear-gradient(135deg, var(--brand), #8b5cf6);
+            background: linear-gradient(135deg, var(--brand), #d73c37);
             border-color: var(--brand);
             color: #fff;
-            box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+            box-shadow: 0 4px 12px rgba(181,31,9,0.32);
         }
 
         .page-btn:disabled,
@@ -712,7 +764,7 @@
             width: 80px;
             height: 80px;
             border-radius: 20px;
-            background: rgba(99,102,241,0.08);
+            background: rgba(181,31,9,0.09);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -852,13 +904,28 @@
     <!-- Hero -->
     <section class="hero-nova">
         <div class="container" style="position: relative; z-index: 1;">
-            <div class="row align-items-center">
-                <div class="col-lg-8" data-aos="fade-up">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7" data-aos="fade-up">
                     <h1 class="hero-title">{{siteName}}</h1>
                     <p class="hero-sub">{{siteDescription}}</p>
                     <div class="hero-search-wrap mt-3">
                         <input type="text" class="hero-search" id="searchInput" placeholder="Search articles..." autocomplete="off">
                         <i class="fa-solid fa-magnifying-glass hero-search-icon"></i>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block" data-aos="fade-left">
+                    <div class="hero-showcase">
+                        <div class="hero-showcase-card">
+                            <span class="mini-label">Festive palette</span>
+                            <h3>Warm tones, rich contrast, and a paper-like reading surface.</h3>
+                            <p>Hong pairs vermilion, deep red, antique gold, and subtle jade to create a design language that feels celebratory without relying on stark white or black.</p>
+                        </div>
+                        <div class="hero-swatches">
+                            <span style="background:#b51f09"></span>
+                            <span style="background:#d73c37"></span>
+                            <span style="background:#f0b429"></span>
+                            <span style="background:#2f855a"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -885,11 +952,11 @@
 
             <!-- Articles grid -->
             <div id="articlesWrap" style="display: none;">
-                <!-- Featured article -->
+                <!-- Editor's Choice article -->
                 <div class="row mb-4" id="featuredWrap" data-aos="fade-up">
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-2 mb-3">
-                            <h2 class="section-title mb-0">Featured</h2>
+                            <h2 class="section-title mb-0">Editor's Choice</h2>
                         </div>
                     </div>
                     <div class="col-md-8" id="featuredArticle"></div>
@@ -898,8 +965,8 @@
 
                 <!-- All articles grid -->
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h2 class="section-title mb-0" id="gridHeading">Latest Articles</h2>
-                    <span class="badge rounded-pill" id="articleCount" style="background: rgba(99,102,241,0.1); color: var(--brand); font-size: 0.78rem; padding: 0.4rem 0.8rem;"></span>
+                    <h2 class="section-title mb-0" id="gridHeading">Fresh from the Archive</h2>
+                    <span class="badge rounded-pill" id="articleCount" style="background: rgba(181,31,9,0.11); color: var(--brand); font-size: 0.78rem; padding: 0.4rem 0.8rem;"></span>
                 </div>
 
                 <div class="row g-4" id="articlesGrid"></div>
@@ -909,12 +976,12 @@
             <div id="emptyState" style="display: none;" data-aos="fade-up">
                 <div class="empty-state">
                     <div class="empty-icon"><i class="fa-solid fa-newspaper"></i></div>
-                    <h4 style="font-family: 'Playfair Display', serif; color: var(--text);">No articles yet</h4>
+                    <h4 style="font-family: 'Playfair Display', serif; color: var(--text);">No stories published yet</h4>
                     <p style="color: var(--text-3); font-size: 0.9rem; max-width: 300px; margin: 0.5rem auto 1.5rem;">
-                        Start creating content for your readers.
+                        When your first post is published, it will appear here with the new hong styling.
                     </p>
                     <a href="/admin/" class="btn-nova-primary">
-                        <i class="fa-solid fa-plus"></i>Create First Article
+                        <i class="fa-solid fa-plus"></i>Publish First Story
                     </a>
                 </div>
             </div>
@@ -930,7 +997,7 @@
             <div class="modal-content">
                 <div class="modal-header border-bottom-0 pb-0">
                     <h5 class="modal-title fw-bold">
-                        <i class="fa-solid fa-share-nodes me-2" style="color: var(--brand)"></i>Share Article
+                        <i class="fa-solid fa-share-nodes me-2" style="color: var(--brand)"></i>Share Story
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -1206,9 +1273,9 @@
             // Count
             document.getElementById('articleCount').textContent = `${articles.length} article${articles.length !== 1 ? 's' : ''}`;
 
-            // Featured (first article overall)
+            // Editor's Choice (first article overall)
             const featured = articles[0];
-            renderFeatured(featured, articles.slice(1, 4));
+            renderEditor's Choice(featured, articles.slice(1, 4));
 
             // Grid paging (skip featured on page 1)
             const startIndex = page === 1 ? 1 : (page - 1) * PAGE_SIZE + 1;
@@ -1223,7 +1290,7 @@
             renderPagination(page, totalPages, articles);
         }
 
-        function renderFeatured(a, sidebar) {
+        function renderEditor's Choice(a, sidebar) {
             const fe = document.getElementById('featuredArticle');
             const fs = document.getElementById('featuredSidebar');
 
@@ -1231,7 +1298,7 @@
             <a href="/article/${esc(a.permalink)}" class="featured-card" data-aos="fade-up">
                 <div class="featured-img-wrap">
                     ${featuredImgHtml(a.img, a.title)}
-                    <span class="featured-badge"><i class="fa-solid fa-star me-1"></i>Featured</span>
+                    <span class="featured-badge"><i class="fa-solid fa-star me-1"></i>Editor's Choice</span>
                 </div>
                 <div class="featured-body">
                     <span class="tag">${esc(a.label || 'Article')}</span>

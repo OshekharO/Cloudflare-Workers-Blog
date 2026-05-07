@@ -73,6 +73,7 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 | Theme | Description |
 |-------|-------------|
 | `nova` | Modern, responsive theme with shimmer skeletons, dark/light mode, animated cards, and a magazine-style layout |
+| `hong` | Chinese-inspired red and gold theme with warm paper tones, decorative hero panels, and festive high-contrast accents |
 
 The theme is loaded remotely from the URL set in `OPT.themeURL`. You can switch to any self-hosted theme by appending `?theme=<theme-name>` to any URL (the worker will load it from `OPT.themeURL` with the theme name substituted):
 

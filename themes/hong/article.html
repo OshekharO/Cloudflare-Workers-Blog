@@ -25,37 +25,37 @@
 
     <style>
         :root {
-            --brand: #6366f1;
-            --brand-dark: #4f46e5;
-            --brand-light: #a5b4fc;
-            --accent: #f59e0b;
-            --success: #10b981;
+            --brand: #b51f09;
+            --brand-dark: #871405;
+            --brand-light: #f3cb68;
+            --accent: #f0b429;
+            --success: #2f855a;
 
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --surface-2: #f1f5f9;
-            --border: #e2e8f0;
-            --text: #0f172a;
-            --text-2: #475569;
-            --text-3: #94a3b8;
-            --nav-bg: rgba(255,255,255,0.92);
-            --footer-bg: #0f172a;
-            --code-bg: #1e293b;
+            --bg: #f7efe5;
+            --surface: #fff8ef;
+            --surface-2: #f4e6d4;
+            --border: #e2c9aa;
+            --text: #4b1e12;
+            --text-2: #7a3423;
+            --text-3: #a06a4b;
+            --nav-bg: rgba(255,248,239,0.94);
+            --footer-bg: #5f1208;
+            --code-bg: #5d2015;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
         }
 
         [data-bs-theme="dark"] {
-            --bg: #0a0e1a;
-            --surface: #111827;
-            --surface-2: #1f2937;
-            --border: #1f2937;
-            --text: #f1f5f9;
-            --text-2: #cbd5e1;
-            --text-3: #64748b;
-            --nav-bg: rgba(10,14,26,0.95);
-            --footer-bg: #050810;
-            --code-bg: #0f172a;
+            --bg: #2f140e;
+            --surface: #432017;
+            --surface-2: #57291c;
+            --border: #7d4b2d;
+            --text: #fdf2df;
+            --text-2: #f2d5aa;
+            --text-3: #d9aa75;
+            --nav-bg: rgba(47,20,14,0.96);
+            --footer-bg: #2c100a;
+            --code-bg: #34140d;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
         }
@@ -79,7 +79,7 @@
             left: 0;
             height: 3px;
             width: 0%;
-            background: linear-gradient(90deg, var(--brand), #8b5cf6, var(--accent));
+            background: linear-gradient(90deg, var(--brand), #d73c37, var(--accent));
             z-index: 9999;
             transition: width 0.1s linear;
             border-radius: 0 2px 2px 0;
@@ -124,7 +124,7 @@
         .btn-nova-outline:hover {
             border-color: var(--brand);
             color: var(--brand);
-            background: rgba(99,102,241,0.06);
+            background: rgba(181,31,9,0.08);
         }
 
         .theme-btn {
@@ -152,13 +152,23 @@
         /* ── Article Header ──────────────────────────────────── */
         .article-header {
             padding: 6rem 0 3rem;
-            background: var(--surface);
+            background: linear-gradient(180deg, rgba(181,31,9,0.07), transparent 70%), var(--surface);
             border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .article-header::before {
+            content: '';
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent), var(--brand), var(--accent));
         }
 
         .article-tag {
             display: inline-block;
-            background: rgba(99,102,241,0.1);
+            background: rgba(181,31,9,0.11);
             color: var(--brand);
             font-size: 0.72rem;
             font-weight: 700;
@@ -231,7 +241,8 @@
         }
 
         .article-body h1 { font-size: 2rem; }
-        .article-body h2 { font-size: 1.6rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+        .article-body h2 { font-size: 1.6rem; border-bottom: 2px solid rgba(240,180,41,0.4); padding-bottom: 0.65rem; position: relative; padding-left: 1rem; }
+        .article-body h2::before { content: '章'; position: absolute; left: 0; top: 0.05rem; color: var(--brand); font-size: 0.9rem; font-weight: 800; }
         .article-body h3 { font-size: 1.3rem; }
         .article-body h4 { font-size: 1.1rem; }
 
@@ -320,7 +331,7 @@
         }
 
         .article-body :not(pre) > code {
-            background: rgba(99,102,241,0.1);
+            background: rgba(181,31,9,0.11);
             color: var(--brand);
             padding: 0.15rem 0.45rem;
             border-radius: 5px;
@@ -350,9 +361,10 @@
 
         /* ── TOC ─────────────────────────────────────────────── */
         .toc-card {
-            background: var(--surface);
+            background: linear-gradient(180deg, rgba(240,180,41,0.08), transparent 28%), var(--surface);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-top: 4px solid var(--accent);
+            border-radius: 18px;
             padding: 1.5rem;
             box-shadow: var(--shadow-sm);
             position: sticky;
@@ -456,7 +468,7 @@
             justify-content: center;
             cursor: pointer;
             font-size: 0.9rem;
-            box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+            box-shadow: 0 4px 16px rgba(181,31,9,0.32);
             transition: all 0.3s ease;
             opacity: 0;
             transform: translateY(10px);
@@ -598,8 +610,8 @@
 
                     <!-- Share -->
                     <div class="share-section">
-                        <p class="share-title"><i class="fa-solid fa-share-nodes me-2" style="color:var(--brand)"></i>Enjoyed this article?</p>
-                        <p style="color:var(--text-3);font-size:0.85rem;margin-bottom:1.25rem;">Share it with your audience.</p>
+                        <p class="share-title"><i class="fa-solid fa-share-nodes me-2" style="color:var(--brand)"></i>Pass this story along</p>
+                        <p style="color:var(--text-3);font-size:0.85rem;margin-bottom:1.25rem;">Spread the word with one tap.</p>
                         <div>
                             <button class="share-btn-circle" onclick="shareTo('twitter')" title="Share on X (Twitter)" style="color:#000">
                                 <i class="fa-brands fa-x-twitter"></i>
@@ -619,7 +631,7 @@
                     <!-- Back to Blog -->
                     <div class="text-center my-4">
                         <a href="/" class="btn-nova-outline" style="font-size:0.9rem;">
-                            <i class="fa-solid fa-arrow-left"></i>All Articles
+                            <i class="fa-solid fa-arrow-left"></i>Return to Archive
                         </a>
                     </div>
                 </div>
@@ -628,7 +640,7 @@
                 <div class="col-lg-3 offset-lg-1 d-none d-lg-block">
                     <div class="toc-card" id="tocCard">
                         <div class="toc-title">
-                            <i class="fa-solid fa-list" style="color:var(--brand)"></i>Contents
+                            <i class="fa-solid fa-list" style="color:var(--brand)"></i>On This Page
                         </div>
                         <ul class="toc-list" id="tocList">
                             <li><a href="#" style="color:var(--text-3)">Loading…</a></li>
@@ -768,7 +780,7 @@
             });
         }
 
-        // ── Table of Contents ──────────────────────────────────────────────
+        // ── Table of On This Page ──────────────────────────────────────────────
         function buildTOC() {
             const headings = document.querySelectorAll('.article-body h2, .article-body h3');
             const list = document.getElementById('tocList');

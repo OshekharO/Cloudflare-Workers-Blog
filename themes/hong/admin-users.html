@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users — {{siteName}} Admin</title>
+
+    <!-- Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --brand: #b51f09;
+            --success: #2f855a;
+            --warning: #f0b429;
+            --danger: #d73c37;
+            --bg: #f7efe5;
+            --surface: #fff8ef;
+            --surface-2: #f4e6d4;
+            --border: #e2c9aa;
+            --text: #4b1e12;
+            --text-2: #7a3423;
+            --text-3: #a06a4b;
+            --sidebar-bg: linear-gradient(180deg, #7d1808 0%, #b51f09 58%, #d73c37 100%);
+            --nav-bg: #6f1608;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        [data-bs-theme="dark"] {
+            --bg: #2f140e;
+            --surface: #432017;
+            --surface-2: #57291c;
+            --border: #7d4b2d;
+            --text: #fdf2df;
+            --text-2: #f2d5aa;
+            --text-3: #d9aa75;
+            --sidebar-bg: linear-gradient(180deg, #40160d 0%, #6d1a0d 58%, #8c2b1b 100%);
+            --nav-bg: #050810;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* ── Top Nav ─────────────────────────────────────── */
+        .admin-topnav {
+            background: var(--nav-bg);
+            height: 58px;
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+        }
+
+        .admin-topnav .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            color: #fff;
+            font-weight: 700;
+            margin-right: auto;
+        }
+
+        .topnav-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+        }
+
+        .topnav-btn:hover { background: rgba(255,255,255,0.16); color: #fff; }
+
+        /* ── Layout ──────────────────────────────────────── */
+        .admin-wrap { display: flex; padding-top: 58px; min-height: 100vh; }
+
+        /* ── Sidebar ─────────────────────────────────────── */
+        .admin-sidebar {
+            background: var(--sidebar-bg);
+            width: 230px;
+            flex-shrink: 0;
+            position: fixed;
+            left: 0; top: 58px; bottom: 0;
+            overflow-y: auto;
+            padding: 1.25rem 0.75rem;
+            z-index: 90;
+            transition: transform 0.3s;
+        }
+
+        .sidebar-section {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            padding: 0.75rem 0.75rem 0.35rem;
+            margin-top: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.65rem 0.875rem;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.75);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .sidebar-item.active { background: rgba(255,255,255,0.2); color: #fff; }
+        .sidebar-item i { width: 1.1rem; text-align: center; font-size: 0.9rem; }
+
+        /* ── Main ────────────────────────────────────────── */
+        .admin-main { margin-left: 230px; flex: 1; padding: 2rem; }
+
+        /* ── Cards ───────────────────────────────────────── */
+        .admin-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .admin-card-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-card-title i { color: var(--brand); }
+        .admin-card-body { padding: 1.5rem; }
+
+        /* ── Buttons ─────────────────────────────────────── */
+        .btn-brand {
+            background: linear-gradient(135deg, var(--brand), #d73c37);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.55rem 1.25rem;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+        }
+
+        .btn-brand:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(181,31,9,0.24);
+            color: #fff;
+        }
+
+        /* ── Table ───────────────────────────────────────── */
+        .nova-table { width: 100%; border-collapse: collapse; }
+
+        .nova-table thead th {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .nova-table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            color: var(--text-2);
+            font-size: 0.875rem;
+        }
+
+        .nova-table tbody tr:last-child td { border-bottom: none; }
+        .nova-table tbody tr:hover td { background: var(--surface-2); }
+
+        /* ── Badges ──────────────────────────────────────── */
+        .badge-nova {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .badge-active { background: rgba(16,185,129,0.1); color: #2f855a; }
+        .badge-inactive { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .badge-superadmin { background: rgba(181,31,9,0.14); color: var(--brand); }
+        .badge-admin { background: rgba(139,92,246,0.1); color: #d73c37; }
+
+        /* ── Avatar ──────────────────────────────────────── */
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        /* ── Action btns ─────────────────────────────────── */
+        .action-btn-sm {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text-3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn-sm:hover { transform: scale(1.1); }
+        .action-btn-sm.edit:hover { background: rgba(181,31,9,0.11); color: var(--brand); border-color: var(--brand); }
+        .action-btn-sm.del:hover { background: rgba(239,68,68,0.1); color: var(--danger); border-color: var(--danger); }
+
+        /* ── Forms ───────────────────────────────────────── */
+        .form-control, .form-select {
+            background: var(--surface-2);
+            border-color: var(--border);
+            color: var(--text);
+            border-radius: 10px;
+            font-size: 0.875rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--surface-2);
+            border-color: var(--brand);
+            color: var(--text);
+            box-shadow: 0 0 0 3px rgba(181,31,9,0.14);
+        }
+
+        /* ── Modal ───────────────────────────────────────── */
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        .modal-header, .modal-footer { border-color: var(--border); }
+
+        /* ── Animations ──────────────────────────────────── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeInUp 0.4s ease-out; }
+
+        @media (max-width: 992px) {
+            .admin-sidebar { transform: translateX(-100%); z-index: 200; }
+            .admin-sidebar.open { transform: translateX(0); }
+            .admin-main { margin-left: 0; }
+        }
+
+        @media (max-width: 576px) {
+            .admin-main { padding: 1rem; }
+        }
+    </style>
+
+    {{codeBeforHead}}
+</head>
+<body>
+
+    <!-- Top Nav -->
+    <nav class="admin-topnav">
+        <span class="brand">
+            <i class="fa-solid fa-users me-2" style="color:#f3cb68"></i>User Management
+        </span>
+        <div class="d-flex align-items-center gap-2">
+            <a href="/admin/" class="topnav-btn d-none d-sm-inline-flex">
+                <i class="fa-solid fa-arrow-left"></i>Control Room
+            </a>
+            <button class="topnav-btn" onclick="toggleTheme()">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+            <button class="topnav-btn d-lg-none" id="sidebarToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="admin-wrap">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-section">Content</div>
+            <a href="/admin/" class="sidebar-item">
+                <i class="fa-solid fa-newspaper"></i>Articles
+            </a>
+            <a href="/admin/edit" class="sidebar-item">
+                <i class="fa-solid fa-circle-plus"></i>New Article
+            </a>
+            <div class="sidebar-section">Admin</div>
+            <a href="/admin/users" class="sidebar-item active">
+                <i class="fa-solid fa-users"></i>Users
+            </a>
+            <a href="/admin/" class="sidebar-item">
+                <i class="fa-solid fa-toolbox"></i>Utilities
+            </a>
+        </aside>
+
+        <!-- Main -->
+        <main class="admin-main">
+            <div class="admin-card fade-in">
+                <div class="admin-card-header">
+                    <span class="admin-card-title">
+                        <i class="fa-solid fa-users"></i>Admin Users
+                    </span>
+                    <button class="btn-brand" onclick="openUserModal()">
+                        <i class="fa-solid fa-plus"></i>Add User
+                    </button>
+                </div>
+                <div class="admin-card-body">
+                    <div class="table-responsive">
+                        <table class="nova-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th class="d-none d-md-table-cell">Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th class="d-none d-sm-table-cell">Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="6" class="text-center py-4">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>Loading…
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add / Edit User Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold" style="color:var(--text)">
+                        <i class="fa-solid fa-user-pen me-2" style="color:var(--brand)"></i>
+                        <span id="modalTitle">Add User</span>
+                    </h6>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm" novalidate>
+                        <input type="hidden" id="userId">
+                        <div class="mb-3">
+                            <label class="form-label fw-600" style="font-size:0.85rem;font-weight:600;">Username *</label>
+                            <input type="text" class="form-control" id="uUsername" required placeholder="e.g. john_doe">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-600" style="font-size:0.85rem;font-weight:600;">
+                                Password <span id="passwordHint" style="color:var(--text-3);font-weight:400;">(leave blank to keep current)</span>
+                            </label>
+                            <input type="password" class="form-control" id="uPassword" placeholder="New password">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-600" style="font-size:0.85rem;font-weight:600;">Email *</label>
+                            <input type="email" class="form-control" id="uEmail" required placeholder="user@example.com">
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-600" style="font-size:0.85rem;font-weight:600;">Role</label>
+                                <select class="form-select" id="uRole">
+                                    <option value="admin">Admin</option>
+                                    <option value="superadmin">Super Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-600" style="font-size:0.85rem;font-weight:600;">Status</label>
+                                <select class="form-select" id="uStatus">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="userFormError" class="alert alert-danger py-2" style="font-size:0.85rem;display:none;"></div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn-brand btn-sm" id="saveUserBtn" onclick="saveUser()">Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold" style="color:var(--danger)">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Remove User
+                    </h6>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:0.875rem;color:var(--text-2);">
+                        Remove <strong id="deleteUserName" style="color:var(--text)"></strong>?
+                    </p>
+                    <p style="font-size:0.78rem;color:var(--text-3);">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-sm btn-danger" id="confirmDeleteBtn">Remove</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ── Theme ──────────────────────────────────────────────────────────
+        const getTheme = () => localStorage.getItem('theme') ||
+            (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+        function setTheme(t) {
+            document.documentElement.setAttribute('data-bs-theme', t);
+            localStorage.setItem('theme', t);
+            document.getElementById('themeIcon').className =
+                t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        function toggleTheme() {
+            setTheme(document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        setTheme(getTheme());
+
+        // ── Sidebar mobile ─────────────────────────────────────────────────
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('adminSidebar').classList.toggle('open');
+        });
+
+        // ── XSS helper ────────────────────────────────────────────────────
+        const esc = s => s ? String(s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#039;') : '';
+
+        // ── Avatar color ──────────────────────────────────────────────────
+        const avatarColors = ['#b51f09','#d73c37','#2f855a','#f0b429','#d73c37','#0ea5e9'];
+        const avatarColor = (s) => avatarColors[Math.abs(s.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % avatarColors.length];
+
+        // ── Load users ─────────────────────────────────────────────────────
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admins');
+                if (!res.ok) throw new Error('Failed');
+                const users = await res.json();
+                renderUsers(users);
+            } catch {
+                document.getElementById('usersTableBody').innerHTML =
+                    `<tr><td colspan="6" class="text-center py-4 text-danger">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Error loading users
+                    </td></tr>`;
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            if (!users.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5" style="color:var(--text-3)">
+                    <i class="fa-solid fa-users fa-2x mb-2 d-block"></i>No users found
+                </td></tr>`;
+                return;
+            }
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="user-avatar" style="background:${avatarColor(u.username)}">
+                                ${esc(u.username.charAt(0).toUpperCase())}
+                            </div>
+                            <span style="font-weight:600;color:var(--text)">${esc(u.username)}</span>
+                        </div>
+                    </td>
+                    <td class="d-none d-md-table-cell">${esc(u.email)}</td>
+                    <td>
+                        <span class="badge-nova ${u.role === 'superadmin' ? 'badge-superadmin' : 'badge-admin'}">
+                            <i class="fa-solid fa-${u.role === 'superadmin' ? 'crown' : 'user-shield'}"></i>
+                            ${u.role === 'superadmin' ? 'Super Admin' : 'Admin'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge-nova ${u.status === 'active' ? 'badge-active' : 'badge-inactive'}">
+                            <i class="fa-solid fa-circle" style="font-size:0.45rem"></i>
+                            ${u.status === 'active' ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td class="d-none d-sm-table-cell" style="white-space:nowrap;font-size:0.8rem;">
+                        ${u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '–'}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="action-btn-sm edit" onclick="openEditModal(${JSON.stringify(esc(JSON.stringify(u)))})" title="Edit">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="action-btn-sm del" onclick="confirmDelete('${esc(u.id)}','${esc(u.username)}')" title="Remove">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ── User Modal ─────────────────────────────────────────────────────
+        let editingUserId = null;
+
+        function openUserModal() {
+            editingUserId = null;
+            document.getElementById('modalTitle').textContent = 'Add User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('passwordHint').style.display = 'none';
+            document.getElementById('uPassword').required = true;
+            document.getElementById('userFormError').style.display = 'none';
+            new bootstrap.Modal(document.getElementById('userModal')).show();
+        }
+
+        function openEditModal(encodedUser) {
+            try {
+                const u = JSON.parse(encodedUser);
+                editingUserId = u.id;
+                document.getElementById('modalTitle').textContent = 'Edit User';
+                document.getElementById('userId').value = u.id;
+                document.getElementById('uUsername').value = u.username;
+                document.getElementById('uEmail').value = u.email;
+                document.getElementById('uRole').value = u.role;
+                document.getElementById('uStatus').value = u.status;
+                document.getElementById('uPassword').value = '';
+                document.getElementById('uPassword').required = false;
+                document.getElementById('passwordHint').style.display = '';
+                document.getElementById('userFormError').style.display = 'none';
+                new bootstrap.Modal(document.getElementById('userModal')).show();
+            } catch {
+                alert('Error loading user data');
+            }
+        }
+
+        async function saveUser() {
+            const errEl = document.getElementById('userFormError');
+            errEl.style.display = 'none';
+
+            const username = document.getElementById('uUsername').value.trim();
+            const password = document.getElementById('uPassword').value;
+            const email = document.getElementById('uEmail').value.trim();
+            const role = document.getElementById('uRole').value;
+            const status = document.getElementById('uStatus').value;
+
+            if (!username || !email) {
+                errEl.textContent = 'Username and email are required.';
+                errEl.style.display = '';
+                return;
+            }
+
+            if (!editingUserId && !password) {
+                errEl.textContent = 'Password is required for new users.';
+                errEl.style.display = '';
+                return;
+            }
+
+            const btn = document.getElementById('saveUserBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>Saving…';
+
+            try {
+                let res;
+                const body = { username, email, role, status };
+                if (password) body.password = password;
+
+                if (editingUserId) {
+                    res = await fetch(`/api/admins/${editingUserId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                } else {
+                    body.password = password;
+                    res = await fetch('/api/admins', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                }
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    errEl.textContent = data.error || 'An error occurred.';
+                    errEl.style.display = '';
+                    return;
+                }
+
+                bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                await loadUsers();
+            } catch {
+                errEl.textContent = 'Network error. Please try again.';
+                errEl.style.display = '';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Save User';
+            }
+        }
+
+        // ── Delete ─────────────────────────────────────────────────────────
+        let pendingDeleteId = '';
+
+        function confirmDelete(id, username) {
+            pendingDeleteId = id;
+            document.getElementById('deleteUserName').textContent = username;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            modal.hide();
+            try {
+                const res = await fetch(`/api/admins/${pendingDeleteId}`, { method: 'DELETE' });
+                if (!res.ok) {
+                    const d = await res.json();
+                    alert(d.error || 'Cannot delete this user.');
+                    return;
+                }
+                await loadUsers();
+            } catch {
+                alert('Error deleting user.');
+            }
+        });
+
+        loadUsers();
+    </script>
+
+    {{codeBeforBody}}
+</body>
+</html>

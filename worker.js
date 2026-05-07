@@ -44,6 +44,14 @@ function generateSlug(title) {
         .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }
 
+function normalizeCategoryLabel(label) {
+    return label == null ? '' : String(label).trim().replace(/\s+/g, ' ');
+}
+
+function categorySlug(label) {
+    return encodeURIComponent(normalizeCategoryLabel(label));
+}
+
 class Blog {
     constructor() {
         this.kv = null;
@@ -262,7 +270,7 @@ class Blog {
      * @param {string} status - Filter by status ('published', 'draft', or 'all')
      * @returns {Promise<Object>} - Paginated result with articles and metadata
      */
-    async listArticlesPaginated(page = 1, pageSize = OPT.pageSize, status = 'published') {
+    async listArticlesPaginated(page = 1, pageSize = OPT.pageSize, status = 'published', category = '') {
         try {
             let articles = await this.listArticles();
 
@@ -271,6 +279,11 @@ class Blog {
                 articles = articles.filter(a => a.status !== 'draft');
             } else if (status === 'draft') {
                 articles = articles.filter(a => a.status === 'draft');
+            }
+
+            const normalizedCategory = normalizeCategoryLabel(category).toLowerCase();
+            if (normalizedCategory) {
+                articles = articles.filter(a => normalizeCategoryLabel(a.label).toLowerCase() === normalizedCategory);
             }
 
             const totalArticles = articles.length;
@@ -378,6 +391,8 @@ class Blog {
                 }
             }
 
+            article.label = normalizeCategoryLabel(article.label);
+
             if (!article.status) {
                 article.status = 'published';
             }
@@ -431,20 +446,30 @@ class Blog {
         }
     }
 
-    async listPublishedArticles() {
+    async listPublishedArticles(category = '') {
         try {
             const articles = await this.listArticles();
-            return articles.filter(article => article.status !== 'draft');
+            const normalizedCategory = normalizeCategoryLabel(category).toLowerCase();
+            return articles.filter(article => {
+                if (article.status === 'draft') return false;
+                if (!normalizedCategory) return true;
+                return normalizeCategoryLabel(article.label).toLowerCase() === normalizedCategory;
+            });
         } catch (error) {
             console.error('Error listing published articles:', error);
             return [];
         }
     }
 
-    async listDraftArticles() {
+    async listDraftArticles(category = '') {
         try {
             const articles = await this.listArticles();
-            return articles.filter(article => article.status === 'draft');
+            const normalizedCategory = normalizeCategoryLabel(category).toLowerCase();
+            return articles.filter(article => {
+                if (article.status !== 'draft') return false;
+                if (!normalizedCategory) return true;
+                return normalizeCategoryLabel(article.label).toLowerCase() === normalizedCategory;
+            });
         } catch (error) {
             console.error('Error listing draft articles:', error);
             return [];
@@ -530,8 +555,9 @@ class Blog {
             const categories = {};
             
             articles.forEach(article => {
-                if (article.label) {
-                    categories[article.label] = (categories[article.label] || 0) + 1;
+                const category = normalizeCategoryLabel(article.label);
+                if (category) {
+                    categories[category] = (categories[category] || 0) + 1;
                 }
             });
             
@@ -882,19 +908,20 @@ export default {
                     const page = parseInt(url.searchParams.get('page')) || 1;
                     const pageSize = parseInt(url.searchParams.get('pageSize')) || OPT.pageSize;
                     const paginate = url.searchParams.get('paginate') === 'true';
+                    const category = normalizeCategoryLabel(url.searchParams.get('category') || url.searchParams.get('cat') || '');
                     
                     let result;
                     if (paginate) {
                         // Return paginated results
                         const status = showDrafts ? 'draft' : 'published';
-                        result = await blog.listArticlesPaginated(page, pageSize, status);
+                        result = await blog.listArticlesPaginated(page, pageSize, status, category);
                         return jsonResponse(result);
                     } else {
                         // Return all results (backward compatible)
                         if (showDrafts) {
-                            result = await blog.listDraftArticles();
+                            result = await blog.listDraftArticles(category);
                         } else {
-                            result = await blog.listPublishedArticles();
+                            result = await blog.listPublishedArticles(category);
                         }
                         return jsonResponse(result);
                     }
@@ -1330,6 +1357,7 @@ export default {
                     excerpt: fullArticle.excerpt || '',
                     createDate: new Date(fullArticle.createDate).toLocaleDateString(),
                     label: fullArticle.label,
+                    labelUrl: categorySlug(fullArticle.label),
                     img: fullArticle.img || '',
                     content: fullArticle.contentMarkdown || fullArticle.content || '',
                     copyRight: OPT.copyRight,

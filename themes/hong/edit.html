@@ -16,33 +16,33 @@
 
     <style>
         :root {
-            --brand: #6366f1;
-            --bg: #f1f5f9;
-            --surface: #ffffff;
-            --surface-2: #f8fafc;
-            --border: #e2e8f0;
-            --text: #0f172a;
-            --text-2: #475569;
-            --text-3: #94a3b8;
-            --sidebar-bg: linear-gradient(160deg, #312e81 0%, #6366f1 60%, #8b5cf6 100%);
-            --nav-bg: #1e293b;
+            --brand: #b51f09;
+            --bg: #f7efe5;
+            --surface: #fff8ef;
+            --surface-2: #f4e6d4;
+            --border: #e3c9a5;
+            --text: #4b1e12;
+            --text-2: #7a3423;
+            --text-3: #a06a4b;
+            --sidebar-bg: linear-gradient(180deg, #7d1808 0%, #b51f09 58%, #d73c37 100%);
+            --nav-bg: #6f1608;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --editor-bg: #ffffff;
-            --editor-toolbar: #f9fafb;
+            --editor-bg: #fff8ef;
+            --editor-toolbar: #f4e6d4;
         }
 
         [data-bs-theme="dark"] {
-            --bg: #0a0e1a;
-            --surface: #111827;
-            --surface-2: #1f2937;
-            --border: #1f2937;
-            --text: #f1f5f9;
-            --text-2: #cbd5e1;
-            --text-3: #64748b;
-            --sidebar-bg: linear-gradient(160deg, #1e1b4b 0%, #312e81 60%, #4c1d95 100%);
-            --nav-bg: #050810;
-            --editor-bg: #1f2937;
-            --editor-toolbar: #111827;
+            --bg: #2f140e;
+            --surface: #432017;
+            --surface-2: #5a2a1b;
+            --border: #7d4b2d;
+            --text: #fdf2df;
+            --text-2: #f3d2a2;
+            --text-3: #d4a873;
+            --sidebar-bg: linear-gradient(180deg, #40160d 0%, #6d1a0d 58%, #8c2b1b 100%);
+            --nav-bg: #35140c;
+            --editor-bg: #4a2417;
+            --editor-toolbar: #3b1b12;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
         }
 
@@ -191,7 +191,7 @@
             background: var(--surface-2);
             border-color: var(--brand);
             color: var(--text);
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+            box-shadow: 0 0 0 3px rgba(181,31,9,0.16);
         }
 
         .form-text { font-size: 0.75rem; color: var(--text-3); }
@@ -240,7 +240,7 @@
 
         /* ── Buttons ─────────────────────────────────────── */
         .btn-brand {
-            background: linear-gradient(135deg, var(--brand), #8b5cf6);
+            background: linear-gradient(135deg, var(--brand), #d73c37);
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -256,7 +256,7 @@
 
         .btn-brand:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99,102,241,0.35);
+            box-shadow: 0 6px 20px rgba(181,31,9,0.28);
             color: #fff;
         }
 
@@ -292,7 +292,7 @@
     <!-- Top Nav -->
     <nav class="admin-topnav">
         <span class="brand">
-            <i class="fa-solid fa-file-pen me-2" style="color:#a5b4fc"></i>{{action}} Article
+            <i class="fa-solid fa-file-pen me-2" style="color:#f3cb68"></i>{{action}} Article
         </span>
         <div class="d-flex align-items-center gap-2">
             <a href="/admin/" class="topnav-btn d-none d-sm-inline-flex">
