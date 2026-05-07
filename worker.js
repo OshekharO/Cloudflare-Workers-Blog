@@ -758,7 +758,7 @@ class Blog {
         let html = template;
 
         // These keys contain raw HTML and must not be entity-escaped
-        const rawKeys = new Set(['content', 'codeBeforHead', 'codeBeforBody', 'commentCode', 'commentConfig', 'widgetOther']);
+        const rawKeys = new Set(['content', 'codeBeforHead', 'codeBeforBody', 'commentCode', 'widgetOther']);
         
         for (const [key, value] of Object.entries(data)) {
             const regex = new RegExp(`{{${key}}}`, 'g');
@@ -1097,6 +1097,7 @@ export default {
                         }
                     }
 
+                    // Honeypot anti-spam field: real users won't fill this hidden field.
                     if (body.subject) {
                         return jsonResponse({ error: 'Invalid comment submission.' }, 400);
                     }
@@ -1431,7 +1432,8 @@ export default {
                     keyWords: OPT.keyWords,
                     copyRight: OPT.copyRight,
                     commentCode: OPT.commentCode || '',
-                    commentConfig: JSON.stringify({ enabled: !!OPT.commentsEnabled, permalink: fullArticle.permalink }),
+                    commentsEnabled: OPT.commentsEnabled ? 'true' : 'false',
+                    commentPermalink: fullArticle.permalink || '',
                     widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''

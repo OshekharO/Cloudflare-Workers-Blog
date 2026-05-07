@@ -989,7 +989,10 @@
 
 
         // ── Comments ───────────────────────────────────────────────────────
-        const commentConfig = {{commentConfig}};
+        const commentConfig = {
+            enabled: '{{commentsEnabled}}' === 'true',
+            permalink: '{{commentPermalink}}'
+        };
         const escComment = s => s ? String(s)
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#039;') : '';
