@@ -181,16 +181,30 @@ const OPT = {
 ```
 Cloudflare-Workers-Blog/
 ├── themes/
-│   ├── nova/
-│   ├── hong/
-│   └── panda/
-│       ├── index.html        # Homepage template
-│       ├── article.html      # Article page template
-│       ├── admin.html        # Admin dashboard template
-│       ├── edit.html         # Article editor template
-│       ├── admin-users.html  # Admin user management template
-│       ├── bookmarks.html    # Bookmarks page template
-│       └── 404.html          # 404 error page template
+│   ├── nova/                  # Default blue-violet theme
+│   │   ├── index.html
+│   │   ├── article.html
+│   │   ├── admin.html
+│   │   ├── edit.html
+│   │   ├── admin-users.html
+│   │   ├── bookmarks.html
+│   │   └── 404.html
+│   ├── hong/                  # Red-gold festive theme
+│   │   ├── index.html
+│   │   ├── article.html
+│   │   ├── admin.html
+│   │   ├── edit.html
+│   │   ├── admin-users.html
+│   │   ├── bookmarks.html
+│   │   └── 404.html
+│   └── panda/                 # Panda-inspired monochrome+bamboo theme
+│       ├── index.html
+│       ├── article.html
+│       ├── admin.html
+│       ├── edit.html
+│       ├── admin-users.html
+│       ├── bookmarks.html
+│       └── 404.html
 ├── Screenshot/               # Repository screenshots
 ├── worker.js                 # Single-file Cloudflare Worker (all backend logic)
 └── LICENSE
