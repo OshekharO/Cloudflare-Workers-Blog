@@ -88,6 +88,13 @@ class Blog {
         this.kv = kv;
     }
 
+    async deleteKeysInBatches(keys, batchSize = 50) {
+        for (let i = 0; i < keys.length; i += batchSize) {
+            const chunk = keys.slice(i, i + batchSize);
+            await Promise.all(chunk.map(key => this.kv.delete(key)));
+        }
+    }
+
     /**
      * Get value from KV with optional parsing and error handling
      * @param {string} key - KV key
@@ -655,7 +662,7 @@ class Blog {
 
     async deleteCommentsForPermalink(permalink) {
         const keys = await this.listKeys(commentKeyPrefix(permalink));
-        await Promise.all(keys.map(key => this.kv.delete(key)));
+        await this.deleteKeysInBatches(keys);
         return keys.length;
     }
 
@@ -671,7 +678,7 @@ class Blog {
             ...draftKeys
         ]);
 
-        await Promise.all(Array.from(keysToDelete).map(key => this.kv.delete(key)));
+        await this.deleteKeysInBatches(Array.from(keysToDelete));
         this.clearCache();
 
         return {
