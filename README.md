@@ -48,7 +48,7 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 | **Runtime** | Cloudflare Workers (edge computing, global CDN) |
 | **Storage** | Cloudflare KV — persistent key-value store |
 | **Editor** | EasyMDE — full Markdown editing experience |
-| **Themes** | 1 built-in theme (nova); remote theme loading from any GitHub repository |
+| **Themes** | 3 built-in themes (nova, hong, panda); remote theme loading from any GitHub repository |
 | **Admin** | Role-based multi-admin system (superadmin / admin) |
 | **Content** | Published articles and drafts, category labels, featured images, optional KV-backed comments |
 | **SEO** | RSS 2.0 feed, XML sitemap with image support, configurable robots.txt |
@@ -74,6 +74,7 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 |-------|-------------|
 | `nova` | Modern, responsive theme with shimmer skeletons, dark/light mode, animated cards, and a magazine-style layout |
 | `hong` | Chinese-inspired red and gold theme with warm paper tones, decorative hero panels, and festive high-contrast accents |
+| `panda` | Panda-inspired monochrome + bamboo palette with paw icon branding, dark/light mode, and an inline panda SVG hero badge |
 
 The theme is loaded remotely from the URL set in `OPT.themeURL`. You can switch to any self-hosted theme by appending `?theme=<theme-name>` to any URL (the worker will load it from `OPT.themeURL` with the theme name substituted):
 
@@ -180,7 +181,9 @@ const OPT = {
 ```
 Cloudflare-Workers-Blog/
 ├── themes/
-│   └── nova/
+│   ├── nova/
+│   ├── hong/
+│   └── panda/
 │       ├── index.html        # Homepage template
 │       ├── article.html      # Article page template
 │       ├── admin.html        # Admin dashboard template

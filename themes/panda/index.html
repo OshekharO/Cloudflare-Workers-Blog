@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{siteName}}</title>
+    <meta name="description" content="{{siteDescription}}">
+    <meta name="keywords" content="{{keyWords}}">
+    <meta property="og:title" content="{{siteName}}">
+    <meta property="og:description" content="{{siteDescription}}">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="/">
+    <link rel="alternate" type="application/rss+xml" title="{{siteName}} RSS Feed" href="/rss.xml">
+
+    <!-- Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Playfair Display + Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animations -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --brand: #2b2f36;
+            --brand-dark: #1f2328;
+            --brand-light: #cfd4d9;
+            --accent: #7fb069;
+            --success: #6fbf73;
+            --danger: #e76f51;
+
+            /* Light mode */
+            --bg: #f6f7f5;
+            --surface: #ffffff;
+            --surface-2: #edf1ed;
+            --border: #d5dcd5;
+            --text: #1f2328;
+            --text-2: #4f5962;
+            --text-3: #7b8793;
+            --nav-bg: rgba(255,255,255,0.94);
+            --footer-bg: #1f2328;
+            --hero-bg: linear-gradient(135deg, #2b2f36 0%, #4f5962 50%, #7fb069 100%);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+            --shadow-hover: 0 20px 60px rgba(43,47,54,0.16);
+        }
+
+        [data-bs-theme="dark"] {
+            --bg: #0f1113;
+            --surface: #1a1e22;
+            --surface-2: #2a3036;
+            --border: #2a3036;
+            --text: #edf1ed;
+            --text-2: #d1d5db;
+            --text-3: #9ca3af;
+            --nav-bg: rgba(15,17,19,0.96);
+            --footer-bg: #0a0b0d;
+            --hero-bg: linear-gradient(135deg, #13171b 0%, #262b31 55%, #35543f 100%);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.6);
+            --shadow-hover: 0 20px 60px rgba(127,176,105,0.18);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Navbar ─────────────────────────────────────── */
+        .nav-nova {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .nav-nova.scrolled { box-shadow: var(--shadow-md); }
+
+        .nav-brand {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--brand) !important;
+            text-decoration: none;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-link-nova {
+            color: var(--text-2) !important;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.5rem 0.875rem !important;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .nav-link-nova:hover {
+            color: var(--brand) !important;
+            background: rgba(127,176,105,0.12);
+        }
+
+        .btn-nova-primary {
+            background: linear-gradient(135deg, var(--brand), #4f5962);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.1rem;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-nova-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(43,47,54,0.35);
+            color: #fff;
+        }
+
+        .btn-nova-outline {
+            background: transparent;
+            color: var(--text-2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.45rem 1rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-nova-outline:hover {
+            border-color: var(--brand);
+            color: var(--brand);
+            background: rgba(127,176,105,0.10);
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .theme-btn:hover {
+            background: var(--brand);
+            color: #fff;
+            border-color: var(--brand);
+            transform: scale(1.05);
+        }
+
+        /* ── Hero ─────────────────────────────────────────── */
+        .hero-nova {
+            background: var(--hero-bg);
+            padding: 100px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-nova::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-nova::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--bg);
+            clip-path: ellipse(55% 100% at 50% 100%);
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.25rem, 5vw, 3.5rem);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .hero-sub {
+            color: rgba(255,255,255,0.82);
+            font-size: 1.05rem;
+            font-weight: 400;
+            max-width: 520px;
+            line-height: 1.7;
+        }
+
+        .panda-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.4rem 0.7rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.14);
+            color: #fff;
+            font-size: 0.82rem;
+            margin-bottom: 0.85rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .panda-mark svg {
+            width: 24px;
+            height: 24px;
+            display: block;
+        }
+
+        .hero-search-wrap {
+            max-width: 460px;
+            position: relative;
+        }
+
+        .hero-search {
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            color: #fff;
+            padding: 0.75rem 3rem 0.75rem 1.1rem;
+            width: 100%;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.25s ease;
+        }
+
+        .hero-search::placeholder { color: rgba(255,255,255,0.6); }
+
+        .hero-search:focus {
+            outline: none;
+            background: rgba(255,255,255,0.22);
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
+        }
+
+        .hero-search-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.7);
+            pointer-events: none;
+        }
+
+        /* ── Category Filter ──────────────────────────────── */
+        .filter-section {
+            padding: 2rem 0 0.5rem;
+        }
+
+        .filter-pill {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            color: var(--text-2);
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 0.45rem 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-pill:hover,
+        .filter-pill.active {
+            background: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(43,47,54,0.35);
+        }
+
+        .filter-scroll {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .filter-scroll::-webkit-scrollbar { display: none; }
+
+        /* ── Article Cards ──────────────────────────────── */
+        .section-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brand), var(--accent));
+            border-radius: 2px;
+        }
+
+        /* Featured Article */
+        .featured-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.35s ease;
+            text-decoration: none;
+            display: block;
+            height: 100%;
+        }
+
+        .featured-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+            border-color: rgba(127,176,105,0.18);
+        }
+
+        .featured-img-wrap {
+            position: relative;
+            overflow: hidden;
+            height: 280px;
+        }
+
+        .featured-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .featured-card:hover .featured-img-wrap img { transform: scale(1.04); }
+
+        .featured-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2b2f36 0%, #4f5962 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: rgba(255,255,255,0.35);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.7rem;
+            border-radius: 50px;
+        }
+
+        .featured-body {
+            padding: 1.5rem;
+        }
+
+        .featured-body .tag {
+            display: inline-block;
+            background: rgba(43,47,54,0.1);
+            color: var(--brand);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            margin-bottom: 0.75rem;
+        }
+
+        .featured-body h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.35;
+            margin-bottom: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            letter-spacing: -0.02em;
+        }
+
+        .featured-body p {
+            color: var(--text-2);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-bottom: 1.1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-3);
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+
+        .card-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+        /* Standard Article Card */
+        .article-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .article-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+            border-color: rgba(43,47,54,0.2);
+        }
+
+        .card-img-wrap {
+            position: relative;
+            overflow: hidden;
+            height: 185px;
+            flex-shrink: 0;
+        }
+
+        .card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.45s ease;
+        }
+
+        .article-card:hover .card-img-wrap img { transform: scale(1.06); }
+
+        @keyframes shimmer {
+            0%   { background-position: -800px 0; }
+            100% { background-position:  800px 0; }
+        }
+
+        .card-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--surface-2) 0%, var(--border) 40%, var(--surface-2) 100%);
+            background-size: 1600px 100%;
+            animation: shimmer 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-3);
+        }
+
+        .sidebar-img-ph {
+            width: 80px;
+            height: 60px;
+            border-radius: 10px;
+            background: rgba(43,47,54,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--brand);
+            font-size: 1.2rem;
+        }
+
+        .sidebar-article {
+            border-radius: 10px;
+            padding: 0.5rem;
+            transition: background 0.2s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-article:hover { background: var(--surface-2); }
+
+        .card-body-nova {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .card-tag {
+            display: inline-block;
+            background: rgba(43,47,54,0.1);
+            color: var(--brand);
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 50px;
+            margin-bottom: 0.6rem;
+        }
+
+        .card-title-nova {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 0.6rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            letter-spacing: -0.01em;
+        }
+
+        .card-excerpt {
+            color: var(--text-2);
+            font-size: 0.85rem;
+            line-height: 1.65;
+            flex: 1;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer-nova {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .read-more-link {
+            color: var(--brand);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: gap 0.2s ease;
+        }
+
+        .read-more-link:hover { gap: 0.6rem; color: var(--brand-dark); }
+
+        .card-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text-3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--brand);
+            color: #fff;
+            border-color: var(--brand);
+        }
+
+        .action-btn.bookmarked {
+            background: rgba(43,47,54,0.1);
+            color: var(--brand);
+            border-color: var(--brand);
+        }
+
+        /* ── Pagination ─────────────────────────────────── */
+        .pagination-nova {
+            display: flex;
+            gap: 0.35rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            min-width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-2);
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            padding: 0 0.5rem;
+        }
+
+        .page-btn:hover {
+            background: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, var(--brand), #4f5962);
+            border-color: var(--brand);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(43,47,54,0.35);
+        }
+
+        .page-btn:disabled,
+        .page-btn.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* ── Footer ─────────────────────────────────────── */
+        .footer-nova {
+            background: var(--footer-bg);
+            color: rgba(255,255,255,0.7);
+            padding: 2.5rem 0 1.5rem;
+            margin-top: 5rem;
+        }
+
+        .footer-brand {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            margin: 0 0.75rem;
+        }
+
+        .footer-links a:hover { color: var(--brand-light); }
+
+        .footer-copy {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* ── Loading ─────────────────────────────────────── */
+        .spinner-nova {
+            width: 42px;
+            height: 42px;
+            border: 3px solid var(--border);
+            border-top-color: var(--brand);
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Empty State ─────────────────────────────────── */
+        .empty-state {
+            background: var(--surface);
+            border: 1.5px dashed var(--border);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: rgba(127,176,105,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--brand);
+        }
+
+        /* ── Share Modal ─────────────────────────────────── */
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+        }
+
+        .modal-header, .modal-footer { border-color: var(--border); }
+
+        .share-btn-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text-2);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.25s ease;
+        }
+
+        .share-btn-circle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        /* ── Toast ───────────────────────────────────────── */
+        .toast-nova {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow-lg);
+            padding: 0.875rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            max-width: 300px;
+        }
+
+        .toast-nova.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-nova .toast-icon { font-size: 1.1rem; }
+        .toast-nova.success .toast-icon { color: var(--success); }
+        .toast-nova.warning .toast-icon { color: var(--accent); }
+        .toast-nova.danger .toast-icon { color: var(--danger); }
+
+        /* ── Responsive ──────────────────────────────────── */
+        @media (max-width: 991.98px) {
+            /* Mobile nav collapse panel */
+            .nav-collapse-panel {
+                padding: 0.875rem 0 0.5rem;
+                border-top: 1px solid var(--border);
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+            .nav-collapse-panel .btn-nova-outline,
+            .nav-collapse-panel .btn-nova-primary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-nova { padding: 80px 0 50px; }
+            .hero-title { font-size: 2rem; }
+            .featured-img-wrap { height: 220px; }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title { font-size: 1.75rem; }
+            .hero-sub { font-size: 0.9rem; }
+            .toast-nova { bottom: 1rem; right: 1rem; left: 1rem; max-width: none; }
+        }
+    </style>
+
+    {{codeBeforHead}}
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg nav-nova fixed-top py-2" id="mainNav">
+        <div class="container">
+            <a class="nav-brand" href="/">
+                <i class="fa-solid fa-paw me-2" style="color: var(--brand)"></i>{{siteName}} <span aria-hidden="true">🐼</span>
+            </a>
+            <!-- Always-visible: theme toggle + hamburger -->
+            <div class="d-flex align-items-center gap-2 ms-auto">
+                <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="navbar-toggler border-0 d-lg-none" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#navCollapse"
+                        aria-controls="navCollapse" aria-expanded="false" aria-label="Toggle navigation"
+                        style="padding: 0.45rem; color: var(--text-2);">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <!-- Collapsible nav links (Bookmarks + Admin) -->
+            <div class="collapse navbar-collapse" id="navCollapse">
+                <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 ms-lg-auto nav-collapse-panel">
+                    <a href="/bookmarks" class="btn-nova-outline">
+                        <i class="fa-regular fa-bookmark"></i>Bookmarks
+                    </a>
+                    <a href="/admin/" class="btn-nova-primary">
+                        <i class="fa-solid fa-gauge-high"></i>Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-nova">
+        <div class="container" style="position: relative; z-index: 1;">
+            <div class="row align-items-center">
+                <div class="col-lg-8" data-aos="fade-up">
+                    <h1 class="hero-title">{{siteName}}</h1>
+                    <p class="hero-sub">{{siteDescription}}</p>
+                    <div class="panda-mark" aria-label="Panda theme badge">
+                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                            <circle cx="32" cy="34" r="20" fill="#fff"/>
+                            <circle cx="20" cy="18" r="8" fill="#1f2328"/>
+                            <circle cx="44" cy="18" r="8" fill="#1f2328"/>
+                            <ellipse cx="24" cy="33" rx="5.5" ry="7.5" fill="#1f2328"/>
+                            <ellipse cx="40" cy="33" rx="5.5" ry="7.5" fill="#1f2328"/>
+                            <circle cx="24" cy="33" r="2.2" fill="#fff"/>
+                            <circle cx="40" cy="33" r="2.2" fill="#fff"/>
+                            <ellipse cx="32" cy="42" rx="5.5" ry="4" fill="#1f2328"/>
+                            <circle cx="32" cy="30" r="2.3" fill="#1f2328"/>
+                        </svg>
+                        Panda mode
+                    </div>
+                    <div class="hero-search-wrap mt-3">
+                        <input type="text" class="hero-search" id="searchInput" placeholder="Search articles..." autocomplete="off">
+                        <i class="fa-solid fa-magnifying-glass hero-search-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-scroll" id="categoryFilter">
+                <button class="filter-pill active" data-cat="all">All Posts</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Articles -->
+    <section class="py-4">
+        <div class="container">
+            <!-- Loading state -->
+            <div id="loadingState" class="text-center py-5">
+                <div class="spinner-nova mx-auto mb-3"></div>
+                <p style="color: var(--text-3); font-size: 0.9rem;">Loading articles…</p>
+            </div>
+
+            <!-- Articles grid -->
+            <div id="articlesWrap" style="display: none;">
+                <!-- Featured article -->
+                <div class="row mb-4" id="featuredWrap" data-aos="fade-up">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <h2 class="section-title mb-0">Featured</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-8" id="featuredArticle"></div>
+                    <div class="col-md-4 d-none d-md-block" id="featuredSidebar"></div>
+                </div>
+
+                <!-- All articles grid -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h2 class="section-title mb-0" id="gridHeading">Latest Articles</h2>
+                    <span class="badge rounded-pill" id="articleCount" style="background: rgba(43,47,54,0.1); color: var(--brand); font-size: 0.78rem; padding: 0.4rem 0.8rem;"></span>
+                </div>
+
+                <div class="row g-4" id="articlesGrid"></div>
+            </div>
+
+            <!-- Empty state -->
+            <div id="emptyState" style="display: none;" data-aos="fade-up">
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fa-solid fa-newspaper"></i></div>
+                    <h4 style="font-family: 'Playfair Display', serif; color: var(--text);">No articles yet</h4>
+                    <p style="color: var(--text-3); font-size: 0.9rem; max-width: 300px; margin: 0.5rem auto 1.5rem;">
+                        Start creating content for your readers.
+                    </p>
+                    <a href="/admin/" class="btn-nova-primary">
+                        <i class="fa-solid fa-plus"></i>Create First Article
+                    </a>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-5" id="paginationWrap"></div>
+        </div>
+    </section>
+
+    <!-- Share Modal -->
+    <div class="modal fade" id="shareModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fa-solid fa-share-nodes me-2" style="color: var(--brand)"></i>Share Article
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-4" style="color: var(--text-2); font-size: 0.9rem;" id="shareTitle"></p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <button class="share-btn-circle" onclick="shareTo('twitter')" title="Share on X (Twitter)" style="color: #000;">
+                            <i class="fa-brands fa-x-twitter"></i>
+                        </button>
+                        <button class="share-btn-circle" onclick="shareTo('facebook')" title="Share on Facebook" style="color: #1877f2;">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </button>
+                        <button class="share-btn-circle" onclick="shareTo('linkedin')" title="Share on LinkedIn" style="color: #0a66c2;">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </button>
+                        <button class="share-btn-circle" onclick="copyLink()" title="Copy link" style="color: var(--brand);">
+                            <i class="fa-solid fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-nova" id="toastMsg">
+        <i class="toast-icon fa-solid fa-circle-check"></i>
+        <span id="toastText"></span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-nova">
+        <div class="container">
+            <div class="row align-items-start g-4">
+                <div class="col-md-6">
+                    <div class="footer-brand">
+                        <i class="fa-solid fa-paw me-2" style="color: var(--brand-light)"></i>{{siteName}} <span aria-hidden="true">🐼</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.45); max-width: 320px; line-height: 1.65; margin-top: 0.5rem;">
+                        {{siteDescription}}
+                    </p>
+                </div>
+                <div class="col-md-6 d-flex flex-column align-items-md-end">
+                    <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); margin-bottom: 0.75rem; font-weight: 600;">Links</p>
+                    <div class="footer-links d-flex flex-column align-items-md-end gap-2">
+                        <a href="/bookmarks"><i class="fa-regular fa-bookmark me-2"></i>Bookmarks</a>
+                        <a href="/rss.xml"><i class="fa-solid fa-rss me-2"></i>RSS Feed</a>
+                        <a href="/sitemap.xml"><i class="fa-solid fa-sitemap me-2"></i>Sitemap</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copy text-center">
+                {{copyRight}}
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+    <script>
+        AOS.init({ duration: 600, once: true, offset: 60 });
+
+        // ── Theme ──────────────────────────────────────────────────────────
+        const getTheme = () => localStorage.getItem('theme') ||
+            (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+        function setTheme(t) {
+            document.documentElement.setAttribute('data-bs-theme', t);
+            localStorage.setItem('theme', t);
+            document.getElementById('themeIcon').className =
+                t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        function toggleTheme() {
+            setTheme(document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        setTheme(getTheme());
+
+        // ── Navbar scroll effect ───────────────────────────────────────────
+        window.addEventListener('scroll', () => {
+            document.getElementById('mainNav').classList.toggle('scrolled', scrollY > 20);
+        });
+
+        // ── Bookmarks ─────────────────────────────────────────────────────
+        const getBookmarks = () => JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+        const saveBookmarks = b => localStorage.setItem('blog_bookmarks', JSON.stringify(b));
+        const isBookmarked = p => getBookmarks().some(b => b.permalink === p);
+
+        function toggleBookmark(permalink, title, img, label) {
+            const bm = getBookmarks();
+            const idx = bm.findIndex(b => b.permalink === permalink);
+            if (idx > -1) {
+                bm.splice(idx, 1);
+                saveBookmarks(bm);
+                toast('Bookmark removed', 'warning');
+            } else {
+                bm.push({ permalink, title, img, label, bookmarkedAt: new Date().toISOString() });
+                saveBookmarks(bm);
+                toast('Article bookmarked!', 'success');
+            }
+            renderArticles(allArticles, currentPage);
+        }
+
+        // ── Share ─────────────────────────────────────────────────────────
+        let sharePermalink = '', shareArticleTitle = '';
+
+        function openShare(permalink, title) {
+            sharePermalink = permalink;
+            shareArticleTitle = title;
+            document.getElementById('shareTitle').textContent = title;
+            new bootstrap.Modal(document.getElementById('shareModal')).show();
+        }
+
+        function shareTo(platform) {
+            const url = encodeURIComponent(`${location.origin}/article/${sharePermalink}`);
+            const text = encodeURIComponent(shareArticleTitle);
+            const urls = {
+                twitter: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`
+            };
+            window.open(urls[platform], '_blank', 'width=600,height=400');
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+        }
+
+        async function copyLink() {
+            const url = `${location.origin}/article/${sharePermalink}`;
+            try { await navigator.clipboard.writeText(url); } catch {
+                const t = document.createElement('textarea');
+                t.value = url; document.body.appendChild(t); t.select();
+                document.execCommand('copy'); document.body.removeChild(t);
+            }
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+            toast('Link copied!', 'success');
+        }
+
+        // ── Toast ─────────────────────────────────────────────────────────
+        let toastTimer;
+        function toast(msg, type = 'success') {
+            const el = document.getElementById('toastMsg');
+            const icons = { success: 'fa-circle-check', warning: 'fa-triangle-exclamation', danger: 'fa-circle-xmark' };
+            el.querySelector('.toast-icon').className = `toast-icon fa-solid ${icons[type] || icons.success}`;
+            document.getElementById('toastText').textContent = msg;
+            el.className = `toast-nova show ${type}`;
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // ── XSS helpers ───────────────────────────────────────────────────
+        const esc = s => s ? String(s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#039;') : '';
+        const escJs = s => s ? String(s)
+            .replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"')
+            .replace(/\n/g,'\\n').replace(/\r/g,'\\r') : '';
+
+        // ── Image helpers with broken-image fallback ──────────────────────
+        function cardImgHtml(src, alt) {
+            if (!src) return `<div class="card-placeholder"><i class="fa-solid fa-file-lines"></i></div>`;
+            return `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.closest('.card-img-wrap').innerHTML='<div class=&quot;card-placeholder&quot;><i class=&quot;fa-solid fa-file-lines&quot;></i></div>'">`;
+        }
+
+        function featuredImgHtml(src, alt) {
+            if (!src) return `<div class="featured-placeholder"><i class="fa-solid fa-file-lines"></i></div>`;
+            return `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.outerHTML='<div class=&quot;featured-placeholder&quot;><i class=&quot;fa-solid fa-file-lines&quot;></i></div>'">`;
+        }
+
+        function sidebarImgHtml(src, alt) {
+            if (!src) return `<div class="sidebar-img-ph"><i class="fa-solid fa-file-lines"></i></div>`;
+            return `<img src="${esc(src)}" alt="${esc(alt)}" style="width:80px;height:60px;object-fit:cover;border-radius:10px;flex-shrink:0;" onerror="this.onerror=null;this.outerHTML='<div class=&quot;sidebar-img-ph&quot;><i class=&quot;fa-solid fa-file-lines&quot;></i></div>'">`;
+        }
+
+        // ── Reading time estimate ─────────────────────────────────────────
+        const readTime = text => Math.max(1, Math.round((text || '').split(/\s+/).length / 200));
+
+        // ── State ─────────────────────────────────────────────────────────
+        const normalizeCat = s => (s || '').trim().replace(/\s+/g, ' ').toLowerCase();
+        let allArticles = [];
+        let filteredArticles = [];
+        let currentPage = 1;
+        let currentCat = 'all';
+        const PAGE_SIZE = 9;
+
+        // ── Load & render ─────────────────────────────────────────────────
+        async function init() {
+            try {
+                const res = await fetch('/api/articles');
+                if (!res.ok) throw new Error('Failed');
+                allArticles = await res.json();
+                buildCategoryFilter(allArticles);
+                const requestedCat = new URLSearchParams(location.search).get('cat');
+                const matchedCategory = requestedCat
+                    ? (['all', ...new Set(allArticles.map(a => a.label).filter(Boolean))].find(cat => normalizeCat(cat) === normalizeCat(requestedCat)) || requestedCat)
+                    : 'all';
+                applyFilter(matchedCategory || 'all');
+            } catch {
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fa-solid fa-triangle-exclamation" style="color:var(--danger)"></i></div>
+                        <h5 style="color:var(--text)">Error loading articles</h5>
+                        <p style="color:var(--text-3);font-size:0.9rem">Please try refreshing the page.</p>
+                        <button onclick="init()" class="btn-nova-primary" style="margin-top:1rem">
+                            <i class="fa-solid fa-rotate"></i>Retry
+                        </button>
+                    </div>`;
+            }
+        }
+
+        function buildCategoryFilter(articles) {
+            const cats = {};
+            articles.forEach(a => { if (a.label) cats[a.label] = (cats[a.label] || 0) + 1; });
+            const container = document.getElementById('categoryFilter');
+            Object.entries(cats).sort((a,b) => b[1]-a[1]).forEach(([cat]) => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-pill';
+                btn.dataset.cat = cat;
+                btn.textContent = cat;
+                btn.addEventListener('click', () => applyFilter(cat));
+                container.appendChild(btn);
+            });
+        }
+
+        function applyFilter(cat) {
+            currentCat = cat;
+            currentPage = 1;
+            document.querySelectorAll('.filter-pill').forEach(b =>
+                b.classList.toggle('active', b.dataset.cat === cat)
+            );
+            const normalizedCat = normalizeCat(cat);
+            filteredArticles = normalizedCat === 'all' ? allArticles : allArticles.filter(a => normalizeCat(a.label) === normalizedCat);
+            const nextUrl = new URL(location.href);
+            if (normalizedCat === 'all') nextUrl.searchParams.delete('cat');
+            else nextUrl.searchParams.set('cat', cat);
+            history.replaceState(null, '', `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
+
+            const searchQ = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (searchQ) {
+                filteredArticles = filteredArticles.filter(a =>
+                    (a.title||'').toLowerCase().includes(searchQ) ||
+                    (a.excerpt||'').toLowerCase().includes(searchQ) ||
+                    (a.label||'').toLowerCase().includes(searchQ)
+                );
+            }
+            renderArticles(filteredArticles, 1);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            applyFilter(currentCat);
+        });
+
+        document.querySelectorAll('.filter-pill').forEach(b =>
+            b.addEventListener('click', () => applyFilter(b.dataset.cat))
+        );
+
+        function renderArticles(articles, page) {
+            currentPage = page;
+            document.getElementById('loadingState').style.display = 'none';
+
+            if (articles.length === 0) {
+                document.getElementById('articlesWrap').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('paginationWrap').innerHTML = '';
+                return;
+            }
+
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('articlesWrap').style.display = 'block';
+
+            // Count
+            document.getElementById('articleCount').textContent = `${articles.length} article${articles.length !== 1 ? 's' : ''}`;
+
+            // Featured (first article overall)
+            const featured = articles[0];
+            renderFeatured(featured, articles.slice(1, 4));
+
+            // Grid paging (skip featured on page 1)
+            const startIndex = page === 1 ? 1 : (page - 1) * PAGE_SIZE + 1;
+            const endIndex = page === 1 ? Math.min(PAGE_SIZE + 1, articles.length) : Math.min(page * PAGE_SIZE + 1, articles.length);
+            const pageArticles = articles.slice(startIndex, endIndex);
+
+            const grid = document.getElementById('articlesGrid');
+            grid.innerHTML = pageArticles.map((a, i) => articleCardHTML(a, i)).join('');
+
+            // Pagination
+            const totalPages = Math.ceil((articles.length - 1) / PAGE_SIZE) || 1;
+            renderPagination(page, totalPages, articles);
+        }
+
+        function renderFeatured(a, sidebar) {
+            const fe = document.getElementById('featuredArticle');
+            const fs = document.getElementById('featuredSidebar');
+
+            fe.innerHTML = `
+            <a href="/article/${esc(a.permalink)}" class="featured-card" data-aos="fade-up">
+                <div class="featured-img-wrap">
+                    ${featuredImgHtml(a.img, a.title)}
+                    <span class="featured-badge"><i class="fa-solid fa-star me-1"></i>Featured</span>
+                </div>
+                <div class="featured-body">
+                    <span class="tag">${esc(a.label || 'Article')}</span>
+                    <h3>${esc(a.title)}</h3>
+                    <p>${esc(a.excerpt || '')}</p>
+                    <div class="card-meta">
+                        <span><i class="fa-regular fa-calendar"></i>${new Date(a.createDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                        <span><i class="fa-regular fa-clock"></i>${readTime(a.excerpt)} min read</span>
+                    </div>
+                </div>
+            </a>`;
+
+            // Sidebar: next 3 articles
+            fs.innerHTML = sidebar.map((s, i) => `
+            <a href="/article/${esc(s.permalink)}" class="d-flex gap-3 mb-3 sidebar-article" data-aos="fade-left" data-aos-delay="${i * 100}">
+                ${sidebarImgHtml(s.img, s.title)}
+                <div>
+                    <p style="font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:700;color:var(--text);line-height:1.35;margin:0 0 0.3rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${esc(s.title)}</p>
+                    <span style="font-size:0.75rem;color:var(--text-3);">${new Date(s.createDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+                </div>
+            </a>`).join('');
+        }
+
+        function articleCardHTML(a, i) {
+            const bm = isBookmarked(a.permalink);
+            const jP = escJs(a.permalink), jT = escJs(a.title), jI = escJs(a.img), jL = escJs(a.label);
+            return `
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="${(i % 3) * 80}">
+                <div class="article-card">
+                    <a href="/article/${esc(a.permalink)}" class="card-img-wrap d-block text-decoration-none">
+                        ${cardImgHtml(a.img, a.title)}
+                    </a>
+                    <div class="card-body-nova">
+                        <span class="card-tag">${esc(a.label || 'Article')}</span>
+                        <a href="/article/${esc(a.permalink)}" class="text-decoration-none">
+                            <h3 class="card-title-nova">${esc(a.title)}</h3>
+                        </a>
+                        <p class="card-excerpt">${esc(a.excerpt || '')}</p>
+                        <div class="card-footer-nova">
+                            <a href="/article/${esc(a.permalink)}" class="read-more-link">
+                                Read More <i class="fa-solid fa-arrow-right fa-xs"></i>
+                            </a>
+                            <div class="card-actions">
+                                <button class="action-btn ${bm ? 'bookmarked' : ''}" 
+                                    onclick="toggleBookmark('${jP}','${jT}','${jI}','${jL}')"
+                                    title="${bm ? 'Remove bookmark' : 'Bookmark'}">
+                                    <i class="fa-${bm ? 'solid' : 'regular'} fa-bookmark"></i>
+                                </button>
+                                <button class="action-btn" onclick="openShare('${jP}','${jT}')" title="Share">
+                                    <i class="fa-solid fa-share-nodes"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderPagination(page, total, articles) {
+            const wrap = document.getElementById('paginationWrap');
+            if (total <= 1) { wrap.innerHTML = ''; return; }
+
+            let html = '<div class="pagination-nova">';
+            html += `<button class="page-btn" onclick="renderArticles(filteredArticles, ${page - 1})" ${page <= 1 ? 'disabled' : ''}>
+                <i class="fa-solid fa-chevron-left fa-xs"></i>
+            </button>`;
+
+            const start = Math.max(1, page - 2), end = Math.min(total, page + 2);
+            if (start > 1) {
+                html += `<button class="page-btn" onclick="renderArticles(filteredArticles, 1)">1</button>`;
+                if (start > 2) html += `<span class="page-btn disabled" style="pointer-events:none">…</span>`;
+            }
+            for (let i = start; i <= end; i++) {
+                html += `<button class="page-btn ${i === page ? 'active' : ''}" onclick="renderArticles(filteredArticles, ${i})">${i}</button>`;
+            }
+            if (end < total) {
+                if (end < total - 1) html += `<span class="page-btn disabled" style="pointer-events:none">…</span>`;
+                html += `<button class="page-btn" onclick="renderArticles(filteredArticles, ${total})">${total}</button>`;
+            }
+            html += `<button class="page-btn" onclick="renderArticles(filteredArticles, ${page + 1})" ${page >= total ? 'disabled' : ''}>
+                <i class="fa-solid fa-chevron-right fa-xs"></i>
+            </button>`;
+            html += '</div>';
+
+            const totalA = articles.length;
+            html += `<p class="text-center mt-3" style="color:var(--text-3);font-size:0.8rem;">
+                Page ${page} of ${total} &middot; ${totalA} article${totalA !== 1 ? 's' : ''}
+            </p>`;
+            wrap.innerHTML = html;
+            wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        init();
+    </script>
+
+    {{codeBeforBody}}
+</body>
+</html>
