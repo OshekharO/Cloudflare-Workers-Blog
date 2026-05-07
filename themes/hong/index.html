@@ -1275,7 +1275,7 @@
 
             // Editor's Choice (first article overall)
             const featured = articles[0];
-            renderEditor's Choice(featured, articles.slice(1, 4));
+            renderEditorsChoice(featured, articles.slice(1, 4));
 
             // Grid paging (skip featured on page 1)
             const startIndex = page === 1 ? 1 : (page - 1) * PAGE_SIZE + 1;
@@ -1290,7 +1290,7 @@
             renderPagination(page, totalPages, articles);
         }
 
-        function renderEditor's Choice(a, sidebar) {
+        function renderEditorsChoice(a, sidebar) {
             const fe = document.getElementById('featuredArticle');
             const fs = document.getElementById('featuredSidebar');
 
