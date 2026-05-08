@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{siteName}}</title>
+  <meta name="description" content="{{siteDescription}}">
+  <meta name="keywords" content="{{keyWords}}">
+  <meta property="og:title" content="{{siteName}}">
+  <meta property="og:description" content="{{siteDescription}}">
+  <meta property="og:type" content="website">
+  <link rel="alternate" type="application/rss+xml" title="{{siteName}} RSS Feed" href="/rss.xml">
+  <link rel="stylesheet" href="https://unpkg.com/@primer/css@21.2.4/dist/primer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root{--bg:#f6f8fa;--fg:#1f2328;--muted:#59636e;--line:#d0d7de;--brand:#0969da;--brand2:#1f6feb;--panel:#fff;--dark-bg:#0d1117;--dark-panel:#161b22;--dark-fg:#e6edf3;--dark-muted:#8b949e;--dark-line:#30363d}
+    [data-theme="dark"]{--bg:var(--dark-bg);--fg:var(--dark-fg);--muted:var(--dark-muted);--line:var(--dark-line);--panel:var(--dark-panel);--brand:#58a6ff;--brand2:#79c0ff}
+    body{background:var(--bg);color:var(--fg);margin:0}
+    .arch-wrap{max-width:1180px;margin:0 auto;padding:1rem}
+    .arch-top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 92%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+    .brand{font-weight:700;color:var(--fg);text-decoration:none;display:flex;gap:.5rem;align-items:center}
+    .hero{border:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 10%, var(--panel)) 0%,var(--panel) 60%);padding:2rem;border-radius:12px;position:relative;overflow:hidden}
+    .hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:36px 36px;opacity:.18;pointer-events:none}
+    .hero h1,.hero p{position:relative;margin:0}
+    .chips{display:flex;gap:.5rem;flex-wrap:wrap}
+    .chip{border:1px solid var(--line);background:var(--panel);padding:.35rem .75rem;border-radius:999px;color:var(--fg);cursor:pointer}
+    .chip.active{background:var(--brand);border-color:var(--brand);color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+    .card{border:1px solid var(--line);background:var(--panel);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+    .card img{width:100%;height:170px;object-fit:cover;background:#f0f2f4}
+    .card .ph{height:170px;display:grid;place-items:center;color:var(--muted);background:linear-gradient(180deg,#f6f8fa,#eef2f6)}
+    [data-theme="dark"] .card .ph{background:linear-gradient(180deg,#0d1117,#161b22)}
+    .card-body{padding:1rem;display:flex;flex-direction:column;gap:.6rem;flex:1}
+    .meta{color:var(--muted);font-size:.82rem;display:flex;gap:1rem}
+    .title{font-size:1.04rem;font-weight:700;line-height:1.35}
+    .title a{color:var(--fg);text-decoration:none}
+    .title a:hover{color:var(--brand)}
+    .excerpt{font-size:.9rem;color:var(--muted)}
+    .actions{margin-top:auto;display:flex;justify-content:space-between;align-items:center}
+    .btn-icon{border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:.35rem .55rem;border-radius:8px;cursor:pointer}
+    .btn-icon.active{color:#d1242f;border-color:#d1242f}
+    .featured{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem}
+    .side-list{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:.5rem}
+    .side-item{display:flex;gap:.6rem;padding:.5rem;border-radius:8px;text-decoration:none;color:var(--fg)}
+    .side-item:hover{background:color-mix(in srgb,var(--brand) 8%, var(--panel))}
+    .side-item img,.side-ph{width:72px;height:56px;object-fit:cover;border-radius:6px;background:#eff2f6;flex-shrink:0}
+    .toast{position:fixed;right:1rem;bottom:1rem;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--brand);padding:.65rem .8rem;border-radius:8px;display:none;z-index:50}
+    .empty{text-align:center;padding:3rem 1rem;border:1px dashed var(--line);border-radius:12px;background:var(--panel)}
+    .pager{display:flex;justify-content:center;gap:.35rem;flex-wrap:wrap}
+    .pager button{border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:.35rem .6rem;border-radius:8px;cursor:pointer}
+    .pager button.active{background:var(--brand);border-color:var(--brand);color:#fff}
+    @media (max-width:840px){.featured{grid-template-columns:1fr}}
+  </style>
+  {{codeBeforHead}}
+</head>
+<body>
+  <header class="arch-top">
+    <div class="arch-wrap d-flex flex-items-center flex-justify-between gap-2">
+      <a class="brand" href="/"><i class="fa-solid fa-drafting-compass" style="color:var(--brand)"></i>{{siteName}}</a>
+      <div class="d-flex gap-2">
+        <a class="btn btn-sm" href="/bookmarks"><i class="fa-regular fa-bookmark"></i> Bookmarks</a>
+        <a class="btn btn-sm" href="/admin/"><i class="fa-solid fa-gauge-high"></i> Admin</a>
+        <button class="btn btn-sm" onclick="toggleTheme()" aria-label="Toggle theme"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="arch-wrap">
+    <section class="hero mt-3 mb-3">
+      <h1 class="h2 mb-2">{{siteName}}</h1>
+      <p class="mb-3 color-fg-muted">{{siteDescription}}</p>
+      <input id="searchInput" class="form-control" type="text" placeholder="Search drawings, notes, and blueprints...">
+    </section>
+
+    <section class="mb-3">
+      <div class="chips" id="categoryFilter"><button class="chip active" data-cat="all">All</button></div>
+    </section>
+
+    <section id="loadingState" class="text-center py-6 color-fg-muted">Loading articles…</section>
+
+    <section id="articlesWrap" style="display:none">
+      <div class="featured mb-3" id="featuredWrap">
+        <div id="featuredArticle"></div>
+        <div id="featuredSidebar" class="side-list"></div>
+      </div>
+      <div class="d-flex flex-items-center flex-justify-between mb-2">
+        <h2 class="h3 mb-0" id="gridHeading">Latest Articles</h2>
+        <span id="articleCount" class="Label">0</span>
+      </div>
+      <div id="articlesGrid" class="grid"></div>
+    </section>
+
+    <section id="emptyState" class="empty" style="display:none">
+      <p class="h4 mb-2">No articles yet</p>
+      <p class="color-fg-muted mb-3">Start writing your first architecture note.</p>
+      <a href="/admin/" class="btn btn-primary">Create Article</a>
+    </section>
+
+    <section class="mt-3 mb-4" id="paginationWrap"></section>
+  </main>
+
+  <footer class="arch-wrap mb-4 mt-4 color-fg-muted text-center">{{copyRight}}</footer>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const getTheme = () => localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    function setTheme(t){document.documentElement.setAttribute('data-theme', t);localStorage.setItem('theme',t);document.getElementById('themeIcon').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon'}
+    function toggleTheme(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')}
+    setTheme(getTheme());
+
+    const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;') : '';
+    const escJs = s => s ? String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\r/g,'\\r') : '';
+    const getBookmarks = () => JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+    const saveBookmarks = b => localStorage.setItem('blog_bookmarks', JSON.stringify(b));
+    const isBookmarked = p => getBookmarks().some(b => b.permalink === p);
+
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.style.display='none',2200)}
+    function toggleBookmark(permalink,title,img,label){const bm=getBookmarks();const i=bm.findIndex(b=>b.permalink===permalink);if(i>-1){bm.splice(i,1);toast('Bookmark removed')}else{bm.push({permalink,title,img,label,bookmarkedAt:new Date().toISOString()});toast('Bookmarked')}saveBookmarks(bm);renderArticles(filteredArticles,currentPage)}
+    function shareLink(permalink,title){const url=`${location.origin}/article/${permalink}`;if(navigator.share){navigator.share({title,url}).catch(()=>{});return}navigator.clipboard?.writeText(url).then(()=>toast('Link copied')).catch(()=>prompt('Copy link:',url))}
+
+    function cardImgHtml(src, alt){if(!src)return `<div class="ph"><i class="fa-regular fa-file-lines"></i></div>`;return `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;ph&quot;><i class=&quot;fa-regular fa-file-lines&quot;></i></div>'">`}
+    const readTime = text => Math.max(1, Math.round((text || '').split(/\s+/).length / 200));
+    const normalizeCat = s => (s || '').trim().replace(/\s+/g, ' ').toLowerCase();
+
+    let allArticles=[],filteredArticles=[],currentPage=1,currentCat='all';
+    const PAGE_SIZE=9;
+
+    function buildCategoryFilter(articles){const cats={};articles.forEach(a=>{if(a.label)cats[a.label]=(cats[a.label]||0)+1});const c=document.getElementById('categoryFilter');Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).forEach(cat=>{const b=document.createElement('button');b.className='chip';b.dataset.cat=cat;b.textContent=cat;b.onclick=()=>applyFilter(cat);c.appendChild(b)})}
+
+    function applyFilter(cat){currentCat=cat;currentPage=1;document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));const normalized=normalizeCat(cat);filteredArticles=normalized==='all'?allArticles:allArticles.filter(a=>normalizeCat(a.label)===normalized);const q=document.getElementById('searchInput').value.toLowerCase().trim();if(q){filteredArticles=filteredArticles.filter(a=>(a.title||'').toLowerCase().includes(q)||(a.excerpt||'').toLowerCase().includes(q)||(a.label||'').toLowerCase().includes(q))}renderArticles(filteredArticles,1)}
+    document.getElementById('searchInput').addEventListener('input',()=>applyFilter(currentCat));
+
+    function renderFeatured(a,sidebar){const fe=document.getElementById('featuredArticle');const fs=document.getElementById('featuredSidebar');if(!a){fe.innerHTML='';fs.innerHTML='';return}fe.innerHTML=`<article class="card"><a href="/article/${esc(a.permalink)}">${cardImgHtml(a.img,a.title)}</a><div class="card-body"><span class="Label Label--accent">Featured</span><h3 class="title"><a href="/article/${esc(a.permalink)}">${esc(a.title)}</a></h3><p class="excerpt">${esc(a.excerpt||'')}</p><div class="meta"><span><i class='fa-regular fa-calendar'></i> ${new Date(a.createDate).toLocaleDateString()}</span><span><i class='fa-regular fa-clock'></i> ${readTime(a.excerpt)} min</span></div></div></article>`;fs.innerHTML=sidebar.map(s=>`<a class="side-item" href="/article/${esc(s.permalink)}">${s.img?`<img src="${esc(s.img)}" alt="${esc(s.title)}" onerror="this.outerHTML='<div class=&quot;side-ph&quot;></div>'">`:`<div class="side-ph"></div>`}<div><div class="f6 color-fg-muted">${new Date(s.createDate).toLocaleDateString()}</div><div>${esc(s.title)}</div></div></a>`).join('')}
+
+    function articleCardHTML(a){const bm=isBookmarked(a.permalink);const jP=escJs(a.permalink),jT=escJs(a.title),jI=escJs(a.img),jL=escJs(a.label);return `<article class="card"><a href="/article/${esc(a.permalink)}">${cardImgHtml(a.img,a.title)}</a><div class="card-body"><div class="d-flex flex-items-center flex-justify-between"><span class="Label">${esc(a.label||'Article')}</span><span class="color-fg-muted f6">${new Date(a.createDate).toLocaleDateString()}</span></div><h3 class="title"><a href="/article/${esc(a.permalink)}">${esc(a.title)}</a></h3><p class="excerpt">${esc(a.excerpt||'')}</p><div class="actions"><a class="btn btn-sm" href="/article/${esc(a.permalink)}">Read</a><div class="d-flex gap-1"><button class="btn-icon ${bm?'active':''}" onclick="toggleBookmark('${jP}','${jT}','${jI}','${jL}')"><i class="fa-${bm?'solid':'regular'} fa-bookmark"></i></button><button class="btn-icon" onclick="shareLink('${jP}','${jT}')"><i class="fa-solid fa-share-nodes"></i></button></div></div></div></article>`}
+
+    function renderPagination(page,total){const wrap=document.getElementById('paginationWrap');if(total<=1){wrap.innerHTML='';return}let h='<div class="pager">';h+=`<button ${page<=1?'disabled':''} onclick="renderArticles(filteredArticles,${page-1})">‹</button>`;for(let i=Math.max(1,page-2);i<=Math.min(total,page+2);i++){h+=`<button class="${i===page?'active':''}" onclick="renderArticles(filteredArticles,${i})">${i}</button>`}h+=`<button ${page>=total?'disabled':''} onclick="renderArticles(filteredArticles,${page+1})">›</button></div>`;wrap.innerHTML=h}
+
+    function renderArticles(articles,page){currentPage=page;document.getElementById('loadingState').style.display='none';if(!articles.length){document.getElementById('articlesWrap').style.display='none';document.getElementById('emptyState').style.display='block';document.getElementById('paginationWrap').innerHTML='';return}document.getElementById('emptyState').style.display='none';document.getElementById('articlesWrap').style.display='block';document.getElementById('articleCount').textContent=`${articles.length} article${articles.length!==1?'s':''}`;renderFeatured(articles[0],articles.slice(1,4));const start=page===1?1:(page-1)*PAGE_SIZE+1;const end=page===1?Math.min(PAGE_SIZE+1,articles.length):Math.min(page*PAGE_SIZE+1,articles.length);document.getElementById('articlesGrid').innerHTML=articles.slice(start,end).map(articleCardHTML).join('');const total=Math.ceil((articles.length-1)/PAGE_SIZE)||1;renderPagination(page,total)}
+
+    async function init(){try{const res=await fetch('/api/articles');if(!res.ok)throw new Error('failed');allArticles=await res.json();buildCategoryFilter(allArticles);const requestedCat=new URLSearchParams(location.search).get('cat');const matched=requestedCat?(['all',...new Set(allArticles.map(a=>a.label).filter(Boolean))].find(c=>normalizeCat(c)===normalizeCat(requestedCat))||requestedCat):'all';applyFilter(matched||'all')}catch{document.getElementById('loadingState').innerHTML='<div class="empty"><p class="mb-2">Failed loading articles.</p><button class="btn" onclick="init()">Retry</button></div>'}}
+    init();
+  </script>
+  {{codeBeforBody}}
+</body>
+</html>
