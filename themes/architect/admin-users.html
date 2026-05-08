@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users — {{siteName}} Admin</title>
+  <link rel="stylesheet" href="https://unpkg.com/@primer/css@21.2.4/dist/primer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root{--bg:#f6f8fa;--fg:#1f2328;--line:#d0d7de;--panel:#fff;--muted:#59636e;--brand:#0969da;--d-bg:#0d1117;--d-fg:#e6edf3;--d-line:#30363d;--d-panel:#161b22;--d-muted:#8b949e}
+    [data-theme='dark']{--bg:var(--d-bg);--fg:var(--d-fg);--line:var(--d-line);--panel:var(--d-panel);--muted:var(--d-muted);--brand:#58a6ff}
+    body{margin:0;background:var(--bg);color:var(--fg)}.wrap{max-width:1100px;margin:0 auto;padding:1rem}.card{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:1rem}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:.55rem;border-bottom:1px solid var(--line);text-align:left}.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 25%, var(--panel));font-size:.78rem;font-weight:700}
+  </style>
+  {{codeBeforHead}}
+</head>
+<body>
+  <main class="wrap">
+    <div class="d-flex flex-items-center flex-justify-between mb-2"><h1 class="h2 m-0"><i class="fa-solid fa-users" style="color:var(--brand)"></i> User Management</h1><div class="d-flex gap-2"><a href="/admin/" class="btn btn-sm"><i class="fa-solid fa-arrow-left"></i> Dashboard</a><button class="btn btn-sm" onclick="toggleTheme()"><i id="themeIcon" class="fa-solid fa-moon"></i></button></div></div>
+
+    <section class="card mb-2">
+      <h2 class="h3 mt-0">Add / Edit User</h2>
+      <form id="userForm" class="d-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem" novalidate>
+        <input type="hidden" id="userId">
+        <div><label class="form-label">Username *</label><input id="uUsername" class="form-control" required></div>
+        <div><label class="form-label">Email *</label><input id="uEmail" type="email" class="form-control" required></div>
+        <div><label class="form-label">Password <span class="color-fg-muted" id="passwordHint">*</span></label><input id="uPassword" type="password" class="form-control" placeholder="Required for new user"></div>
+        <div class="d-grid" style="grid-template-columns:1fr 1fr;gap:.7rem"><div><label class="form-label">Role</label><select id="uRole" class="form-select"><option value="admin">Admin</option><option value="superadmin">Super Admin</option></select></div><div><label class="form-label">Status</label><select id="uStatus" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select></div></div>
+        <div style="grid-column:1/-1" id="userFormError" class="flash flash-error" hidden></div>
+        <div style="grid-column:1/-1" class="d-flex gap-2"><button class="btn btn-primary" id="saveUserBtn" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save User</button><button type="button" class="btn" onclick="resetUserForm()">Reset</button></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2 class="h3 mt-0">Admin Users</h2>
+      <div style="overflow:auto"><table class="table"><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="usersTableBody"><tr><td colspan="6">Loading…</td></tr></tbody></table></div>
+    </section>
+  </main>
+
+  <script>
+    const getTheme=()=>localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    function setTheme(t){document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t);document.getElementById('themeIcon').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon'}
+    function toggleTheme(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')}setTheme(getTheme());
+
+    const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'):'';
+    const escJs=s=>s?String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\r/g,'\\r'):'';
+    const avatarColors=['#0969da','#8250df','#1a7f37','#bf8700','#cf222e','#1f6feb'];
+    const avatarColor=s=>avatarColors[Math.abs((s||'a').split('').reduce((a,c)=>a+c.charCodeAt(0),0))%avatarColors.length];
+
+    let editingUserId=null,usersCache=[];
+
+    function resetUserForm(){editingUserId=null;document.getElementById('userForm').reset();document.getElementById('userId').value='';document.getElementById('uPassword').required=false;document.getElementById('uPassword').placeholder='Required for new user';document.getElementById('passwordHint').textContent='*';document.getElementById('userFormError').hidden=true}
+    function openEditModal(id){const u=usersCache.find(x=>x.id===id);if(!u)return;editingUserId=u.id;document.getElementById('userId').value=u.id;document.getElementById('uUsername').value=u.username||'';document.getElementById('uEmail').value=u.email||'';document.getElementById('uRole').value=u.role||'admin';document.getElementById('uStatus').value=u.status||'active';document.getElementById('uPassword').value='';document.getElementById('uPassword').required=false;document.getElementById('passwordHint').textContent='(leave blank to keep current)';document.getElementById('userFormError').hidden=true;window.scrollTo({top:0,behavior:'smooth'})}
+
+    async function loadUsers(){try{const res=await fetch('/api/admins');if(!res.ok)throw new Error('Failed');const users=await res.json();usersCache=users;renderUsers(users)}catch{document.getElementById('usersTableBody').innerHTML='<tr><td colspan="6">Error loading users.</td></tr>'}}
+    function renderUsers(users){const tb=document.getElementById('usersTableBody');if(!users.length){tb.innerHTML='<tr><td colspan="6">No users found.</td></tr>';return}tb.innerHTML=users.map(u=>`<tr><td><div class='d-flex flex-items-center gap-2'><div class='avatar' style='background:${avatarColor(u.username)}22;color:${avatarColor(u.username)}'>${esc((u.username||'?').charAt(0).toUpperCase())}</div><span>${esc(u.username)}</span></div></td><td>${esc(u.email)}</td><td><span class='Label ${u.role==='superadmin'?'Label--accent':''}'>${u.role==='superadmin'?'Super Admin':'Admin'}</span></td><td><span class='Label ${u.status==='active'?'Label--success':''}'>${u.status==='active'?'Active':'Inactive'}</span></td><td>${u.createdAt?new Date(u.createdAt).toLocaleDateString():'–'}</td><td><div class='d-flex gap-1'><button class='btn btn-sm' onclick="openEditModal('${escJs(u.id)}')"><i class='fa-solid fa-pen'></i></button><button class='btn btn-sm btn-danger' onclick="confirmDelete('${escJs(u.id)}','${escJs(u.username)}')"><i class='fa-solid fa-trash'></i></button></div></td></tr>`).join('')}
+
+    async function saveUser(e){e.preventDefault();const err=document.getElementById('userFormError');err.hidden=true;const username=document.getElementById('uUsername').value.trim();const password=document.getElementById('uPassword').value;const email=document.getElementById('uEmail').value.trim();const role=document.getElementById('uRole').value;const status=document.getElementById('uStatus').value;if(!username||!email){err.textContent='Username and email are required.';err.hidden=false;return}if(!editingUserId&&!password){err.textContent='Password is required for new users.';err.hidden=false;return}const btn=document.getElementById('saveUserBtn');btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving…';try{let res;const body={username,email,role,status};if(password)body.password=password;if(editingUserId){res=await fetch(`/api/admins/${editingUserId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})}else{body.password=password;res=await fetch('/api/admins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})}const data=await res.json();if(!res.ok){err.textContent=data.error||'An error occurred.';err.hidden=false;return}resetUserForm();await loadUsers()}catch{err.textContent='Network error. Please try again.';err.hidden=false}finally{btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save User'}}
+    async function confirmDelete(id,username){if(!confirm(`Remove ${username}?`))return;try{const res=await fetch(`/api/admins/${id}`,{method:'DELETE'});if(!res.ok){const d=await res.json();alert(d.error||'Cannot delete this user.');return}await loadUsers()}catch{alert('Error deleting user.')}}
+
+    document.getElementById('userForm').addEventListener('submit',saveUser);
+    resetUserForm();
+    loadUsers();
+  </script>
+  {{codeBeforBody}}
+</body>
+</html>

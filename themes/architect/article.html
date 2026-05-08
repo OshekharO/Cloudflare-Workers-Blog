@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} — {{siteName}}</title>
+  <meta name="description" content="{{excerpt}}">
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{excerpt}}">
+  <meta property="og:type" content="article">
+  {{#img}}<meta property="og:image" content="{{img}}">{{/img}}
+  <link rel="stylesheet" href="https://unpkg.com/@primer/css@21.2.4/dist/primer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="hljs-theme">
+  <style>
+    :root{--bg:#f6f8fa;--fg:#1f2328;--muted:#59636e;--line:#d0d7de;--panel:#fff;--brand:#0969da;--dark-bg:#0d1117;--dark-fg:#e6edf3;--dark-line:#30363d;--dark-panel:#161b22;--dark-muted:#8b949e}
+    [data-theme="dark"]{--bg:var(--dark-bg);--fg:var(--dark-fg);--muted:var(--dark-muted);--line:var(--dark-line);--panel:var(--dark-panel);--brand:#58a6ff}
+    body{margin:0;background:var(--bg);color:var(--fg)}
+    .wrap{max-width:1150px;margin:0 auto;padding:1rem}
+    .top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 92%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+    .brand{color:var(--fg);text-decoration:none;font-weight:700}
+    .hero{border:1px solid var(--line);background:linear-gradient(130deg,color-mix(in srgb,var(--brand) 10%, var(--panel)),var(--panel));border-radius:12px;padding:1.25rem;margin-top:1rem;position:relative;overflow:hidden}
+    .hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;opacity:.15;pointer-events:none}
+    .hero > *{position:relative}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:1rem;margin-top:1rem}
+    .article{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:1.2rem}
+    .article img{max-width:100%;height:auto;border-radius:10px}
+    .article-body{font-size:1rem;line-height:1.7;color:var(--fg)}
+    .article-body h2,.article-body h3{margin-top:1.4em}
+    .article-body pre{background:color-mix(in srgb,var(--bg) 80%, #0000);padding:1rem;border-radius:10px;overflow:auto;border:1px solid var(--line);position:relative}
+    .aside{position:sticky;top:72px;align-self:start;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:.9rem}
+    .toc a{display:block;color:var(--muted);text-decoration:none;padding:.25rem .4rem;border-radius:6px;font-size:.9rem}
+    .toc a.active,.toc a:hover{background:color-mix(in srgb,var(--brand) 14%, var(--panel));color:var(--brand)}
+    .comments{margin-top:1.5rem;border-top:1px solid var(--line);padding-top:1rem}
+    .comment{border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%, var(--bg));padding:.7rem;border-radius:8px;margin-bottom:.6rem}
+    .toast{position:fixed;right:1rem;bottom:1rem;background:var(--panel);border:1px solid var(--line);padding:.65rem .8rem;border-radius:8px;display:none;z-index:60}
+    #readingProgress{position:fixed;left:0;top:0;height:3px;background:var(--brand);width:0;z-index:80}
+    #backToTop{position:fixed;right:1rem;bottom:1rem;transform:translateY(120px);transition:transform .2s;border:1px solid var(--line);background:var(--panel);padding:.55rem;border-radius:8px;cursor:pointer}
+    #backToTop.show{transform:translateY(0)}
+    @media (max-width:900px){.layout{grid-template-columns:1fr}.aside{position:static}}
+  </style>
+  {{codeBeforHead}}
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <header class="top">
+    <div class="wrap d-flex flex-items-center flex-justify-between">
+      <a href="/" class="brand"><i class="fa-solid fa-drafting-compass" style="color:var(--brand)"></i> {{siteName}}</a>
+      <div class="d-flex gap-2">
+        <a href="/" class="btn btn-sm"><i class="fa-solid fa-arrow-left"></i> All Articles</a>
+        <button class="btn btn-sm" onclick="toggleTheme()"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <a href="/?cat={{labelUrl}}" class="Label">{{label}}</a>
+      <h1 class="h1 mt-2 mb-1">{{title}}</h1>
+      <p class="color-fg-muted mb-0"><i class="fa-regular fa-calendar"></i> {{createDate}} · <span id="readTimeVal">–</span> min read</p>
+    </section>
+
+    <div class="layout">
+      <article class="article">
+        {{#img}}<img src="{{img}}" alt="{{title}}" class="mb-3" onerror="this.style.display='none'">{{/img}}
+        <div id="articleBody" class="article-body"></div>
+
+        <section class="d-flex gap-2 mt-3">
+          <button class="btn" onclick="shareTo('twitter')"><i class="fa-brands fa-x-twitter"></i></button>
+          <button class="btn" onclick="shareTo('facebook')"><i class="fa-brands fa-facebook-f"></i></button>
+          <button class="btn" onclick="shareTo('linkedin')"><i class="fa-brands fa-linkedin-in"></i></button>
+          <button class="btn" onclick="copyLink()"><i class="fa-solid fa-link"></i></button>
+        </section>
+
+        <section class="comments" id="commentsSection">
+          <h2 class="h3">Comments <span class="Counter" id="commentsCount">0</span></h2>
+          <div id="commentsStatus" class="color-fg-muted mb-2"></div>
+          <div id="commentsList"></div>
+          <form id="commentForm" class="d-grid gap-2 mt-2">
+            <input type="text" name="subject" tabindex="-1" autocomplete="off" style="display:none">
+            <input class="form-control" id="commentAuthor" name="name" maxlength="80" placeholder="Your name" required>
+            <textarea class="form-control" id="commentContent" name="content" maxlength="4000" rows="5" placeholder="Your comment" required></textarea>
+            <button id="commentSubmit" class="btn btn-primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Post Comment</button>
+          </form>
+        </section>
+
+        {{commentCode}}
+      </article>
+
+      <aside class="aside" id="tocCard">
+        <h3 class="h4 mb-2"><i class="fa-solid fa-list" style="color:var(--brand)"></i> Contents</h3>
+        <div class="toc" id="tocList"><a href="#" class="color-fg-muted">Loading…</a></div>
+      </aside>
+    </div>
+
+    <footer class="color-fg-muted text-center mt-4 mb-3">{{copyRight}}</footer>
+  </main>
+
+  <button id="backToTop" onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>
+    const getTheme = () => localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    function setTheme(t){document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t);document.getElementById('themeIcon').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';const hl=document.getElementById('hljs-theme');if(hl){hl.href=t==='dark'?'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css':'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css'}}
+    function toggleTheme(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')}
+    setTheme(getTheme());
+
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.style.display='none',2400)}
+
+    window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('readingProgress').style.width=`${h>0?(scrollY/h)*100:0}%`;document.getElementById('backToTop').classList.toggle('show',scrollY>420)});
+
+    function shareTo(platform){const url=encodeURIComponent(location.href);const text=encodeURIComponent(document.querySelector('h1').textContent);const m={twitter:`https://twitter.com/intent/tweet?text=${text}&url=${url}`,facebook:`https://www.facebook.com/sharer/sharer.php?u=${url}`,linkedin:`https://www.linkedin.com/sharing/share-offsite/?url=${url}`};window.open(m[platform],'_blank','width=600,height=420')}
+    async function copyLink(){try{await navigator.clipboard.writeText(location.href);toast('Link copied')}catch{prompt('Copy link:',location.href)}}
+
+    function addCopyButtons(){document.querySelectorAll('.article-body pre').forEach(pre=>{const b=document.createElement('button');b.className='btn btn-sm';b.style.position='absolute';b.style.top='.45rem';b.style.right='.45rem';b.innerHTML='Copy';b.onclick=async()=>{const code=(pre.querySelector('code')||pre).textContent;try{await navigator.clipboard.writeText(code)}catch{}b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1400)};pre.appendChild(b)})}
+    function buildTOC(){const hs=document.querySelectorAll('.article-body h2,.article-body h3');const list=document.getElementById('tocList');if(!hs.length){document.getElementById('tocCard').style.display='none';return}list.innerHTML='';hs.forEach((h,i)=>{const id=`heading-${i}`;h.id=id;const a=document.createElement('a');a.href=`#${id}`;a.textContent=h.textContent;a.style.paddingLeft=h.tagName==='H3'?'.9rem':'.35rem';a.onclick=e=>{e.preventDefault();h.scrollIntoView({behavior:'smooth',block:'start'})};list.appendChild(a)});const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('#tocList a').forEach(a=>a.classList.remove('active'));const idx=[...hs].indexOf(e.target);const a=list.querySelectorAll('a')[idx];if(a)a.classList.add('active')}})},{rootMargin:'-20% 0px -70% 0px'});hs.forEach(h=>obs.observe(h))}
+
+    const commentConfig={enabled:'{{commentsEnabled}}'==='true',permalink:'{{commentPermalink}}'};
+    const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;') : '';
+    function setCommentsStatus(msg=''){document.getElementById('commentsStatus').textContent=msg}
+    function renderComments(comments){document.getElementById('commentsCount').textContent=comments.length;const list=document.getElementById('commentsList');if(!comments.length){list.innerHTML='<div class="comment">No comments yet.</div>';return}list.innerHTML=comments.map(c=>`<article class="comment"><div class="f6 color-fg-muted mb-1"><strong>${esc(c.author)}</strong> · ${new Date(c.createdAt).toLocaleString()}</div><div>${esc(c.content)}</div></article>`).join('')}
+    async function loadComments(){if(!commentConfig.enabled)return;setCommentsStatus('Loading comments…');try{const res=await fetch(`/api/comments/${encodeURIComponent(commentConfig.permalink)}`);const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed to load comments');renderComments(data.comments||[]);setCommentsStatus('')}catch(e){renderComments([]);setCommentsStatus(e.message||'Failed to load comments')}}
+    async function submitComment(e){e.preventDefault();const form=document.getElementById('commentForm');const author=document.getElementById('commentAuthor').value.trim();const content=document.getElementById('commentContent').value.trim();if(author.length<2||content.length<3){setCommentsStatus('Please enter a valid name and comment.');return}const btn=document.getElementById('commentSubmit');btn.disabled=true;btn.textContent='Posting…';try{const fd=new FormData(form);const res=await fetch(`/api/comments/${encodeURIComponent(commentConfig.permalink)}`,{method:'POST',body:fd});const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed to submit comment');form.reset();setCommentsStatus('Comment posted.');toast('Comment posted');await loadComments()}catch(err){setCommentsStatus(err.message||'Failed to submit comment')}finally{btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-paper-plane"></i> Post Comment'}}
+
+    (function renderArticle(){const body=document.getElementById('articleBody');const rawContent=`{{content}}`;marked.setOptions({breaks:true,gfm:true});try{body.innerHTML=marked.parse(rawContent)}catch{body.textContent=rawContent}document.querySelectorAll('.article-body pre code').forEach(b=>hljs.highlightElement(b));addCopyButtons();buildTOC();const wc=body.textContent.trim().split(/\s+/).length;document.getElementById('readTimeVal').textContent=Math.max(1,Math.round(wc/200));if(!commentConfig.enabled){document.getElementById('commentsSection').style.display='none'}else{document.getElementById('commentForm').addEventListener('submit',submitComment);loadComments()}})();
+  </script>
+  {{codeBeforBody}}
+</body>
+</html>

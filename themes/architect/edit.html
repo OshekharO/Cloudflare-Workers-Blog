@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{action}} Article — {{siteName}}</title>
+  <link rel="stylesheet" href="https://unpkg.com/@primer/css@21.2.4/dist/primer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+  <style>
+    :root{--bg:#f6f8fa;--fg:#1f2328;--line:#d0d7de;--panel:#fff;--muted:#59636e;--brand:#0969da;--d-bg:#0d1117;--d-fg:#e6edf3;--d-line:#30363d;--d-panel:#161b22;--d-muted:#8b949e}
+    [data-theme='dark']{--bg:var(--d-bg);--fg:var(--d-fg);--line:var(--d-line);--panel:var(--d-panel);--muted:var(--d-muted);--brand:#58a6ff}
+    body{margin:0;background:var(--bg);color:var(--fg)}.wrap{max-width:1040px;margin:0 auto;padding:1rem}.card{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:1rem}
+    .EasyMDEContainer .CodeMirror,.EasyMDEContainer .editor-toolbar{background:var(--panel);border-color:var(--line);color:var(--fg)}
+  </style>
+  {{codeBeforHead}}
+</head>
+<body>
+  <main class="wrap">
+    <div class="d-flex flex-items-center flex-justify-between mb-2"><h1 class="h2 m-0"><i class="fa-solid fa-compass-drafting" style="color:var(--brand)"></i> {{action}} Article</h1><div class="d-flex gap-2"><a class="btn btn-sm" href="/admin/"><i class="fa-solid fa-arrow-left"></i> Dashboard</a><button class="btn btn-sm" onclick="toggleTheme()"><i id="themeIcon" class="fa-solid fa-moon"></i></button></div></div>
+    <section class="card">
+      <form id="articleForm" novalidate>
+        <div class="d-grid" style="grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><label class="form-label">Permalink *</label><div class="d-flex gap-1"><input id="permalink" class="form-control" required pattern="[a-z0-9-]+" placeholder="my-article-title"><button id="genSlugBtn" type="button" class="btn">Generate</button></div></div>
+          <div><label class="form-label">Category *</label><input id="label" class="form-control" list="categorySuggestions" required placeholder="Architecture"><datalist id="categorySuggestions"></datalist></div>
+        </div>
+        <div class="mt-2"><label class="form-label">Title *</label><input id="title" class="form-control" required></div>
+        <div class="mt-2"><label class="form-label">Featured Image URL</label><input id="img" class="form-control" type="url" oninput="previewImg(this.value)"><img id="imgPreview" style="display:none;max-width:100%;max-height:160px;border-radius:8px;margin-top:.5rem;border:1px solid var(--line)"></div>
+        <div class="d-grid mt-2" style="grid-template-columns:1fr 1fr;gap:.75rem"><div><label class="form-label">Publish Date *</label><input id="createDate" class="form-control" type="datetime-local" required></div><div><label class="form-label">Status</label><select id="status" class="form-select"><option value="published">Published</option><option value="draft">Draft</option></select></div></div>
+        <div class="mt-2"><label class="form-label">Content (Markdown) *</label><textarea id="content"></textarea></div>
+        <div id="formAlert" class="flash flash-error mt-2" style="display:none"></div>
+        <div class="d-flex gap-2 flex-justify-end mt-2"><button type="button" class="btn" onclick="history.back()">Cancel</button><button id="submitBtn" class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Article</button></div>
+      </form>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+  <script>
+    const getTheme=()=>localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    function setTheme(t){document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t);document.getElementById('themeIcon').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon'}
+    function toggleTheme(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')}setTheme(getTheme());
+    function previewImg(url){const el=document.getElementById('imgPreview');if(url&&url.startsWith('http')){el.src=url;el.style.display='block'}else el.style.display='none'}
+
+    const easyMDE=new EasyMDE({element:document.getElementById('content'),spellChecker:false,status:false,autosave:{enabled:false},placeholder:'Write your article in Markdown…',toolbar:['bold','italic','strikethrough','heading','|','quote','unordered-list','ordered-list','|','link','image','table','|','preview','side-by-side','fullscreen','|','guide']});
+    document.getElementById('genSlugBtn').addEventListener('click',async()=>{const title=document.getElementById('title').value.trim();if(!title){alert('Please enter a title first.');return}try{const res=await fetch('/api/generate-slug',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title})});const data=await res.json();if(data.slug)document.getElementById('permalink').value=data.slug}catch{document.getElementById('permalink').value=title.toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/[\s]+/g,'-')}});
+    async function loadCategories(){try{const res=await fetch('/api/categories');if(!res.ok)return;const categories=await res.json();const dl=document.getElementById('categorySuggestions');dl.innerHTML='';Object.entries(categories).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([c])=>{const o=document.createElement('option');o.value=c;dl.appendChild(o)})}catch{}}
+    loadCategories();
+
+    let isEditing=false,currentPermalink='';const urlParams=new URLSearchParams(location.search);const editPermalink=urlParams.get('permalink');
+    if(editPermalink){isEditing=true;currentPermalink=editPermalink;document.title='Edit Article';loadArticle(editPermalink)}else{const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());document.getElementById('createDate').value=now.toISOString().slice(0,16)}
+    async function loadArticle(permalink){try{const res=await fetch(`/api/articles/${permalink}`);if(!res.ok)throw new Error('Not found');const a=await res.json();document.getElementById('permalink').value=a.permalink;document.getElementById('permalink').readOnly=true;document.getElementById('title').value=a.title||'';document.getElementById('img').value=a.img||'';document.getElementById('label').value=a.label||'';document.getElementById('status').value=a.status||'published';const dt=new Date(a.createDate);dt.setMinutes(dt.getMinutes()-dt.getTimezoneOffset());document.getElementById('createDate').value=dt.toISOString().slice(0,16);easyMDE.value(a.contentMarkdown||a.content||'');if(a.img)previewImg(a.img)}catch{alert('Error loading article.');location.href='/admin/'}}
+
+    document.getElementById('articleForm').addEventListener('submit',async e=>{e.preventDefault();e.stopPropagation();const alertEl=document.getElementById('formAlert');alertEl.style.display='none';if(!e.target.checkValidity()){e.target.classList.add('was-validated');return}const btn=document.getElementById('submitBtn');btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving…';const payload={permalink:document.getElementById('permalink').value,title:document.getElementById('title').value,img:document.getElementById('img').value,label:document.getElementById('label').value.trim(),createDate:document.getElementById('createDate').value,content:easyMDE.value(),status:document.getElementById('status').value};try{const url=isEditing?`/api/articles/${currentPermalink}`:'/api/articles';const method=isEditing?'PUT':'POST';const res=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await res.json();if(!res.ok){alertEl.textContent=data.error||'An error occurred.';alertEl.style.display='';return}location.href='/admin/'}catch{alertEl.textContent='Network error. Please try again.';alertEl.style.display=''}finally{btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save Article'}});
+  </script>
+  {{codeBeforBody}}
+</body>
+</html>

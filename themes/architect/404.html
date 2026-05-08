@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — {{siteName}}</title>
+  <link rel="stylesheet" href="https://unpkg.com/@primer/css@21.2.4/dist/primer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root{--bg:#f6f8fa;--fg:#1f2328;--line:#d0d7de;--panel:#fff;--brand:#0969da;--d-bg:#0d1117;--d-fg:#e6edf3;--d-line:#30363d;--d-panel:#161b22}
+    [data-theme='dark']{--bg:var(--d-bg);--fg:var(--d-fg);--line:var(--d-line);--panel:var(--d-panel);--brand:#58a6ff}
+    body{margin:0;background:var(--bg);color:var(--fg);display:grid;min-height:100vh;place-items:center;padding:1rem}.box{max-width:660px;width:100%;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:2rem;text-align:center;position:relative;overflow:hidden}.box:before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:34px 34px;opacity:.15;pointer-events:none}.box>*{position:relative}
+  </style>
+  {{codeBeforHead}}
+</head>
+<body>
+  <section class="box">
+    <p class="h0 m-0" style="font-size:4.5rem">404</p>
+    <h1 class="h2 mt-2"><i class="fa-solid fa-compass-drafting" style="color:var(--brand)"></i> Blueprint Missing</h1>
+    <p class="color-fg-muted">This page is not in the current plan set.</p>
+    <div class="d-flex flex-justify-center gap-2 mt-3"><a href="/" class="btn btn-primary"><i class="fa-solid fa-house"></i> Home</a><button class="btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i> Back</button><button class="btn" onclick="toggleTheme()"><i id="themeIcon" class="fa-solid fa-moon"></i></button></div>
+    <p class="mt-4 color-fg-muted">{{copyRight}}</p>
+  </section>
+  <script>const getTheme=()=>localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');function setTheme(t){document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t);document.getElementById('themeIcon').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon'}function toggleTheme(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')}setTheme(getTheme());</script>
+  {{codeBeforBody}}
+</body>
+</html>

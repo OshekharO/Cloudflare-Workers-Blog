@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookmarks — {{siteName}}</title>
+  <link rel="stylesheet" href="https://unpkg.com/@primer/css@21.2.4/dist/primer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root{--bg:#f6f8fa;--fg:#1f2328;--line:#d0d7de;--panel:#fff;--muted:#59636e;--brand:#0969da;--d-bg:#0d1117;--d-fg:#e6edf3;--d-line:#30363d;--d-panel:#161b22;--d-muted:#8b949e}
+    [data-theme='dark']{--bg:var(--d-bg);--fg:var(--d-fg);--line:var(--d-line);--panel:var(--d-panel);--muted:var(--d-muted);--brand:#58a6ff}
+    body{margin:0;background:var(--bg);color:var(--fg)} .wrap{max-width:1140px;margin:0 auto;padding:1rem}
+    .top{position:sticky;top:0;background:color-mix(in srgb,var(--bg) 92%, transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+    .hero{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:1rem;margin-top:1rem}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+    .card{border:1px solid var(--line);background:var(--panel);border-radius:10px;overflow:hidden}
+    .card img{width:100%;height:170px;object-fit:cover}.ph{height:170px;display:grid;place-items:center;background:#eef2f6;color:var(--muted)}
+    .body{padding:.95rem}.toast{position:fixed;right:1rem;bottom:1rem;background:var(--panel);border:1px solid var(--line);padding:.6rem .8rem;border-radius:8px;display:none}
+  </style>
+  {{codeBeforHead}}
+</head>
+<body>
+  <header class="top"><div class="wrap d-flex flex-items-center flex-justify-between"><a href="/" class="Link--primary no-underline"><i class="fa-solid fa-drafting-compass"></i> {{siteName}}</a><div class="d-flex gap-2"><a href="/" class="btn btn-sm">Home</a><a href="/admin/" class="btn btn-sm">Admin</a><button class="btn btn-sm" onclick="toggleTheme()"><i id="themeIcon" class="fa-solid fa-moon"></i></button></div></div></header>
+  <main class="wrap">
+    <section class="hero"><h1 class="h2 mb-1"><i class="fa-regular fa-bookmark"></i> Saved Bookmarks</h1><p id="bookmarkCount" class="color-fg-muted mb-0">0 saved articles</p></section>
+    <section class="mt-3 mb-2 d-flex flex-justify-end"><button id="clearAllBtn" class="btn btn-sm" onclick="clearAll()" style="display:none"><i class="fa-solid fa-trash"></i> Clear All</button></section>
+    <section id="bookmarksGrid" class="grid"></section>
+    <section id="emptyState" class="blankslate" style="display:none;margin-top:1rem"><h3 class="blankslate-heading">No bookmarks yet</h3><p class="color-fg-muted">Bookmark articles from the homepage to keep them here.</p><a href="/" class="btn btn-primary">Browse Articles</a></section>
+  </main>
+  <footer class="wrap text-center color-fg-muted mt-4 mb-4">{{copyRight}}</footer>
+  <div id="toast" class="toast"></div>
+  <script>
+    const getTheme=()=>localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    function setTheme(t){document.documentElement.setAttribute('data-theme',t);localStorage.setItem('theme',t);document.getElementById('themeIcon').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon'}
+    function toggleTheme(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')} setTheme(getTheme());
+    const getBookmarks=()=>JSON.parse(localStorage.getItem('blog_bookmarks')||'[]'); const saveBookmarks=b=>localStorage.setItem('blog_bookmarks',JSON.stringify(b));
+    const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'):'';
+    const escJs=s=>s?String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"'):'';
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.style.display='none',2200)}
+    function removeBookmark(p){saveBookmarks(getBookmarks().filter(b=>b.permalink!==p));toast('Bookmark removed');renderBookmarks()}
+    function clearAll(){if(!confirm('Remove all bookmarks?'))return;saveBookmarks([]);renderBookmarks()}
+    function renderBookmarks(){const bm=getBookmarks();document.getElementById('bookmarkCount').textContent=`${bm.length} saved article${bm.length!==1?'s':''}`;document.getElementById('clearAllBtn').style.display=bm.length?'':'none';const grid=document.getElementById('bookmarksGrid');const empty=document.getElementById('emptyState');if(!bm.length){grid.innerHTML='';empty.style.display='';return}empty.style.display='none';grid.innerHTML=bm.map(b=>`<article class='card'><a href='/article/${esc(b.permalink)}'>${b.img?`<img src='${esc(b.img)}' alt='${esc(b.title)}' onerror="this.outerHTML='<div class=&quot;ph&quot;><i class=&quot;fa-regular fa-file-lines&quot;></i></div>'">`:`<div class='ph'><i class='fa-regular fa-file-lines'></i></div>`}</a><div class='body'><span class='Label'>${esc(b.label||'Article')}</span><h3 class='h4 mt-2 mb-1'><a href='/article/${esc(b.permalink)}' class='Link--primary no-underline'>${esc(b.title)}</a></h3><p class='f6 color-fg-muted mb-2'>Saved ${new Date(b.bookmarkedAt).toLocaleDateString()}</p><button class='btn btn-sm' onclick="removeBookmark('${escJs(b.permalink)}')"><i class='fa-solid fa-bookmark-slash'></i> Remove</button></div></article>`).join('')}
+    renderBookmarks();
+  </script>
+  {{codeBeforBody}}
+</body>
+</html>
