@@ -716,14 +716,6 @@
         </div>
     </nav>
 
-    <section class="panda-strip" style="background:linear-gradient(90deg, rgba(127,176,105,0.18), rgba(43,47,54,0.08)); border-bottom:1px solid var(--border);">
-        <div class="container py-2 d-flex align-items-center justify-content-between flex-wrap gap-2" style="margin-top:56px;">
-            <span style="font-size:0.78rem;font-weight:700;color:var(--text-2);letter-spacing:0.04em;text-transform:uppercase;"><i class="fa-solid fa-paw me-2"></i>Panda Mode</span>
-            <span style="font-size:0.78rem;color:var(--text-3);">Calm monochrome + bamboo accents</span>
-        </div>
-    </section>
-
-
     <!-- Article Header -->
     <header class="article-header">
         <div class="container">
@@ -749,21 +741,6 @@
                     {{#img}}
                     <img src="{{img}}" alt="{{title}}" class="article-hero-img" onerror="this.style.display='none'">
                     {{/img}}
-
-                    <div class="panda-article-note" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:0.85rem 1rem;display:flex;gap:0.75rem;align-items:center;margin-bottom:1rem;">
-                        <svg viewBox="0 0 84 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:84px;height:44px;flex-shrink:0;">
-                            <rect width="84" height="44" rx="12" fill="rgba(127,176,105,0.16)"/>
-                            <circle cx="28" cy="24" r="11" fill="#fff"/>
-                            <circle cx="23" cy="16" r="4.5" fill="#1f2328"/>
-                            <circle cx="33" cy="16" r="4.5" fill="#1f2328"/>
-                            <ellipse cx="28" cy="26" rx="3.2" ry="2.2" fill="#1f2328"/>
-                            <rect x="48" y="26" width="20" height="4" rx="2" fill="#7fb069"/>
-                            <rect x="52" y="18" width="16" height="3" rx="1.5" fill="#7fb069"/>
-                        </svg>
-                        <div style="font-size:0.84rem;color:var(--text-2);line-height:1.6;">
-                            <strong style="color:var(--text)">Panda read mode:</strong> a clean long-form layout with a guide rail for section jumps.
-                        </div>
-                    </div>
 
                     <div class="article-body" id="articleBody">
                         <!-- Populated by JS -->
@@ -830,7 +807,7 @@
                 <div class="col-lg-3 order-1 order-lg-2">
                     <div class="toc-card" id="tocCard">
                         <div class="toc-title">
-                            <i class="fa-solid fa-list" style="color:var(--brand)"></i>Panda Guide
+                            <i class="fa-solid fa-list" style="color:var(--brand)"></i>Contents
                         </div>
                         <ul class="toc-list" id="tocList">
                             <li><a href="#" style="color:var(--text-3)">Loading…</a></li>
@@ -970,7 +947,7 @@
             });
         }
 
-        // ── Table of Panda Guide ──────────────────────────────────────────────
+        // ── Table of Contents ─────────────────────────────────────────────────
         function buildTOC() {
             const headings = document.querySelectorAll('.article-body h2, .article-body h3');
             const list = document.getElementById('tocList');
