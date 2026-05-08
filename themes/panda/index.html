@@ -242,6 +242,31 @@
             display: block;
         }
 
+        .panda-layout-deck {
+            margin-top: -20px;
+            margin-bottom: 1.5rem;
+        }
+        .panda-layout-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+        }
+        .panda-layout-card h3 {
+            margin: 0 0 0.35rem;
+            font-size: 1rem;
+            color: var(--text);
+            font-weight: 700;
+        }
+        .panda-layout-card p {
+            margin: 0;
+            color: var(--text-3);
+            font-size: 0.83rem;
+            line-height: 1.65;
+        }
+
         .hero-search-wrap {
             max-width: 460px;
             position: relative;
@@ -919,6 +944,31 @@
                             <rect x="204" y="122" width="34" height="10" rx="5" fill="#7fb069"/>
                         </svg>
                         <p style="margin:0.75rem 0 0;color:#fff;font-size:0.88rem;">A calmer reading space with panda-inspired layout accents.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panda-layout-deck">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="panda-layout-card">
+                        <h3><i class="fa-solid fa-seedling me-2" style="color:var(--accent)"></i>Bamboo Feed</h3>
+                        <p>Category chips now act like a curated bamboo trail rather than a plain filter list.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panda-layout-card">
+                        <h3><i class="fa-solid fa-newspaper me-2" style="color:var(--brand)"></i>Reading Grid</h3>
+                        <p>Featured stories stay front-and-center while quick picks sit beside them for fast scanning.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panda-layout-card">
+                        <h3><i class="fa-solid fa-paw me-2" style="color:var(--brand-dark)"></i>Panda Rhythm</h3>
+                        <p>Custom SVG accents and paw iconography define a unique layout signature for this theme.</p>
                     </div>
                 </div>
             </div>
