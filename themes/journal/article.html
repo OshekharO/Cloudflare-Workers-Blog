@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    
+    <!-- Bootswatch Journal Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/journal/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Marked.js & Highlight.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'News Cycle', Georgia, serif;
+            background-color: #faf9f6;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .article-header {
+            background: #fff;
+            border-bottom: 3px double #1a1a1a;
+            padding: 2rem 0;
+        }
+        
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        
+        .article-meta {
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            padding: 0.75rem 0;
+        }
+        
+        .category-badge {
+            background: #eb6864;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            letter-spacing: 1px;
+        }
+        
+        .article-content {
+            background: #fff;
+            padding: 2rem;
+            margin-top: 2rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .article-content h1, .article-content h2, .article-content h3 {
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .article-content h1 { font-size: 1.8rem; border-bottom: 2px solid #eb6864; padding-bottom: 0.5rem; }
+        .article-content h2 { font-size: 1.5rem; border-left: 4px solid #eb6864; padding-left: 1rem; }
+        .article-content h3 { font-size: 1.25rem; }
+        
+        .article-content blockquote {
+            border-left: 4px solid #eb6864;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            background: #f8f8f8;
+        }
+        
+        .article-content pre {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .article-content code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        .article-content pre code {
+            background: transparent;
+            color: inherit;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 1.5rem 0;
+            border: 1px solid #ddd;
+        }
+        
+        .article-content a {
+            color: #eb6864;
+        }
+        
+        .share-section {
+            border-top: 1px solid #ddd;
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .share-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            border: none;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-twitter { background: #1da1f2; }
+        .btn-facebook { background: #1877f2; }
+        .btn-linkedin { background: #0a66c2; }
+        .btn-copy { background: #6c757d; }
+        
+        .footer {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        #raw-content { display: none; }
+        
+        @media (max-width: 768px) {
+            .article-title { font-size: 1.75rem; }
+            .article-content { padding: 1rem; font-size: 1rem; }
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="/">{{siteName}}</a>
+            <div class="navbar-nav ms-auto">
+                <a href="/" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="article-header">
+        <div class="container">
+            <span class="badge category-badge mb-3">{{label}}</span>
+            <h1 class="article-title">{{title}}</h1>
+            <div class="article-meta">
+                <i class="bi bi-calendar me-1"></i> {{createDate}}
+            </div>
+            {{#img}}<img src="{{img}}" class="img-fluid mt-4 w-100" style="max-height:400px; object-fit:cover;" alt="{{title}}">{{/img}}
+        </div>
+    </header>
+
+    <!-- Article Content -->
+    <main class="container">
+        <article class="article-content">
+            <div id="raw-content">{{content}}</div>
+            <div id="article-content">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Share Section -->
+            <div class="share-section">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <a href="/" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left me-1"></i>Back to Home
+                        </a>
+                    </div>
+                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                        <span class="me-2">Share:</span>
+                        <button onclick="shareOnTwitter()" class="share-btn btn-twitter" title="Twitter">
+                            <i class="bi bi-twitter"></i>
+                        </button>
+                        <button onclick="shareOnFacebook()" class="share-btn btn-facebook" title="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </button>
+                        <button onclick="shareOnLinkedIn()" class="share-btn btn-linkedin" title="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </button>
+                        <button onclick="copyShareLink()" class="share-btn btn-copy" title="Copy Link">
+                            <i class="bi bi-link-45deg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function getShareUrl() { return window.location.href; }
+        function getShareTitle() { return document.title.replace(` - ${'{{siteName}}'}`, ''); }
+
+        function shareOnTwitter() {
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareTitle())}&url=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400');
+        }
+        function shareOnFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400');
+        }
+        function shareOnLinkedIn() {
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`, '_blank', 'width=600,height=400');
+        }
+        async function copyShareLink() {
+            try {
+                await navigator.clipboard.writeText(getShareUrl());
+                showNotification('Link copied!', 'success');
+            } catch (err) {
+                const ta = document.createElement('textarea');
+                ta.value = getShareUrl();
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showNotification('Link copied!', 'success');
+            }
+        }
+
+        function showNotification(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-bg-${type} border-0`;
+            toast.innerHTML = `<div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            new bootstrap.Toast(toast).show();
+            toast.addEventListener('hidden.bs.toast', () => document.body.removeChild(container));
+        }
+
+        function renderMarkdown() {
+            const contentEl = document.getElementById('article-content');
+            const rawEl = document.getElementById('raw-content');
+            let raw = rawEl.textContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+            
+            if (!raw || raw.trim() === '') {
+                contentEl.innerHTML = '<div class="alert alert-warning">No content available.</div>';
+                return;
+            }
+            
+            if (window.marked && window.hljs) {
+                try {
+                    marked.setOptions({
+                        highlight: (code, lang) => {
+                            if (lang && hljs.getLanguage(lang)) {
+                                return hljs.highlight(code, { language: lang }).value;
+                            }
+                            return hljs.highlightAuto(code).value;
+                        },
+                        breaks: true,
+                        gfm: true
+                    });
+                    contentEl.innerHTML = marked.parse(raw);
+                } catch (e) {
+                    contentEl.innerHTML = `<pre style="white-space:pre-wrap">${raw}</pre>`;
+                }
+            } else {
+                contentEl.innerHTML = `<pre style="white-space:pre-wrap">${raw}</pre>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderMarkdown);
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>

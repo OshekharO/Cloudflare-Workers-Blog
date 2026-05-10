@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - {{siteName}}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --primary-dark: #1e3d72;
+            --secondary: #6c757d;
+            --accent: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin: 100px auto 40px;
+            overflow: hidden;
+            max-width: 900px;
+        }
+
+        .article-header {
+            background: var(--gradient);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><polygon points="1000,100 1000,0 0,100"/></svg>');
+            background-size: cover;
+        }
+
+        .article-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+        }
+
+        .article-label {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+        }
+
+        .article-featured-img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .article-content {
+            padding: 3rem;
+            font-size: 1.1rem;
+            color: #374151;
+        }
+
+        .article-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 2.5rem 0 1.5rem 0;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
+        .article-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 2rem 0 1rem 0;
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+        }
+
+        .article-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--dark);
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--secondary);
+            background: rgba(44, 90, 160, 0.05);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .article-content code {
+            background: #f3f4f6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            color: #e11d48;
+        }
+
+        .article-content pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .article-content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .article-content ul, .article-content ol {
+            padding-left: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .article-content li {
+            margin: 0.5rem 0;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+        }
+
+        .article-actions {
+            padding: 2rem 3rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(44, 90, 160, 0.3);
+            color: white;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        #raw-content {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 2rem;
+            }
+            
+            .article-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .article-content {
+                padding: 2rem 1.5rem;
+            }
+            
+            .article-actions {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+    {{codeBeforHead}}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-blog me-2"></i>{{siteName}}
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a href="/" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-home me-1"></i>Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="article-container">
+            <header class="article-header">
+                <h1 class="article-title">{{title}}</h1>
+                <div class="article-meta">
+                    <span><i class="fas fa-calendar me-1"></i> {{createDate}}</span>
+                    <span class="article-label">{{label}}</span>
+                </div>
+            </header>
+
+            {{#img}}<img src="{{img}}" class="article-featured-img" alt="{{title}}">{{/img}}
+            
+            <div id="raw-content">{{content}}</div>
+            
+            <div class="article-content" id="article-content">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading content...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="article-actions">
+                <a href="/" class="btn-primary-custom">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Home
+                </a>
+                <small class="text-muted">{{copyRight}}</small>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function renderMarkdown() {
+            const contentElement = document.getElementById('article-content');
+            const rawContentElement = document.getElementById('raw-content');
+            
+            let rawContent = rawContentElement.textContent;
+            rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+            
+            if (!rawContent || rawContent.trim() === '') {
+                contentElement.innerHTML = '<div class="alert alert-warning">No content available.</div>';
+                return;
+            }
+            
+            if (window.marked && window.hljs) {
+                try {
+                    marked.setOptions({
+                        highlight: function(code, lang) {
+                            if (lang && hljs.getLanguage(lang)) {
+                                try {
+                                    return hljs.highlight(code, { language: lang }).value;
+                                } catch (err) {
+                                    console.warn('Error highlighting code:', err);
+                                }
+                            }
+                            return hljs.highlightAuto(code).value;
+                        },
+                        breaks: true,
+                        gfm: true
+                    });
+                    
+                    const htmlContent = marked.parse(rawContent);
+                    contentElement.innerHTML = htmlContent;
+                    
+                    const codeBlocks = document.querySelectorAll('pre code');
+                    codeBlocks.forEach(block => {
+                        if (!block.classList.contains('hljs')) {
+                            block.classList.add('hljs');
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error parsing markdown:', error);
+                    contentElement.innerHTML = `<pre style="white-space: pre-wrap;">${rawContent}</pre>`;
+                }
+            } else {
+                contentElement.innerHTML = `<pre style="white-space: pre-wrap;">${rawContent}</pre>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderMarkdown);
+    </script>
+    {{codeBeforBody}}
+</body>
+</html>

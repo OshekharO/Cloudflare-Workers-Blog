@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{action}} Article - Admin</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            pink: '#fce4ec',
+                            purple: '#e8daef',
+                            blue: '#d6eaf8',
+                            mint: '#d5f5e3',
+                            peach: '#fdebd0',
+                            lavender: '#e8e0f0',
+                            rose: '#f8e1e7',
+                            sky: '#e0f2fe',
+                            cream: '#fef9e7',
+                            sage: '#e8f5e9'
+                        },
+                        accent: {
+                            primary: '#7c6f9f',
+                            secondary: '#e89bb0',
+                            tertiary: '#7fb8c9'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- EasyMDE -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fce4ec 0%, #e8daef 50%, #d6eaf8 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+        }
+        
+        .EasyMDEContainer .CodeMirror {
+            border: 2px solid #e8daef;
+            border-radius: 0 0 16px 16px;
+            font-size: 0.9375rem;
+            min-height: 350px;
+            font-family: 'Poppins', sans-serif;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .EasyMDEContainer .CodeMirror:focus-within {
+            border-color: #7c6f9f;
+            box-shadow: 0 0 0 3px rgba(124, 111, 159, 0.15);
+        }
+        
+        .EasyMDEContainer .editor-toolbar {
+            border: 2px solid #e8daef;
+            border-bottom: none;
+            border-radius: 16px 16px 0 0;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #fce4ec 0%, #e8daef 100%);
+        }
+        
+        .EasyMDEContainer .editor-toolbar button {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            color: #7c6f9f;
+        }
+        
+        .EasyMDEContainer .editor-toolbar button:hover {
+            background: rgba(124, 111, 159, 0.15);
+        }
+        
+        .EasyMDEContainer .editor-toolbar button.active {
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
+            color: white;
+        }
+        
+        .form-input {
+            border: 2px solid #e8daef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #7c6f9f;
+            box-shadow: 0 0 0 3px rgba(124, 111, 159, 0.15);
+            background: white;
+        }
+        
+        .form-select {
+            border: 2px solid #e8daef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: #7c6f9f;
+            box-shadow: 0 0 0 3px rgba(124, 111, 159, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #7c6f9f 0%, #9b8fc2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6b5f8e 0%, #8a7eb1 100%);
+            box-shadow: 0 8px 25px rgba(124, 111, 159, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e8daef;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            border-color: #7c6f9f;
+            transform: translateY(-2px);
+        }
+        
+        .magic-btn {
+            background: linear-gradient(135deg, #e89bb0 0%, #f0b8c7 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .magic-btn:hover {
+            background: linear-gradient(135deg, #d88a9f 0%, #e9a8b8 100%);
+            transform: scale(1.05);
+        }
+        
+        .form-label {
+            color: #4b5563;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-label i {
+            color: #7c6f9f;
+            margin-right: 0.5rem;
+        }
+    </style>
+    
+    {{codeBeforHead}}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="glass-nav sticky top-0 z-50 border-b border-white/30">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center shadow-lg">
+                        <i class="ri-edit-2-line text-white text-lg md:text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold text-gray-800">{{action}} Article</h1>
+                        <p class="text-xs text-gray-500 hidden sm:block">Create amazing content</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 md:space-x-3">
+                    <a href="/admin/" class="btn-secondary px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-sm font-medium text-gray-700 flex items-center">
+                        <i class="ri-arrow-left-line mr-1"></i>
+                        <span class="hidden sm:inline">Back</span>
+                    </a>
+                    <a href="/" class="btn-secondary px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-sm font-medium text-gray-700 flex items-center">
+                        <i class="ri-eye-line mr-1"></i>
+                        <span class="hidden sm:inline">View</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="glass-card overflow-hidden shadow-xl">
+            <div class="bg-gradient-to-r from-pastel-lavender/50 to-pastel-pink/50 border-b border-gray-100/80 px-6 py-5">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-secondary flex items-center justify-center">
+                        <i class="ri-article-line text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">{{action}} Article</h2>
+                        <p class="text-sm text-gray-500">Fill in the details below</p>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="article-form" class="p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="permalink" class="form-label">
+                            <i class="ri-link"></i>Permalink *
+                        </label>
+                        <div class="flex">
+                            <input type="text" id="permalink" required pattern="[a-z0-9-]+" 
+                                   class="form-input flex-1 min-w-0 rounded-r-none" placeholder="article-url-slug">
+                            <button type="button" id="generate-slug-btn" title="Generate from title"
+                                    class="magic-btn px-4 rounded-l-none rounded-r-xl text-white">
+                                <i class="ri-magic-line text-lg"></i>
+                            </button>
+                        </div>
+                        <p class="mt-2 text-xs text-gray-500 flex items-center">
+                            <i class="ri-information-line mr-1"></i>URL-friendly identifier • Click magic wand to auto-generate
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <label for="label" class="form-label">
+                            <i class="ri-price-tag-3-line"></i>Category *
+                        </label>
+                        <select id="label" required class="form-select w-full">
+                            <option value="">Choose a category...</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Lifestyle">Lifestyle</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Food">Food</option>
+                            <option value="Business">Business</option>
+                            <option value="Science">Science</option>
+                            <option value="Health">Health</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="title" class="form-label">
+                        <i class="ri-heading"></i>Title *
+                    </label>
+                    <input type="text" id="title" required 
+                           class="form-input w-full" placeholder="Enter your article title...">
+                </div>
+                
+                <div class="mb-6">
+                    <label for="img" class="form-label">
+                        <i class="ri-image-line"></i>Featured Image URL
+                    </label>
+                    <input type="url" id="img" 
+                           class="form-input w-full"
+                           placeholder="https://example.com/image.jpg">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="createDate" class="form-label">
+                            <i class="ri-calendar-line"></i>Publish Date *
+                        </label>
+                        <input type="datetime-local" id="createDate" required 
+                               class="form-input w-full">
+                    </div>
+                    
+                    <div>
+                        <label for="status" class="form-label">
+                            <i class="ri-toggle-line"></i>Status
+                        </label>
+                        <select id="status" class="form-select w-full">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <label for="content" class="form-label mb-3">
+                        <i class="ri-file-text-line"></i>Content *
+                    </label>
+                    <textarea id="content"></textarea>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-100">
+                    <button type="button" onclick="window.history.back()" 
+                            class="btn-secondary px-6 py-3 rounded-xl text-gray-700 font-medium order-2 sm:order-1">
+                        <i class="ri-close-line mr-2"></i>Cancel
+                    </button>
+                    <button type="submit" 
+                            class="btn-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg order-1 sm:order-2">
+                        <i class="ri-check-line mr-2"></i>Save Article
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        let easyMDE;
+        let isEditing = false;
+        let currentPermalink = '';
+
+        // Initialize EasyMDE
+        easyMDE = new EasyMDE({ 
+            element: document.getElementById('content'),
+            spellChecker: false,
+            status: false,
+            autosave: {
+                enabled: false
+            },
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ]
+        });
+
+        // Check if editing existing article
+        const urlParams = new URLSearchParams(window.location.search);
+        const permalink = urlParams.get('permalink');
+        
+        if (permalink) {
+            isEditing = true;
+            currentPermalink = permalink;
+            loadArticle(permalink);
+        }
+
+        // Set default date to now
+        document.getElementById('createDate').value = new Date().toISOString().slice(0, 16);
+
+        async function loadArticle(permalink) {
+            try {
+                const response = await fetch('/api/articles/' + permalink);
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+                
+                const article = await response.json();
+                
+                document.getElementById('permalink').value = article.permalink;
+                document.getElementById('permalink').readOnly = true;
+                document.getElementById('permalink').classList.add('bg-gray-100');
+                document.getElementById('title').value = article.title;
+                document.getElementById('img').value = article.img || '';
+                document.getElementById('label').value = article.label;
+                document.getElementById('createDate').value = new Date(article.createDate).toISOString().slice(0, 16);
+                
+                if (article.status) {
+                    document.getElementById('status').value = article.status;
+                }
+                
+                easyMDE.value(article.content);
+            } catch (error) {
+                console.error('Error loading article:', error);
+                showNotification('Error loading article: ' + error.message, 'error');
+                setTimeout(() => {
+                    window.location.href = '/admin/';
+                }, 2000);
+            }
+        }
+
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Saving...';
+
+            const formData = {
+                permalink: document.getElementById('permalink').value,
+                title: document.getElementById('title').value,
+                img: document.getElementById('img').value,
+                label: document.getElementById('label').value,
+                createDate: document.getElementById('createDate').value,
+                content: easyMDE.value(),
+                status: document.getElementById('status').value
+            };
+
+            try {
+                const url = isEditing ? '/api/articles/' + currentPermalink : '/api/articles';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const message = isEditing ? 'Article updated successfully!' : 'Article created successfully!';
+                    showNotification(message + (formData.status === 'draft' ? ' (Saved as draft)' : ''), 'success');
+                    setTimeout(() => {
+                        window.location.href = '/admin/';
+                    }, 1500);
+                } else {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error saving article: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // Auto-generate slug from title
+        function generateSlugLocal(title) {
+            if (!title) return '';
+            return title
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Generate slug button click handler
+        document.getElementById('generate-slug-btn').addEventListener('click', async () => {
+            const title = document.getElementById('title').value;
+            if (!title) {
+                showNotification('Please enter a title first', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('generate-slug-btn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ri-loader-4-line animate-spin text-lg"></i>';
+
+            try {
+                const response = await fetch('/api/generate-slug', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('permalink').value = data.slug;
+                    showNotification('Slug generated!', 'success');
+                } else {
+                    document.getElementById('permalink').value = generateSlugLocal(title);
+                    showNotification('Slug generated locally', 'success');
+                }
+            } catch (error) {
+                document.getElementById('permalink').value = generateSlugLocal(title);
+                showNotification('Slug generated locally', 'success');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        });
+
+        // Auto-generate slug on title blur if permalink is empty
+        document.getElementById('title').addEventListener('blur', () => {
+            const permalinkField = document.getElementById('permalink');
+            if (!permalinkField.value && !isEditing) {
+                const title = document.getElementById('title').value;
+                if (title) {
+                    permalinkField.value = generateSlugLocal(title);
+                }
+            }
+        });
+
+        function showNotification(message, type = 'success') {
+            document.querySelectorAll('.notification').forEach(el => el.remove());
+            
+            const colors = {
+                success: 'from-green-400 to-emerald-500',
+                warning: 'from-yellow-400 to-orange-500',
+                error: 'from-red-400 to-rose-500'
+            };
+            
+            const icons = {
+                success: 'ri-check-line',
+                warning: 'ri-alert-line',
+                error: 'ri-error-warning-line'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-24 right-6 px-5 py-3.5 rounded-2xl shadow-xl text-white font-medium z-50 flex items-center gap-2 bg-gradient-to-r ${colors[type] || colors.success} transform transition-all duration-500`;
+            notification.innerHTML = `<i class="${icons[type] || icons.success} text-lg"></i>${message}`;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(120%)';
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
+        }
+    </script>
+    
+    {{codeBeforBody}}
+</body>
+</html>
