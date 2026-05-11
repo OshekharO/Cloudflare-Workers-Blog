@@ -708,15 +708,25 @@ class Blog {
                 }
             });
             
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: Failed to fetch template`);
+            if (response.ok) {
+                const template = await response.text();
+                this.themeCache.set(cacheKey, template);
+                return template;
             }
-            
-            const template = await response.text();
-            
-            this.themeCache.set(cacheKey, template);
-            
-            return template;
+
+            const fallbackUrl = `https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/minimal/${templateName}.html`;
+            const fallbackResponse = await fetch(fallbackUrl, {
+                cf: {
+                    cacheTtl: 300
+                }
+            });
+            if (fallbackResponse.ok) {
+                const template = await fallbackResponse.text();
+                this.themeCache.set(cacheKey, template);
+                return template;
+            }
+
+            throw new Error(`HTTP ${response.status}: Failed to fetch template`);
         } catch (error) {
             console.error(`Error fetching template ${templateName}:`, error);
             throw new Error(`Failed to fetch template: ${templateName}`);
@@ -1440,7 +1450,7 @@ export default {
                     copyRight: OPT.copyRight,
                     commentCode: OPT.commentCode || '',
                     commentsEnabled: OPT.commentsEnabled ? 'true' : 'false',
-                    commentPermalink: fullArticle.permalink || '',
+                    commentPermalink: '',
                     widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
