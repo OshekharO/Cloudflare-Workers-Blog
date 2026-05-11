@@ -12,6 +12,7 @@ const OPT = {
     "readMoreLength": 150,
     "cacheTime": 60 * 60 * 24 * 0.5,
     "themeURL": "https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/nova/",
+    "fallbackThemeURL": "https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/panda/",
     "html404": ``,
     "codeBeforHead": ``,
     "codeBeforBody": ``,
@@ -714,7 +715,7 @@ class Blog {
                 return template;
             }
 
-            const fallbackUrl = `https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/minimal/${templateName}.html`;
+            const fallbackUrl = `${OPT.fallbackThemeURL}${templateName}.html`;
             const fallbackResponse = await fetch(fallbackUrl, {
                 cf: {
                     cacheTtl: 300
@@ -726,7 +727,7 @@ class Blog {
                 return template;
             }
 
-            throw new Error(`HTTP ${response.status}: Failed to fetch template`);
+            throw new Error(`Primary fetch failed (${response.status}) and fallback fetch failed (${fallbackResponse.status})`);
         } catch (error) {
             console.error(`Error fetching template ${templateName}:`, error);
             throw new Error(`Failed to fetch template: ${templateName}`);
