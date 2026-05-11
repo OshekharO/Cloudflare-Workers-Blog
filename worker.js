@@ -357,15 +357,18 @@ class Blog {
      */
     async getArticle(id) {
         try {
+            if (!id) return null;
+            const articleId = String(id);
+
             // Check cache first
-            if (this.articleCache.has(id)) {
-                return this.articleCache.get(id);
+            if (this.articleCache.has(articleId)) {
+                return this.articleCache.get(articleId);
             }
 
-            const article = await this.get(id, true);
+            const article = await this.get(articleId, true);
             
             if (article) {
-                this.articleCache.set(id, article);
+                this.articleCache.set(articleId, article);
             }
 
             return article;
@@ -697,13 +700,15 @@ class Blog {
      */
     async fetchThemeTemplate(templateName) {
         const cacheKey = `${OPT.themeURL}${templateName}`;
+        const primaryUrl = `${OPT.themeURL}${templateName}.html`;
+        const fallbackUrl = `${OPT.fallbackThemeURL}${templateName}.html`;
         
         if (this.themeCache.has(cacheKey)) {
             return this.themeCache.get(cacheKey);
         }
 
         try {
-            const response = await fetch(`${OPT.themeURL}${templateName}.html`, {
+            const response = await fetch(primaryUrl, {
                 cf: {
                     cacheTtl: 300
                 }
@@ -715,7 +720,6 @@ class Blog {
                 return template;
             }
 
-            const fallbackUrl = `${OPT.fallbackThemeURL}${templateName}.html`;
             const fallbackResponse = await fetch(fallbackUrl, {
                 cf: {
                     cacheTtl: 300
@@ -727,7 +731,7 @@ class Blog {
                 return template;
             }
 
-            throw new Error(`Primary fetch failed (${response.status}) and fallback fetch failed (${fallbackResponse.status})`);
+            throw new Error(`Template "${templateName}" fetch failed. Primary: ${primaryUrl} (${response.status}), fallback: ${fallbackUrl} (${fallbackResponse.status})`);
         } catch (error) {
             console.error(`Error fetching template ${templateName}:`, error);
             throw new Error(`Failed to fetch template: ${templateName}`);
@@ -1451,7 +1455,6 @@ export default {
                     copyRight: OPT.copyRight,
                     commentCode: OPT.commentCode || '',
                     commentsEnabled: OPT.commentsEnabled ? 'true' : 'false',
-                    commentPermalink: '',
                     widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
