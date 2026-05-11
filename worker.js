@@ -357,7 +357,7 @@ class Blog {
      */
     async getArticle(id) {
         try {
-            const articleId = id == null ? '' : String(id).trim();
+            const articleId = (id === null || id === undefined) ? '' : String(id).trim();
             if (!articleId) return null;
 
             // Check cache first
@@ -743,7 +743,7 @@ class Blog {
             throw new Error(`Template "${templateName}" fetch failed. Primary: ${primaryUrl} (${response.status}), fallback: ${fallbackUrl} (${fallbackStatus})`);
         } catch (error) {
             console.error(`Error fetching template ${templateName}:`, error);
-            throw new Error(`Failed to fetch template: ${templateName}`);
+            throw new Error(`Failed to fetch template: ${templateName}. ${error.message}`);
         }
     }
 
