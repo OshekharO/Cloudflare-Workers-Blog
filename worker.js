@@ -357,8 +357,8 @@ class Blog {
      */
     async getArticle(id) {
         try {
-            if (!id) return null;
-            const articleId = String(id);
+            const articleId = id == null ? '' : String(id).trim();
+            if (!articleId) return null;
 
             // Check cache first
             if (this.articleCache.has(articleId)) {
@@ -720,18 +720,27 @@ class Blog {
                 return template;
             }
 
-            const fallbackResponse = await fetch(fallbackUrl, {
-                cf: {
-                    cacheTtl: 300
-                }
-            });
-            if (fallbackResponse.ok) {
+            let fallbackResponse = null;
+            let fallbackError = null;
+            try {
+                fallbackResponse = await fetch(fallbackUrl, {
+                    cf: {
+                        cacheTtl: 300
+                    }
+                });
+            } catch (error) {
+                fallbackError = error;
+            }
+            if (fallbackResponse && fallbackResponse.ok) {
                 const template = await fallbackResponse.text();
                 this.themeCache.set(cacheKey, template);
                 return template;
             }
 
-            throw new Error(`Template "${templateName}" fetch failed. Primary: ${primaryUrl} (${response.status}), fallback: ${fallbackUrl} (${fallbackResponse.status})`);
+            const fallbackStatus = fallbackResponse
+                ? fallbackResponse.status
+                : `fetch_error:${fallbackError ? fallbackError.message : 'unknown'}`;
+            throw new Error(`Template "${templateName}" fetch failed. Primary: ${primaryUrl} (${response.status}), fallback: ${fallbackUrl} (${fallbackStatus})`);
         } catch (error) {
             console.error(`Error fetching template ${templateName}:`, error);
             throw new Error(`Failed to fetch template: ${templateName}`);
