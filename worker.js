@@ -11,13 +11,11 @@ const OPT = {
     "recentlySize": 6,
     "readMoreLength": 150,
     "cacheTime": 60 * 60 * 24 * 0.5,
-    "themeURL": "https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/nova/",
-    "fallbackThemeURL": "https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/panda/",
+    "themeURL": "https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/minimal/",
     "html404": ``,
     "codeBeforHead": ``,
     "codeBeforBody": ``,
     "commentCode": ``,
-    "commentsEnabled": false,
     "widgetOther": ``,
     "copyRight": `Powered by OshekharO`,
     "robots": `User-agent: *\nDisallow: /admin`,
@@ -46,35 +44,6 @@ function generateSlug(title) {
         .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }
 
-function normalizeCategoryLabel(label) {
-    return label == null ? '' : String(label).trim().replace(/\s+/g, ' ');
-}
-
-function categorySlug(label) {
-    return encodeURIComponent(normalizeCategoryLabel(label));
-}
-
-
-const COMMENTS_PREFIX = 'COMMENTS_';
-
-function commentKeyPrefix(permalink) {
-    return `${COMMENTS_PREFIX}${permalink}-`;
-}
-
-function buildCommentKey(permalink, suffix) {
-    return `${commentKeyPrefix(permalink)}${suffix}`;
-}
-
-function normalizeCommentField(value, maxLength) {
-    return value == null
-        ? ''
-        : String(value)
-            .trim()
-            .replace(/\r\n/g, '\n')
-            .replace(/\r/g, '\n')
-            .slice(0, maxLength);
-}
-
 class Blog {
     constructor() {
         this.kv = null;
@@ -87,13 +56,6 @@ class Blog {
 
     setKV(kv) {
         this.kv = kv;
-    }
-
-    async deleteKeysInBatches(keys, batchSize = 50) {
-        for (let i = 0; i < keys.length; i += batchSize) {
-            const chunk = keys.slice(i, i + batchSize);
-            await Promise.all(chunk.map(key => this.kv.delete(key)));
-        }
     }
 
     /**
@@ -300,7 +262,7 @@ class Blog {
      * @param {string} status - Filter by status ('published', 'draft', or 'all')
      * @returns {Promise<Object>} - Paginated result with articles and metadata
      */
-    async listArticlesPaginated(page = 1, pageSize = OPT.pageSize, status = 'published', category = '') {
+    async listArticlesPaginated(page = 1, pageSize = OPT.pageSize, status = 'published') {
         try {
             let articles = await this.listArticles();
 
@@ -309,11 +271,6 @@ class Blog {
                 articles = articles.filter(a => a.status !== 'draft');
             } else if (status === 'draft') {
                 articles = articles.filter(a => a.status === 'draft');
-            }
-
-            const normalizedCategory = normalizeCategoryLabel(category).toLowerCase();
-            if (normalizedCategory) {
-                articles = articles.filter(a => normalizeCategoryLabel(a.label).toLowerCase() === normalizedCategory);
             }
 
             const totalArticles = articles.length;
@@ -357,18 +314,15 @@ class Blog {
      */
     async getArticle(id) {
         try {
-            const articleId = (id === null || id === undefined) ? '' : String(id).trim();
-            if (!articleId) return null;
-
             // Check cache first
-            if (this.articleCache.has(articleId)) {
-                return this.articleCache.get(articleId);
+            if (this.articleCache.has(id)) {
+                return this.articleCache.get(id);
             }
 
-            const article = await this.get(articleId, true);
+            const article = await this.get(id, true);
             
             if (article) {
-                this.articleCache.set(articleId, article);
+                this.articleCache.set(id, article);
             }
 
             return article;
@@ -424,8 +378,6 @@ class Blog {
                 }
             }
 
-            article.label = normalizeCategoryLabel(article.label);
-
             if (!article.status) {
                 article.status = 'published';
             }
@@ -467,12 +419,9 @@ class Blog {
         }
     }
 
-    async deleteArticle(id, permalink = '') {
+    async deleteArticle(id) {
         try {
             await this.delete(id);
-            if (permalink) {
-                await this.deleteCommentsForPermalink(permalink);
-            }
             const index = await this.listArticles();
             const filtered = index.filter(item => item.id !== id);
             await this.put('SYSTEM_INDEX_LIST', filtered);
@@ -482,30 +431,20 @@ class Blog {
         }
     }
 
-    async listPublishedArticles(category = '') {
+    async listPublishedArticles() {
         try {
             const articles = await this.listArticles();
-            const normalizedCategory = normalizeCategoryLabel(category).toLowerCase();
-            return articles.filter(article => {
-                if (article.status === 'draft') return false;
-                if (!normalizedCategory) return true;
-                return normalizeCategoryLabel(article.label).toLowerCase() === normalizedCategory;
-            });
+            return articles.filter(article => article.status !== 'draft');
         } catch (error) {
             console.error('Error listing published articles:', error);
             return [];
         }
     }
 
-    async listDraftArticles(category = '') {
+    async listDraftArticles() {
         try {
             const articles = await this.listArticles();
-            const normalizedCategory = normalizeCategoryLabel(category).toLowerCase();
-            return articles.filter(article => {
-                if (article.status !== 'draft') return false;
-                if (!normalizedCategory) return true;
-                return normalizeCategoryLabel(article.label).toLowerCase() === normalizedCategory;
-            });
+            return articles.filter(article => article.status === 'draft');
         } catch (error) {
             console.error('Error listing draft articles:', error);
             return [];
@@ -591,9 +530,8 @@ class Blog {
             const categories = {};
             
             articles.forEach(article => {
-                const category = normalizeCategoryLabel(article.label);
-                if (category) {
-                    categories[category] = (categories[category] || 0) + 1;
+                if (article.label) {
+                    categories[article.label] = (categories[article.label] || 0) + 1;
                 }
             });
             
@@ -604,95 +542,6 @@ class Blog {
         }
     }
 
-
-    async listKeys(prefix = '', maxKeys = Number.POSITIVE_INFINITY) {
-        try {
-            const keys = [];
-            let cursor = undefined;
-
-            do {
-                const result = await this.kv.list({ prefix, cursor, limit: 1000 });
-                for (const key of result.keys) {
-                    keys.push(key.name);
-                    if (keys.length >= maxKeys) {
-                        return keys;
-                    }
-                }
-                cursor = result.list_complete ? undefined : result.cursor;
-            } while (cursor);
-
-            return keys;
-        } catch (error) {
-            console.error(`Error listing keys for prefix ${prefix}:`, error);
-            return [];
-        }
-    }
-
-    async listComments(permalink, maxComments = 100) {
-        try {
-            const safeMax = Math.min(Math.max(parseInt(maxComments, 10) || 100, 1), 200);
-            const keys = await this.listKeys(commentKeyPrefix(permalink), safeMax);
-            if (keys.length === 0) return [];
-
-            const comments = await Promise.all(keys.map(key => this.get(key, true)));
-            return comments
-                .filter(Boolean)
-                .sort((a, b) => (a.time || 0) - (b.time || 0));
-        } catch (error) {
-            console.error('Error listing comments:', error);
-            return [];
-        }
-    }
-
-    async addComment(permalink, commentData, request) {
-        const timestamp = Date.now();
-        const comment = {
-            id: this.generateId(),
-            permalink,
-            author: normalizeCommentField(commentData.author, 80),
-            email: normalizeCommentField(commentData.email, 120),
-            content: normalizeCommentField(commentData.content, 4000),
-            createdAt: new Date(timestamp).toISOString(),
-            time: timestamp,
-            user_ip: request.headers.get('cf-connecting-ip') || '',
-            user_agent: request.headers.get('User-Agent') || '',
-            referrer: request.headers.get('Referer') || ''
-        };
-
-        const key = buildCommentKey(permalink, `${timestamp}-${comment.id}`);
-        await this.put(key, comment);
-        return comment;
-    }
-
-    async deleteCommentsForPermalink(permalink) {
-        const keys = await this.listKeys(commentKeyPrefix(permalink));
-        await this.deleteKeysInBatches(keys);
-        return keys.length;
-    }
-
-    async clearAllContentAndComments() {
-        const index = await this.listArticles();
-        const commentKeys = await this.listKeys(COMMENTS_PREFIX);
-        const draftKeys = OPT.draftPrefix ? await this.listKeys(OPT.draftPrefix) : [];
-        const keysToDelete = new Set([
-            'SYSTEM_INDEX_LIST',
-            'SYSTEM_INDEX_NUM',
-            ...index.map(article => article.id),
-            ...commentKeys,
-            ...draftKeys
-        ]);
-
-        await this.deleteKeysInBatches(Array.from(keysToDelete));
-        this.clearCache();
-
-        return {
-            deletedArticles: index.length,
-            deletedComments: commentKeys.length,
-            deletedDraftKeys: draftKeys.length,
-            deletedKeys: keysToDelete.size
-        };
-    }
-
     /**
      * Fetch theme template with caching and error handling
      * @param {string} templateName - Template name
@@ -700,50 +549,30 @@ class Blog {
      */
     async fetchThemeTemplate(templateName) {
         const cacheKey = `${OPT.themeURL}${templateName}`;
-        const primaryUrl = `${OPT.themeURL}${templateName}.html`;
-        const fallbackUrl = `${OPT.fallbackThemeURL}${templateName}.html`;
         
         if (this.themeCache.has(cacheKey)) {
             return this.themeCache.get(cacheKey);
         }
 
         try {
-            const response = await fetch(primaryUrl, {
+            const response = await fetch(`${OPT.themeURL}${templateName}.html`, {
                 cf: {
                     cacheTtl: 300
                 }
             });
             
-            if (response.ok) {
-                const template = await response.text();
-                this.themeCache.set(cacheKey, template);
-                return template;
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: Failed to fetch template`);
             }
-
-            let fallbackResponse = null;
-            let fallbackError = null;
-            try {
-                fallbackResponse = await fetch(fallbackUrl, {
-                    cf: {
-                        cacheTtl: 300
-                    }
-                });
-            } catch (error) {
-                fallbackError = error;
-            }
-            if (fallbackResponse && fallbackResponse.ok) {
-                const template = await fallbackResponse.text();
-                this.themeCache.set(cacheKey, template);
-                return template;
-            }
-
-            const fallbackStatus = fallbackResponse
-                ? fallbackResponse.status
-                : `fetch_error:${fallbackError ? fallbackError.message : 'unknown'}`;
-            throw new Error(`Template "${templateName}" fetch failed. Primary: ${primaryUrl} (${response.status}), fallback: ${fallbackUrl} (${fallbackStatus})`);
+            
+            const template = await response.text();
+            
+            this.themeCache.set(cacheKey, template);
+            
+            return template;
         } catch (error) {
             console.error(`Error fetching template ${templateName}:`, error);
-            throw new Error(`Failed to fetch template: ${templateName}. ${error.message}`);
+            throw new Error(`Failed to fetch template: ${templateName}`);
         }
     }
 
@@ -787,16 +616,11 @@ class Blog {
 
     renderTemplate(template, data) {
         let html = template;
-
-        // These keys contain raw HTML and must not be entity-escaped
-        const rawKeys = new Set(['content', 'codeBeforHead', 'codeBeforBody', 'commentCode', 'widgetOther']);
         
         for (const [key, value] of Object.entries(data)) {
             const regex = new RegExp(`{{${key}}}`, 'g');
-            const replacement = rawKeys.has(key)
-                ? (value != null ? String(value) : '')
-                : this.escapeHtml(value != null ? String(value) : '');
-            html = html.replace(regex, replacement);
+            const replacement = key === 'content' ? value : this.escapeHtml(value.toString());
+            html = html.replace(regex, replacement || '');
         }
         
         if (data.img) {
@@ -822,11 +646,8 @@ function authenticate(request) {
 
     try {
         const base64 = authHeader.substring(6);
-        const decoded = atob(base64);
-        // Split on the FIRST colon only — passwords may contain colons
-        const colonIndex = decoded.indexOf(':');
-        if (colonIndex === -1) return null;
-        return [decoded.slice(0, colonIndex), decoded.slice(colonIndex + 1)];
+        const credentials = atob(base64).split(':');
+        return credentials;
     } catch (error) {
         return null;
     }
@@ -882,18 +703,6 @@ export default {
         }
 
         if (path.startsWith('/api/')) {
-            // Handle CORS preflight
-            if (request.method === 'OPTIONS') {
-                return new Response(null, {
-                    status: 204,
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                        'Access-Control-Max-Age': '86400'
-                    }
-                });
-            }
             return handleAPI(request, path);
         }
 
@@ -1053,109 +862,22 @@ export default {
                     const page = parseInt(url.searchParams.get('page')) || 1;
                     const pageSize = parseInt(url.searchParams.get('pageSize')) || OPT.pageSize;
                     const paginate = url.searchParams.get('paginate') === 'true';
-                    const category = normalizeCategoryLabel(url.searchParams.get('category') || url.searchParams.get('cat') || '');
                     
                     let result;
                     if (paginate) {
                         // Return paginated results
                         const status = showDrafts ? 'draft' : 'published';
-                        result = await blog.listArticlesPaginated(page, pageSize, status, category);
+                        result = await blog.listArticlesPaginated(page, pageSize, status);
                         return jsonResponse(result);
                     } else {
                         // Return all results (backward compatible)
                         if (showDrafts) {
-                            result = await blog.listDraftArticles(category);
+                            result = await blog.listDraftArticles();
                         } else {
-                            result = await blog.listPublishedArticles(category);
+                            result = await blog.listPublishedArticles();
                         }
                         return jsonResponse(result);
                     }
-                }
-
-
-
-                if (path.match(/^\/api\/comments\/[^\/]+$/) && method === 'GET') {
-                    if (!OPT.commentsEnabled) {
-                        return jsonResponse({ error: 'Comments are disabled.' }, 403);
-                    }
-
-                    const permalink = decodeURIComponent(path.split('/').pop());
-                    const limit = parseInt(url.searchParams.get('limit') || '100', 10);
-                    const article = await blog.getArticleByPermalink(permalink);
-                    if (!article || article.status === 'draft') {
-                        return jsonResponse({ error: 'Article not found' }, 404);
-                    }
-
-                    const comments = await blog.listComments(article.permalink, limit);
-                    return new Response(JSON.stringify({
-                        enabled: true,
-                        comments: comments.map(comment => ({
-                            id: comment.id,
-                            author: comment.author || '',
-                            content: comment.content || '',
-                            createdAt: comment.createdAt || new Date(comment.time || Date.now()).toISOString(),
-                            time: comment.time || Date.now()
-                        }))
-                    }), {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Access-Control-Allow-Origin': '*',
-                            'Cache-Control': 'public, max-age=300, s-maxage=300'
-                        }
-                    });
-                }
-
-                if (path.match(/^\/api\/comments\/[^\/]+$/) && method === 'POST') {
-                    if (!OPT.commentsEnabled) {
-                        return jsonResponse({ error: 'Comments are disabled.' }, 403);
-                    }
-
-                    const permalink = decodeURIComponent(path.split('/').pop());
-                    const article = await blog.getArticleByPermalink(permalink);
-                    if (!article || article.status === 'draft') {
-                        return jsonResponse({ error: 'Article not found' }, 404);
-                    }
-
-                    const contentType = request.headers.get('Content-Type') || '';
-                    let body = {};
-
-                    if (contentType.includes('application/json')) {
-                        body = await request.json();
-                    } else {
-                        const formData = await request.formData();
-                        for (const [key, value] of formData.entries()) {
-                            body[key] = value;
-                        }
-                    }
-
-                    // Honeypot anti-spam field: real users won't fill this hidden field.
-                    if (body.subject) {
-                        return jsonResponse({ error: 'Invalid comment submission.' }, 400);
-                    }
-
-                    const author = normalizeCommentField(body.author || body.name, 80);
-                    const email = normalizeCommentField(body.email, 120);
-                    const content = normalizeCommentField(body.content, 4000);
-
-                    if (author.length < 2) {
-                        return jsonResponse({ error: 'Name must be at least 2 characters long.' }, 400);
-                    }
-
-                    if (content.length < 3) {
-                        return jsonResponse({ error: 'Comment must be at least 3 characters long.' }, 400);
-                    }
-
-                    const comment = await blog.addComment(article.permalink, { author, email, content }, request);
-                    return jsonResponse({
-                        success: true,
-                        comment: {
-                            id: comment.id,
-                            author: comment.author,
-                            content: comment.content,
-                            createdAt: comment.createdAt,
-                            time: comment.time
-                        }
-                    }, 201);
                 }
 
                 // Generate slug API endpoint
@@ -1233,7 +955,7 @@ export default {
                         return jsonResponse({ error: 'Article not found' }, 404);
                     }
                     
-                    await blog.deleteArticle(article.id, article.permalink);
+                    await blog.deleteArticle(article.id);
                     return jsonResponse({ success: true });
                 }
 
@@ -1271,22 +993,6 @@ export default {
                     return jsonResponse(categories);
                 }
 
-
-
-                if (path === '/api/content/clear-all' && method === 'POST') {
-                    const isSuper = await isSuperAdmin(request);
-                    if (!isSuper) {
-                        return jsonResponse({ error: 'Access denied. Superadmin required.' }, 403);
-                    }
-
-                    const result = await blog.clearAllContentAndComments();
-                    return jsonResponse({
-                        success: true,
-                        ...result,
-                        message: `Deleted ${result.deletedArticles} article records and ${result.deletedComments} comments.`
-                    });
-                }
-
                 if (path === '/api/debug' && method === 'GET') {
                     const index = await blog.listArticles();
                     const allArticles = [];
@@ -1305,36 +1011,6 @@ export default {
                         allArticles: allArticles,
                         total: index.length,
                         systemIndexNum: await blog.get('SYSTEM_INDEX_NUM')
-                    });
-                }
-
-                if (path === '/api/fix-missing-articles' && method === 'POST') {
-                    const index = await blog.listArticles();
-                    const removed = [];
-                    const kept = [];
-
-                    for (const item of index) {
-                        const full = await blog.getArticle(item.id);
-                        if (full) {
-                            kept.push(item);
-                        } else {
-                            removed.push({ id: item.id, title: item.title, permalink: item.permalink });
-                        }
-                    }
-
-                    if (removed.length > 0) {
-                        await blog.put('SYSTEM_INDEX_LIST', kept);
-                        blog.clearCache();
-                    }
-
-                    return jsonResponse({
-                        success: true,
-                        checked: index.length,
-                        removed: removed.length,
-                        removedArticles: removed,
-                        message: removed.length > 0
-                            ? `Removed ${removed.length} orphaned index entries.`
-                            : 'Index is clean — no orphaned entries found.'
                     });
                 }
 
@@ -1462,19 +1138,13 @@ export default {
                     siteDescription: OPT.siteDescription,
                     keyWords: OPT.keyWords,
                     copyRight: OPT.copyRight,
-                    commentCode: OPT.commentCode || '',
-                    commentsEnabled: OPT.commentsEnabled ? 'true' : 'false',
-                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                        'Cache-Control': 'public, max-age=300'
-                    }
+                    headers: { 'Content-Type': 'text/html' }
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
@@ -1486,20 +1156,14 @@ export default {
                 const template = await blog.fetchThemeTemplate('admin');
                 const data = {
                     siteName: OPT.siteName,
-                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
-                    commentCode: OPT.commentCode || '',
-                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                        'Cache-Control': 'no-store'
-                    }
+                    headers: { 'Content-Type': 'text/html' }
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
@@ -1511,20 +1175,14 @@ export default {
                 const template = await blog.fetchThemeTemplate('admin-users');
                 const data = {
                     siteName: OPT.siteName,
-                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
-                    commentCode: OPT.commentCode || '',
-                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                        'Cache-Control': 'no-store'
-                    }
+                    headers: { 'Content-Type': 'text/html' }
                 });
             } catch (error) {
                 return new Response('Error loading admin users template', { status: 500 });
@@ -1541,20 +1199,14 @@ export default {
                 const data = {
                     action: action,
                     siteName: OPT.siteName,
-                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
-                    commentCode: OPT.commentCode || '',
-                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                        'Cache-Control': 'no-store'
-                    }
+                    headers: { 'Content-Type': 'text/html' }
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
@@ -1566,20 +1218,14 @@ export default {
                 const template = await blog.fetchThemeTemplate('bookmarks');
                 const data = {
                     siteName: OPT.siteName,
-                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
-                    commentCode: OPT.commentCode || '',
-                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                        'Cache-Control': 'public, max-age=300'
-                    }
+                    headers: { 'Content-Type': 'text/html' }
                 });
             } catch (error) {
                 return new Response('Error loading bookmarks page', { status: 500 });
@@ -1589,38 +1235,35 @@ export default {
         async function renderArticle(path) {
             try {
                 const template = await blog.fetchThemeTemplate('article');
-                // Extract the permalink segment from /article/<permalink>, trimming any trailing slash
-                const permalink = path.replace(/^\/article\//, '').replace(/\/$/, '');
+                const permalink = path.split('/').pop();
+                const articles = await blog.listPublishedArticles();
+                const article = articles.find(a => a.permalink === permalink);
                 
-                const fullArticle = await blog.getArticleByPermalink(permalink);
-                
-                if (!fullArticle || fullArticle.status === 'draft') {
+                if (!article) {
                     return render404();
                 }
                 
+                const fullArticle = await blog.getArticle(article.id);
+
+                if (!fullArticle) {
+                    return render404();
+                }
+
                 const data = {
                     title: fullArticle.title,
                     siteName: OPT.siteName,
-                    siteDescription: OPT.siteDescription,
-                    excerpt: fullArticle.excerpt || '',
                     createDate: new Date(fullArticle.createDate).toLocaleDateString(),
                     label: fullArticle.label,
-                    labelUrl: categorySlug(fullArticle.label),
                     img: fullArticle.img || '',
-                    content: fullArticle.contentMarkdown || fullArticle.content || '',
+                    content: fullArticle.contentMarkdown || fullArticle.content,
                     copyRight: OPT.copyRight,
-                    commentCode: OPT.commentCode || '',
-                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
                 
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                        'Cache-Control': 'public, max-age=300'
-                    }
+                    headers: { 'Content-Type': 'text/html' }
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
@@ -1632,10 +1275,7 @@ export default {
                 const template = await blog.fetchThemeTemplate('404');
                 const data = {
                     siteName: OPT.siteName,
-                    siteDescription: OPT.siteDescription,
                     copyRight: OPT.copyRight,
-                    commentCode: OPT.commentCode || '',
-                    widgetOther: OPT.widgetOther || '',
                     codeBeforHead: OPT.codeBeforHead || '',
                     codeBeforBody: OPT.codeBeforBody || ''
                 };
@@ -1643,10 +1283,7 @@ export default {
                 const html = blog.renderTemplate(template, data);
                 return new Response(html, {
                     status: 404,
-                    headers: {
-                        'Content-Type': 'text/html; charset=utf-8',
-                        'Cache-Control': 'no-store'
-                    }
+                    headers: { 'Content-Type': 'text/html' }
                 });
             } catch (error) {
                 return new Response('404 - Page Not Found', {

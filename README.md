@@ -48,14 +48,14 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 | **Runtime** | Cloudflare Workers (edge computing, global CDN) |
 | **Storage** | Cloudflare KV — persistent key-value store |
 | **Editor** | EasyMDE — full Markdown editing experience |
-| **Themes** | 3 built-in themes (nova, hong, panda); remote theme loading from any GitHub repository |
+| **Themes** | 5 built-in themes; remote theme loading from GitHub |
 | **Admin** | Role-based multi-admin system (superadmin / admin) |
-| **Content** | Published articles and drafts, category labels, featured images, optional KV-backed comments |
+| **Content** | Published articles and drafts, category labels, featured images |
 | **SEO** | RSS 2.0 feed, XML sitemap with image support, configurable robots.txt |
 | **UI** | Dark/light mode toggle with system-preference detection |
 | **Sharing** | Twitter/X, Facebook, LinkedIn, copy-link buttons |
 | **Bookmarks** | Client-side bookmarking via `localStorage` |
-| **Backup** | JSON export/import plus admin tools for clearing article and comment KV data |
+| **Backup** | JSON export and import for full content portability |
 | **Styling** | Bootstrap 5.3.3, Font Awesome 6.5.1, Inter typography |
 
 ---
@@ -72,17 +72,17 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 
 | Theme | Description |
 |-------|-------------|
-| `nova` | Modern, responsive theme with shimmer skeletons, dark/light mode, animated cards, and a magazine-style layout |
-| `hong` | Chinese-inspired red and gold theme with warm paper tones, decorative hero panels, and festive high-contrast accents |
-| `panda` | Panda-inspired monochrome + bamboo palette with paw icon branding, dark/light mode, and an inline panda SVG hero badge |
+| `default` | Bootstrap-based theme with glass-morphism cards and gradient accents |
+| `minimal` | Lightweight Tailwind theme with clean typography and subtle animations |
+| `modern` | Professional Bootstrap theme using Playfair Display, inspired by magazine layouts |
+| `journal` | Newspaper-style serif theme, based on [Bootswatch Journal](https://bootswatch.com/journal/) |
+| `lux` | Elegant premium theme with uppercase headings, based on [Bootswatch Lux](https://bootswatch.com/lux/) |
 
-The theme is loaded remotely from the URL set in `OPT.themeURL`. You can switch to any self-hosted theme by appending `?theme=<theme-name>` to any URL (the worker will load it from `OPT.themeURL` with the theme name substituted):
+Switch the active theme by appending `?theme=<theme-name>` to any URL, for example:
 
 ```
-https://your-blog.workers.dev/?theme=nova
+https://your-blog.workers.dev/?theme=minimal
 ```
-
-> **Note:** The `?theme=` switcher resolves to a separate hosted repository. Set `OPT.themeURL` to point at your own theme repository for custom themes.
 
 ---
 
@@ -159,14 +159,12 @@ const OPT = {
     "recentlySize":    6,                                // Recent posts in sidebar
     "readMoreLength":  150,                              // Excerpt length (characters)
     "cacheTime":       43200,                            // HTTP cache TTL in seconds
-    "themeURL":        "https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/nova/",
-    "html404":         ``,                               // Custom 404 HTML (leave empty to use theme template)
+    "themeURL":        "https://raw.githubusercontent.com/<user>/<repo>/main/themes/default/",
     "copyRight":       "Powered by CF Workers Blog",
     "robots":          "User-agent: *\nDisallow: /admin",
     "codeBeforHead":   "",                               // Custom HTML injected into <head>
     "codeBeforBody":   "",                               // Custom HTML injected before </body>
-    "commentCode":     "",                               // Optional extra comment/embed HTML
-    "commentsEnabled": false,                            // Enable built-in Workers KV comments
+    "commentCode":     "",                               // Comment system embed code
     "widgetOther":     "",                               // Extra sidebar widget HTML
     "draftPrefix":     "DRAFT_"                          // KV prefix for draft articles
 };
@@ -181,32 +179,21 @@ const OPT = {
 ```
 Cloudflare-Workers-Blog/
 ├── themes/
-│   ├── nova/                  # Default blue-violet theme
-│   │   ├── index.html
-│   │   ├── article.html
-│   │   ├── admin.html
-│   │   ├── edit.html
-│   │   ├── admin-users.html
-│   │   ├── bookmarks.html
-│   │   └── 404.html
-│   ├── hong/                  # Red-gold festive theme
-│   │   ├── index.html
-│   │   ├── article.html
-│   │   ├── admin.html
-│   │   ├── edit.html
-│   │   ├── admin-users.html
-│   │   ├── bookmarks.html
-│   │   └── 404.html
-│   └── panda/                 # Panda-inspired monochrome+bamboo theme
-│       ├── index.html
-│       ├── article.html
-│       ├── admin.html
-│       ├── edit.html
-│       ├── admin-users.html
-│       ├── bookmarks.html
-│       └── 404.html
+│   ├── default/
+│   │   ├── index.html        # Homepage template
+│   │   ├── article.html      # Article page template
+│   │   ├── admin.html        # Admin dashboard template
+│   │   ├── edit.html         # Article editor template
+│   │   ├── admin-users.html  # Admin user management template
+│   │   ├── bookmarks.html    # Bookmarks page template
+│   │   └── 404.html          # 404 error page template
+│   ├── minimal/
+│   ├── modern/
+│   ├── journal/
+│   └── lux/
 ├── Screenshot/               # Repository screenshots
 ├── worker.js                 # Single-file Cloudflare Worker (all backend logic)
+├── wrangler.toml             # Wrangler deployment configuration
 └── LICENSE
 ```
 
@@ -243,8 +230,6 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 |--------|------|-------------|
 | `GET` | `/api/articles` | List all published articles |
 | `GET` | `/api/articles?drafts=true` | List draft articles |
-| `GET` | `/api/articles?paginate=true&page=1` | Paginated published articles |
-| `GET` | `/api/articles/{permalink}` | Get a single article by permalink |
 | `POST` | `/api/articles` | Create a new article |
 | `PUT` | `/api/articles/{permalink}` | Update an existing article |
 | `DELETE` | `/api/articles/{permalink}` | Delete an article |
@@ -263,29 +248,16 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/api/categories` | Article counts per category |
-| `GET` | `/api/comments/{permalink}` | List comments for a published article *(public, requires comments enabled)* |
-| `POST` | `/api/comments/{permalink}` | Post a comment on a published article *(public, requires comments enabled)* |
-| `POST` | `/api/generate-slug` | Generate a URL-safe slug from a title |
 | `GET` | `/api/export` | Export all articles as JSON *(auth required)* |
 | `POST` | `/api/import` | Import articles from JSON *(auth required)* |
 | `GET` | `/api/debug` | Runtime debug information *(auth required)* |
-| `POST` | `/api/fix-missing-articles` | Remove orphaned index entries whose article data no longer exists *(auth required)* |
-| `POST` | `/api/content/clear-all` | Delete all article, draft, and comment KV data *(superadmin required)* |
-
----
-
-
-### Comments
-
-Set `OPT.commentsEnabled` to `true` to enable the built-in comment system backed by Workers KV. It follows the same simple approach as `simple-static-comments`: each comment is stored as its own KV record under a permalink-based prefix and is loaded through `/api/comments/{permalink}`. For efficiency, comment reads are bounded (default 100, capped at 200 via `?limit=`) and cacheable for 5 minutes. When comments are disabled, the public comment UI is hidden and the API returns an error.
-
-The admin dashboard also includes a destructive **Clear Content** tool that removes all article records, draft keys, and stored comment buckets from KV. This action is restricted to superadmins.
+| `POST` | `/api/fix-missing-articles` | Repair corrupted article index *(auth required)* |
 
 ---
 
 ## Theme System
 
-Themes are plain HTML files hosted in a public GitHub repository. The worker fetches them on demand via the raw URL set in `OPT.themeURL`. You can host your own themes by forking this repository or creating a new one, then pointing `OPT.themeURL` at your fork.
+Themes are plain HTML files hosted in a public GitHub repository. The worker fetches them on demand via the raw URL set in `OPT.themeURL`. You can host your own themes by forking this repository or creating a new one.
 
 ### Required Template Files
 
@@ -311,18 +283,14 @@ The worker replaces the following placeholders before serving a page:
 | `{{siteName}}` | Blog name |
 | `{{siteDescription}}` | Blog meta description |
 | `{{title}}` | Article title |
-| `{{excerpt}}` | Plain-text article excerpt (used for meta descriptions) |
-| `{{content}}` | Raw Markdown source (rendered client-side via Marked.js) |
+| `{{content}}` | Rendered HTML from Markdown source |
 | `{{createDate}}` | Article publish date |
 | `{{label}}` | Article category / label |
 | `{{img}}` | Featured image URL |
 | `{{copyRight}}` | Copyright text |
-| `{{commentCode}}` | Comment system embed code (raw HTML) |
-| `{{widgetOther}}` | Extra sidebar widget HTML (raw HTML) |
-| `{{codeBeforHead}}` | Custom HTML injected into `<head>` (raw HTML) |
-| `{{codeBeforBody}}` | Custom HTML injected before `</body>` (raw HTML) |
+| `{{codeBeforHead}}` | Custom HTML injected into `<head>` |
+| `{{codeBeforBody}}` | Custom HTML injected before `</body>` |
 | `{{action}}` | Editor context — `"New"` or `"Edit"` |
-| `{{#img}}…{{/img}}` | Conditional block — rendered only when a featured image exists |
 
 ---
 
