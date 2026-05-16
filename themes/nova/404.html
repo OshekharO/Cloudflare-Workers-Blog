@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Page Not Found — {{siteName}}</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --brand: #6366f1;
+            --brand-dark: #4f46e5;
+            --brand-light: #a5b4fc;
+            --accent: #f59e0b;
+
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-2: #475569;
+            --text-3: #94a3b8;
+            --nav-bg: rgba(255,255,255,0.92);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        [data-bs-theme="dark"] {
+            --bg: #0a0e1a;
+            --surface: #111827;
+            --border: #1f2937;
+            --text: #f1f5f9;
+            --text-2: #cbd5e1;
+            --text-3: #64748b;
+            --nav-bg: rgba(10,14,26,0.95);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Navbar ─────────────────────────────────────── */
+        .nav-nova {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--brand) !important;
+            text-decoration: none;
+        }
+
+        .btn-nova-primary {
+            background: linear-gradient(135deg, var(--brand), #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.55rem 1.25rem;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-nova-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99,102,241,0.4);
+            color: #fff;
+        }
+
+        .btn-nova-outline {
+            background: transparent;
+            color: var(--text-2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.45rem 1rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-nova-outline:hover {
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+        /* ── 404 Section ──────────────────────────────────── */
+        .error-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1.5rem;
+        }
+
+        .error-number {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(6rem, 18vw, 12rem);
+            font-weight: 800;
+            line-height: 0.9;
+            background: linear-gradient(135deg, var(--brand) 0%, #8b5cf6 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            user-select: none;
+        }
+
+        .error-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 4vw, 2.25rem);
+            font-weight: 700;
+            color: var(--text);
+            margin: 1rem 0 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .error-desc {
+            color: var(--text-3);
+            font-size: 1rem;
+            max-width: 420px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+
+        .error-illustration {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto 3rem;
+        }
+
+        .orbit {
+            position: absolute;
+            border-radius: 50%;
+            border: 1.5px dashed;
+            animation: spin linear infinite;
+        }
+
+        .orbit-1 {
+            width: 200px; height: 200px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border-color: rgba(99,102,241,0.2);
+            animation-duration: 10s;
+        }
+
+        .orbit-2 {
+            width: 280px; height: 280px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border-color: rgba(139,92,246,0.15);
+            animation-duration: 14s;
+            animation-direction: reverse;
+        }
+
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .planet {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand) 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 60px rgba(99,102,241,0.4), inset 0 -10px 30px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .planet i {
+            font-size: 2.5rem;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .dot {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .dot-1 {
+            width: 10px; height: 10px;
+            background: var(--brand);
+            top: 50%; left: 0;
+            transform: translateY(-50%);
+            animation: orbit1 10s linear infinite;
+        }
+
+        .dot-2 {
+            width: 8px; height: 8px;
+            background: var(--accent);
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            animation: orbit2 14s linear infinite reverse;
+        }
+
+        @keyframes orbit1 {
+            from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+        }
+
+        @keyframes orbit2 {
+            from { transform: rotate(0deg) translateX(140px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(140px) rotate(-360deg); }
+        }
+
+        /* ── Footer ─────────────────────────────────────── */
+        .footer-nova {
+            background: var(--footer-bg, #0f172a);
+            color: rgba(255,255,255,0.45);
+            padding: 1.5rem 0;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+    </style>
+
+    {{codeBeforHead}}
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar nav-nova py-2">
+        <div class="container d-flex align-items-center gap-3">
+            <a class="nav-brand me-auto" href="/">
+                <i class="fa-solid fa-feather-pointed me-2"></i>{{siteName}}
+            </a>
+            <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 404 Content -->
+    <section class="error-section">
+        <div class="text-center">
+            <!-- Illustration -->
+            <div class="error-illustration">
+                <div class="orbit orbit-2">
+                    <div class="dot dot-2"></div>
+                </div>
+                <div class="orbit orbit-1">
+                    <div class="dot dot-1"></div>
+                </div>
+                <div class="planet">
+                    <i class="fa-solid fa-satellite"></i>
+                </div>
+            </div>
+
+            <div class="error-number">404</div>
+            <h1 class="error-title">Lost in Space</h1>
+            <p class="error-desc">
+                The page you're looking for has drifted into the void. It may have been moved, deleted, or never existed.
+            </p>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="/" class="btn-nova-primary">
+                    <i class="fa-solid fa-house"></i>Back to Home
+                </a>
+                <button onclick="history.back()" class="btn-nova-outline">
+                    <i class="fa-solid fa-arrow-left"></i>Go Back
+                </button>
+            </div>
+
+            <p class="mt-4" style="color:var(--text-3);font-size:0.8rem;">
+                <i class="fa-solid fa-magnifying-glass me-1"></i>
+                Looking for something specific?
+                <a href="/" style="color:var(--brand);text-decoration:none;font-weight:600;"> Browse all articles →</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-nova">
+        {{copyRight}}
+    </footer>
+
+    <script>
+        const getTheme = () => localStorage.getItem('theme') ||
+            (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+        function setTheme(t) {
+            document.documentElement.setAttribute('data-bs-theme', t);
+            localStorage.setItem('theme', t);
+            document.getElementById('themeIcon').className =
+                t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        function toggleTheme() {
+            setTheme(document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        setTheme(getTheme());
+    </script>
+
+    {{codeBeforBody}}
+</body>
+</html>

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — {{siteName}}</title>
+
+    <!-- Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --brand: #6366f1;
+            --brand-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+
+            --bg: #f1f5f9;
+            --surface: #ffffff;
+            --surface-2: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-2: #475569;
+            --text-3: #94a3b8;
+            --sidebar-bg: linear-gradient(160deg, #312e81 0%, #6366f1 60%, #8b5cf6 100%);
+            --nav-bg: #1e293b;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        [data-bs-theme="dark"] {
+            --bg: #0a0e1a;
+            --surface: #111827;
+            --surface-2: #1f2937;
+            --border: #1f2937;
+            --text: #f1f5f9;
+            --text-2: #cbd5e1;
+            --text-3: #64748b;
+            --sidebar-bg: linear-gradient(160deg, #1e1b4b 0%, #312e81 60%, #4c1d95 100%);
+            --nav-bg: #050810;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ── Top Nav ─────────────────────────────────────── */
+        .admin-topnav {
+            background: var(--nav-bg);
+            height: 58px;
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .admin-topnav .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            color: #fff;
+            font-weight: 700;
+            margin-right: auto;
+        }
+
+        .topnav-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+        }
+
+        .topnav-btn:hover {
+            background: rgba(255,255,255,0.16);
+            color: #fff;
+        }
+
+        /* ── Layout ──────────────────────────────────────── */
+        .admin-wrap {
+            display: flex;
+            padding-top: 58px;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ─────────────────────────────────────── */
+        .admin-sidebar {
+            background: var(--sidebar-bg);
+            width: 230px;
+            flex-shrink: 0;
+            position: fixed;
+            left: 0;
+            top: 58px;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 1.25rem 0.75rem;
+            z-index: 90;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            padding: 0.75rem 0.75rem 0.35rem;
+            margin-top: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.65rem 0.875rem;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.75);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+        }
+
+        .sidebar-item.active {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+
+        .sidebar-item i { width: 1.1rem; text-align: center; font-size: 0.9rem; }
+
+        /* ── Main Content ────────────────────────────────── */
+        .admin-main {
+            margin-left: 230px;
+            flex: 1;
+            padding: 2rem;
+            min-width: 0;
+        }
+
+        /* ── Cards ───────────────────────────────────────── */
+        .admin-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .admin-card-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-card-title i { color: var(--brand); }
+
+        .admin-card-body { padding: 1.5rem; }
+
+        /* ── Stats ───────────────────────────────────────── */
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .stat-val {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-3);
+            font-weight: 500;
+        }
+
+        /* ── Buttons ─────────────────────────────────────── */
+        .btn-brand {
+            background: linear-gradient(135deg, var(--brand), #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.55rem 1.25rem;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-brand:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.35);
+            color: #fff;
+        }
+
+        /* ── Tabs ────────────────────────────────────────── */
+        .nova-tabs {
+            display: flex;
+            gap: 0.25rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1.25rem;
+        }
+
+        .nova-tab {
+            padding: 0.6rem 1.1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-3);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 8px 8px 0 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nova-tab:hover { color: var(--brand); }
+
+        .nova-tab.active {
+            color: var(--brand);
+            border-bottom-color: var(--brand);
+        }
+
+        /* ── Table ───────────────────────────────────────── */
+        .nova-table { width: 100%; border-collapse: collapse; }
+
+        .nova-table thead th {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+            background: transparent;
+        }
+
+        .nova-table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            color: var(--text-2);
+            font-size: 0.875rem;
+        }
+
+        .nova-table tbody tr:last-child td { border-bottom: none; }
+
+        .nova-table tbody tr:hover td { background: var(--surface-2); }
+
+        .draft-row td { background: rgba(245,158,11,0.04) !important; }
+
+        /* ── Badges ──────────────────────────────────────── */
+        .badge-nova {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .badge-published { background: rgba(16,185,129,0.1); color: #10b981; }
+        .badge-draft { background: rgba(245,158,11,0.1); color: #f59e0b; }
+
+        /* ── Tool Cards ──────────────────────────────────── */
+        .tool-card {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            text-align: center;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            border-color: var(--brand);
+            box-shadow: 0 4px 20px rgba(99,102,241,0.12);
+            transform: translateY(-3px);
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.4rem;
+        }
+
+        /* ── Action btns ─────────────────────────────────── */
+        .action-btn-sm {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text-3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn-sm:hover { transform: scale(1.1); }
+        .action-btn-sm.edit:hover { background: rgba(99,102,241,0.1); color: var(--brand); border-color: var(--brand); }
+        .action-btn-sm.del:hover { background: rgba(239,68,68,0.1); color: var(--danger); border-color: var(--danger); }
+
+        /* ── Forms ───────────────────────────────────────── */
+        .form-control, .form-select {
+            background: var(--surface-2);
+            border-color: var(--border);
+            color: var(--text);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            padding: 0.6rem 0.875rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--surface-2);
+            border-color: var(--brand);
+            color: var(--text);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+
+        /* ── Modal ───────────────────────────────────────── */
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        .modal-header, .modal-footer { border-color: var(--border); }
+
+        /* ── Animations ──────────────────────────────────── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeInUp 0.4s ease-out; }
+
+        /* ── Responsive ──────────────────────────────────── */
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                z-index: 200;
+            }
+            .admin-sidebar.open { transform: translateX(0); }
+            .admin-main { margin-left: 0; }
+        }
+
+        @media (max-width: 576px) {
+            .admin-main { padding: 1rem; }
+            .admin-card-body { padding: 1rem; }
+            .stat-card { padding: 1rem; }
+        }
+    </style>
+
+    {{codeBeforHead}}
+</head>
+<body>
+
+    <!-- Top Nav -->
+    <nav class="admin-topnav">
+        <span class="brand">
+            <i class="fa-solid fa-shield-halved me-2" style="color:#a5b4fc"></i>{{siteName}} Admin
+        </span>
+        <div class="d-flex align-items-center gap-2">
+            <a href="/" class="topnav-btn d-none d-sm-inline-flex">
+                <i class="fa-solid fa-eye"></i>View Blog
+            </a>
+            <button class="topnav-btn" onclick="toggleTheme()">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+            <button class="topnav-btn d-lg-none" id="sidebarToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="admin-wrap">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-section">Content</div>
+            <button class="sidebar-item active" onclick="showPanel('articles')" id="tab-articles">
+                <i class="fa-solid fa-newspaper"></i>Articles
+            </button>
+            <a href="/admin/edit" class="sidebar-item">
+                <i class="fa-solid fa-circle-plus"></i>New Article
+            </a>
+            <div class="sidebar-section">Admin</div>
+            <a href="/admin/users" class="sidebar-item">
+                <i class="fa-solid fa-users"></i>Users
+            </a>
+            <button class="sidebar-item" onclick="showPanel('tools')" id="tab-tools">
+                <i class="fa-solid fa-toolbox"></i>Tools
+            </button>
+            <div class="sidebar-section">SEO</div>
+            <a href="/sitemap.xml" class="sidebar-item" target="_blank" rel="noopener">
+                <i class="fa-solid fa-sitemap"></i>Sitemap
+            </a>
+            <a href="/rss.xml" class="sidebar-item" target="_blank" rel="noopener">
+                <i class="fa-solid fa-rss"></i>RSS Feed
+            </a>
+        </aside>
+
+        <!-- Main -->
+        <main class="admin-main">
+
+        <!-- Page heading -->
+            <div class="d-flex align-items-center justify-content-between mb-4 fade-in">
+                <div>
+                    <h1 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--text);margin:0;letter-spacing:-0.02em;">Dashboard</h1>
+                    <p style="font-size:0.82rem;color:var(--text-3);margin:0.2rem 0 0;">Overview of your blog content</p>
+                </div>
+                <a href="/admin/edit" class="btn-brand d-none d-sm-inline-flex">
+                    <i class="fa-solid fa-plus"></i>New Article
+                </a>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="row g-3 mb-4 fade-in">
+                <div class="col-6 col-lg-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(99,102,241,0.1);color:var(--brand);">
+                            <i class="fa-solid fa-newspaper"></i>
+                        </div>
+                        <div>
+                            <div class="stat-val" id="statPublished">–</div>
+                            <div class="stat-label">Published</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;">
+                            <i class="fa-solid fa-file-pen"></i>
+                        </div>
+                        <div>
+                            <div class="stat-val" id="statDrafts">–</div>
+                            <div class="stat-label">Drafts</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(16,185,129,0.1);color:#10b981;">
+                            <i class="fa-solid fa-tags"></i>
+                        </div>
+                        <div>
+                            <div class="stat-val" id="statCategories">–</div>
+                            <div class="stat-label">Categories</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(139,92,246,0.1);color:#8b5cf6;">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <div>
+                            <div class="stat-val" id="statTotal">–</div>
+                            <div class="stat-label">Total Articles</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles Panel -->
+            <div id="panel-articles">
+                <div class="admin-card fade-in">
+                    <div class="admin-card-header">
+                        <span class="admin-card-title">
+                            <i class="fa-solid fa-file-lines"></i>Articles
+                        </span>
+                        <a href="/admin/edit" class="btn-brand">
+                            <i class="fa-solid fa-plus"></i>New Article
+                        </a>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="nova-tabs">
+                            <button class="nova-tab active" onclick="switchTab('published')">
+                                <i class="fa-solid fa-circle-check"></i>Published
+                                <span id="tabCountPublished" class="badge rounded-pill ms-1" style="background:rgba(16,185,129,0.1);color:#10b981;font-size:0.7rem;"></span>
+                            </button>
+                            <button class="nova-tab" onclick="switchTab('drafts')">
+                                <i class="fa-solid fa-file-pen"></i>Drafts
+                                <span id="tabCountDrafts" class="badge rounded-pill ms-1" style="background:rgba(245,158,11,0.1);color:#f59e0b;font-size:0.7rem;"></span>
+                            </button>
+                        </div>
+
+                        <!-- Search -->
+                        <div class="mb-3">
+                            <div class="position-relative">
+                                <input type="text" class="form-control ps-4" id="articleSearch" placeholder="Search articles…" style="padding-left:2.5rem!important">
+                                <i class="fa-solid fa-magnifying-glass position-absolute" style="left:0.875rem;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:0.8rem;pointer-events:none;"></i>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="nova-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th class="d-none d-md-table-cell">Category</th>
+                                        <th class="d-none d-sm-table-cell">Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="articlesTableBody">
+                                    <tr><td colspan="5" class="text-center py-4">
+                                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                        Loading…
+                                    </td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="tablePagination" class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools Panel -->
+            <div id="panel-tools" style="display:none">
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <span class="admin-card-title"><i class="fa-solid fa-toolbox"></i>Tools</span>
+                            </div>
+                            <div class="admin-card-body">
+                                <div class="row g-3">
+                                    <div class="col-6 col-md-3">
+                                        <div class="tool-card" onclick="exportData()">
+                                            <div class="tool-icon" style="background:rgba(16,185,129,0.1);color:#10b981;"><i class="fa-solid fa-download"></i></div>
+                                            <div style="font-weight:700;font-size:0.875rem;color:var(--text);margin-bottom:0.25rem;">Export</div>
+                                            <div style="font-size:0.78rem;color:var(--text-3);">Download all articles as JSON</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="tool-card" onclick="document.getElementById('importFile').click()">
+                                            <div class="tool-icon" style="background:rgba(99,102,241,0.1);color:var(--brand);"><i class="fa-solid fa-upload"></i></div>
+                                            <div style="font-weight:700;font-size:0.875rem;color:var(--text);margin-bottom:0.25rem;">Import</div>
+                                            <div style="font-size:0.78rem;color:var(--text-3);">Restore from JSON export</div>
+                                        </div>
+                                        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <a href="/sitemap.xml" class="tool-card text-decoration-none" target="_blank" rel="noopener">
+                                            <div class="tool-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;"><i class="fa-solid fa-sitemap"></i></div>
+                                            <div style="font-weight:700;font-size:0.875rem;color:var(--text);margin-bottom:0.25rem;">Sitemap</div>
+                                            <div style="font-size:0.78rem;color:var(--text-3);">View XML sitemap</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <a href="/rss.xml" class="tool-card text-decoration-none" target="_blank" rel="noopener">
+                                            <div class="tool-icon" style="background:rgba(239,68,68,0.1);color:var(--danger);"><i class="fa-solid fa-rss"></i></div>
+                                            <div style="font-weight:700;font-size:0.875rem;color:var(--text);margin-bottom:0.25rem;">RSS Feed</div>
+                                            <div style="font-size:0.78rem;color:var(--text-3);">View RSS feed</div>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-6 col-md-3">
+                                        <div class="tool-card" onclick="openClearAllModal()">
+                                            <div class="tool-icon" style="background:rgba(239,68,68,0.1);color:var(--danger);"><i class="fa-solid fa-trash-can"></i></div>
+                                            <div style="font-weight:700;font-size:0.875rem;color:var(--text);margin-bottom:0.25rem;">Clear Content</div>
+                                            <div style="font-size:0.78rem;color:var(--text-3);">Delete all article KV data and comments</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold" style="color:var(--danger)">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Delete Article
+                    </h6>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:0.875rem;color:var(--text-2);">
+                        Delete <strong id="deleteArticleTitle" style="color:var(--text)"></strong>?
+                    </p>
+                    <p style="font-size:0.78rem;color:var(--text-3);">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-sm btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Clear All Content Modal -->
+    <div class="modal fade" id="clearAllModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold" style="color:var(--danger)">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Clear All Content
+                    </h6>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:0.875rem;color:var(--text-2);">
+                        Delete <strong style="color:var(--text)">all articles, drafts, and comments</strong> from KV?
+                    </p>
+                    <p style="font-size:0.78rem;color:var(--text-3);">This action cannot be undone and requires a superadmin account.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-sm btn-danger" id="confirmClearAll">Delete everything</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ── Theme ──────────────────────────────────────────────────────────
+        const getTheme = () => localStorage.getItem('theme') ||
+            (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+        function setTheme(t) {
+            document.documentElement.setAttribute('data-bs-theme', t);
+            localStorage.setItem('theme', t);
+            document.getElementById('themeIcon').className =
+                t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        function toggleTheme() {
+            setTheme(document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        setTheme(getTheme());
+
+        // ── Sidebar mobile ─────────────────────────────────────────────────
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('adminSidebar').classList.toggle('open');
+        });
+
+        // ── Panel switching ────────────────────────────────────────────────
+        function showPanel(name) {
+            ['articles','tools'].forEach(p => {
+                document.getElementById(`panel-${p}`).style.display = p === name ? '' : 'none';
+                document.getElementById(`tab-${p}`)?.classList.toggle('active', p === name);
+            });
+        }
+
+        // ── State ─────────────────────────────────────────────────────────
+        let allArticles = [];
+        let allDrafts = [];
+        let currentTab = 'published';
+        let currentPage = 1;
+        const PAGE_SIZE = 15;
+        let searchQ = '';
+
+        document.getElementById('articleSearch').addEventListener('input', function() {
+            searchQ = this.value.toLowerCase();
+            currentPage = 1;
+            renderTable();
+        });
+
+        function switchTab(tab) {
+            currentTab = tab;
+            currentPage = 1;
+            document.querySelectorAll('.nova-tab').forEach((t, i) => {
+                t.classList.toggle('active', (i === 0 && tab === 'published') || (i === 1 && tab === 'drafts'));
+            });
+            renderTable();
+        }
+
+        // ── XSS helpers ───────────────────────────────────────────────────
+        const esc = s => s ? String(s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#039;') : '';
+        const escJs = s => s ? String(s)
+            .replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"')
+            .replace(/\n/g,'\\n').replace(/\r/g,'\\r') : '';
+
+        // ── Load articles ─────────────────────────────────────────────────
+        async function loadArticles() {
+            try {
+                const [pubRes, draftRes] = await Promise.all([
+                    fetch('/api/articles'),
+                    fetch('/api/articles?drafts=true')
+                ]);
+                allArticles = pubRes.ok ? await pubRes.json() : [];
+                allDrafts = draftRes.ok ? await draftRes.json() : [];
+
+                const total = allArticles.length + allDrafts.length;
+                const cats = new Set([...allArticles, ...allDrafts].map(a => a.label).filter(Boolean));
+
+                document.getElementById('statPublished').textContent = allArticles.length;
+                document.getElementById('statDrafts').textContent = allDrafts.length;
+                document.getElementById('statCategories').textContent = cats.size;
+                document.getElementById('statTotal').textContent = total;
+                document.getElementById('tabCountPublished').textContent = allArticles.length;
+                document.getElementById('tabCountDrafts').textContent = allDrafts.length;
+
+                renderTable();
+            } catch (e) {
+                console.error(e);
+                document.getElementById('articlesTableBody').innerHTML =
+                    `<tr><td colspan="5" class="text-center py-4 text-danger">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>Error loading articles
+                    </td></tr>`;
+            }
+        }
+
+        function renderTable() {
+            const source = currentTab === 'published' ? allArticles : allDrafts;
+            const filtered = searchQ
+                ? source.filter(a => (a.title||'').toLowerCase().includes(searchQ) || (a.label||'').toLowerCase().includes(searchQ))
+                : source;
+
+            const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+            const page = Math.min(currentPage, totalPages);
+            const start = (page - 1) * PAGE_SIZE;
+            const items = filtered.slice(start, start + PAGE_SIZE);
+
+            const tbody = document.getElementById('articlesTableBody');
+
+            if (items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5" style="color:var(--text-3)">
+                    <i class="fa-solid fa-inbox fa-2x mb-2 d-block"></i>
+                    No articles found
+                </td></tr>`;
+                document.getElementById('tablePagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = items.map(a => `
+                <tr class="${a.status === 'draft' ? 'draft-row' : ''}">
+                    <td>
+                        <a href="/article/${esc(a.permalink)}" target="_blank" rel="noopener"
+                           style="color:var(--text);font-weight:600;text-decoration:none;font-size:0.875rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:280px;">
+                            ${esc(a.title)}
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <span style="font-size:0.78rem;background:rgba(99,102,241,0.08);color:var(--brand);padding:0.2rem 0.6rem;border-radius:50px;font-weight:600;">${esc(a.label || '–')}</span>
+                    </td>
+                    <td class="d-none d-sm-table-cell" style="white-space:nowrap;">
+                        ${new Date(a.createDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+                    </td>
+                    <td>
+                        <span class="badge-nova ${a.status === 'draft' ? 'badge-draft' : 'badge-published'}">
+                            <i class="fa-solid fa-${a.status === 'draft' ? 'file-pen' : 'circle-check'}"></i>
+                            ${a.status === 'draft' ? 'Draft' : 'Published'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="/admin/edit?permalink=${esc(a.permalink)}" class="action-btn-sm edit" title="Edit">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <button class="action-btn-sm del" onclick="confirmDelete('${escJs(a.permalink)}','${escJs(a.title)}')" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Pagination
+            const pag = document.getElementById('tablePagination');
+            pag.innerHTML = `
+                <span style="font-size:0.78rem;color:var(--text-3);">
+                    ${start+1}–${Math.min(start+PAGE_SIZE, filtered.length)} of ${filtered.length}
+                </span>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="currentPage=${page-1};renderTable()" ${page<=1?'disabled':''}>
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="currentPage=${page+1};renderTable()" ${page>=totalPages?'disabled':''}>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>`;
+        }
+
+        // ── Delete ─────────────────────────────────────────────────────────
+        let pendingDeletePermalink = '';
+
+        function confirmDelete(permalink, title) {
+            pendingDeletePermalink = permalink;
+            document.getElementById('deleteArticleTitle').textContent = title;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        document.getElementById('confirmDelete').addEventListener('click', async () => {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            modal.hide();
+            try {
+                const res = await fetch(`/api/articles/${pendingDeletePermalink}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Failed');
+                await loadArticles();
+            } catch {
+                alert('Error deleting article.');
+            }
+        });
+
+        // ── Export ─────────────────────────────────────────────────────────
+        async function exportData() {
+            try {
+                const res = await fetch('/api/export');
+                if (!res.ok) throw new Error('Failed');
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `blog-export-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch {
+                alert('Export failed.');
+            }
+        }
+
+        // ── Import ─────────────────────────────────────────────────────────
+        async function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                const res = await fetch('/api/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                alert(result.message || `Imported ${result.imported} articles`);
+                await loadArticles();
+            } catch {
+                alert('Import failed. Please check the file format.');
+            }
+            e.target.value = '';
+        }
+
+
+
+        function openClearAllModal() {
+            new bootstrap.Modal(document.getElementById('clearAllModal')).show();
+        }
+
+        document.getElementById('confirmClearAll').addEventListener('click', async () => {
+            const modalEl = document.getElementById('clearAllModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            const btn = document.getElementById('confirmClearAll');
+            btn.disabled = true;
+            btn.textContent = 'Deleting…';
+
+            try {
+                const res = await fetch('/api/content/clear-all', { method: 'POST' });
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.error || 'Failed to clear content.');
+                modal.hide();
+                await loadArticles();
+                showPanel('articles');
+                alert(result.message || 'All content deleted.');
+            } catch (error) {
+                alert(error.message || 'Failed to clear content.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Delete everything';
+            }
+        });
+
+        loadArticles();
+    </script>
+
+    {{codeBeforBody}}
+</body>
+</html>
