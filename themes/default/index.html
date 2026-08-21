@@ -255,17 +255,17 @@
                     <span class="fs-5 fw-bold text-dark">{{siteName}}</span>
                 </a>
                 
-                <div class="d-flex align-items-center gap-3">
-                    <a href="/bookmarks" class="btn btn-outline-dark rounded-3 px-3 py-2 d-none d-md-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/bookmarks" class="btn btn-outline-dark rounded-3 px-2 py-2 d-flex align-items-center gap-1">
                         <i class="fas fa-bookmark"></i>
-                        <span>Favorites</span>
+                        <span class="d-none d-sm-inline">Favorites</span>
                     </a>
-                    <a href="/rss.xml" class="btn btn-outline-dark rounded-3 px-3 py-2 d-none d-md-flex align-items-center gap-2">
+                    <a href="/rss.xml" class="btn btn-outline-dark rounded-3 px-2 py-2 d-flex align-items-center gap-1">
                         <i class="fas fa-rss"></i>
-                        <span>RSS</span>
+                        <span class="d-none d-sm-inline">RSS</span>
                     </a>
-                    <a href="/admin/" class="btn btn-primary-custom text-white rounded-3 px-4 py-2">
-                        <i class="fas fa-gauge-high me-2"></i>
+                    <a href="/admin/" class="btn btn-primary-custom text-white rounded-3 px-3 py-2 d-flex align-items-center gap-2">
+                        <i class="fas fa-gauge-high"></i>
                         <span class="d-none d-sm-inline">Dashboard</span>
                     </a>
                 </div>
@@ -282,7 +282,7 @@
                 </span>
                 <h1 class="display-4 fw-bold mb-3">{{siteName}}</h1>
                 <p class="lead text-white-75 mb-4 mx-auto" style="max-width: 600px;">{{siteDescription}}</p>
-                <div class="d-flex flex-wrap justify-content-center gap-3">
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
                     <a href="#articles" class="btn btn-light text-primary px-4 py-2 rounded-3 fw-semibold">
                         <i class="fas fa-compass me-2"></i>Explore Articles
                     </a>
@@ -437,9 +437,11 @@
                     <div class="col-md-6 col-lg-4">
                         <article class="article-card">
                             <div class="card-image">
-                                ${imgHtml}
+                                <a href="/article/${safePermalink}" class="text-decoration-none">
+                                    ${imgHtml}
+                                </a>
                                 <button class="bookmark-btn position-absolute top-3 end-3 ${isBookmarked ? 'bookmarked' : ''}" 
-                                        onclick="toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
+                                        onclick="event.stopPropagation(); toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
                                         title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
                                     <i class="fas fa-bookmark"></i>
                                 </button>
@@ -452,13 +454,15 @@
                                     <i class="far fa-calendar me-2 text-primary"></i>
                                     <span>${new Date(article.createDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                 </div>
-                                <h3 class="fw-bold text-dark mb-3 line-clamp-2">${safeTitle}</h3>
+                                <a href="/article/${safePermalink}" class="text-decoration-none">
+                                    <h3 class="fw-bold text-dark mb-3 line-clamp-2">${safeTitle}</h3>
+                                </a>
                                 <p class="text-muted small mb-4 line-clamp-3 flex-grow">${safeExcerpt}</p>
                                 <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
                                     <a href="/article/${safePermalink}" class="text-primary text-decoration-none fw-semibold small">
                                         Read More <i class="fas fa-arrow-right ms-1"></i>
                                     </a>
-                                    <button onclick="shareArticle('${safePermalink}', '${safeTitle}')" 
+                                    <button onclick="event.stopPropagation(); shareArticle('${safePermalink}', '${safeTitle}')" 
                                             class="share-btn"
                                             title="Share article">
                                         <i class="fas fa-share-alt"></i>

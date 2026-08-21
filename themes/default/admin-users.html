@@ -435,6 +435,13 @@
         document.addEventListener('DOMContentLoaded', function () {
             addAdminModal = new bootstrap.Modal(document.getElementById('add-admin-modal'));
             editAdminModal = new bootstrap.Modal(document.getElementById('edit-admin-modal'));
+            
+            // Strip credentials from URL to prevent fetch issues
+            if (window.location.href.includes('@')) {
+                const newUrl = window.location.href.replace(/\/\/.*@/, '//');
+                history.replaceState(null, '', newUrl);
+            }
+            
             loadAdmins();
 
             document.getElementById('search-admins').addEventListener('input', function (e) {
@@ -444,7 +451,7 @@
 
         async function loadAdmins() {
             try {
-                const response = await fetch('/api/admins');
+                const response = await fetch(window.location.origin + '/api/admins');
                 if (!response.ok) {
                     if (response.status === 401) {
                         showNotification('Authentication required. Please log in again.', 'error');
@@ -598,7 +605,7 @@
             };
 
             try {
-                const response = await fetch('/api/admins/' + adminId, {
+                const response = await fetch(window.location.origin + '/api/admins/' + adminId, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updateData),
@@ -626,7 +633,7 @@
             if (!confirm(`Are you sure you want to delete admin "${username}"? This action cannot be undone.`)) return;
 
             try {
-                const response = await fetch('/api/admins/' + adminId, { method: 'DELETE' });
+                const response = await fetch(window.location.origin + '/api/admins/' + adminId, { method: 'DELETE' });
 
                 if (response.ok) {
                     showNotification('Admin deleted successfully');

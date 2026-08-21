@@ -267,11 +267,11 @@
         <div class="row g-3 g-md-4 mb-4">
             <div class="col-6 col-md-3">
                 <a href="/admin/edit" class="action-card text-center">
-                    <div class="icon-wrapper bg-gradient-to-br from-info to-primary mx-auto mb-3" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                    <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
                         <i class="fas fa-plus text-white fs-4"></i>
                     </div>
-                    <h3 class="fw-semibold text-dark small mb-1">New Article</h3>
-                    <p class="text-muted d-none d-md-block small">Create new content</p>
+                    <h3 class="fw-semibold text-dark mb-1">New Article</h3>
+                    <p class="text-muted d-none d-md-block small mb-0">Create new content</p>
                 </a>
             </div>
 
@@ -280,28 +280,28 @@
                     <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);">
                         <i class="fas fa-user-gear text-white fs-4"></i>
                     </div>
-                    <h3 class="fw-semibold text-dark small mb-1">Admin Users</h3>
-                    <p class="text-muted d-none d-md-block small">Manage access</p>
+                    <h3 class="fw-semibold text-dark mb-1">Admin Users</h3>
+                    <p class="text-muted d-none d-md-block small mb-0">Manage access</p>
                 </a>
             </div>
             
             <div class="col-6 col-md-3">
-                <button onclick="exportArticles()" class="action-card text-center border-0 bg-transparent">
+                <button onclick="exportArticles()" class="action-card text-center border-0 bg-transparent w-100">
                     <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
                         <i class="fas fa-download text-white fs-4"></i>
                     </div>
-                    <h3 class="fw-semibold text-dark small mb-1">Export</h3>
-                    <p class="text-muted d-none d-md-block small">Download backup</p>
+                    <h3 class="fw-semibold text-dark mb-1">Export</h3>
+                    <p class="text-muted d-none d-md-block small mb-0">Download backup</p>
                 </button>
             </div>
 
             <div class="col-6 col-md-3">
-                <button onclick="openImportModal()" class="action-card text-center border-0 bg-transparent">
+                <button onclick="openImportModal()" class="action-card text-center border-0 bg-transparent w-100">
                     <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);">
                         <i class="fas fa-upload text-white fs-4"></i>
                     </div>
-                    <h3 class="fw-semibold text-dark small mb-1">Import</h3>
-                    <p class="text-muted d-none d-md-block small">Restore data</p>
+                    <h3 class="fw-semibold text-dark mb-1">Import</h3>
+                    <p class="text-muted d-none d-md-block small mb-0">Restore data</p>
                 </button>
             </div>
         </div>
@@ -519,6 +519,13 @@
         document.addEventListener('DOMContentLoaded', function () {
             importModal = new bootstrap.Modal(document.getElementById('import-modal'));
             debugModal = new bootstrap.Modal(document.getElementById('debug-modal'));
+            
+            // Strip credentials from URL to prevent fetch issues
+            if (window.location.href.includes('@')) {
+                const newUrl = window.location.href.replace(/\/\/.*@/, '//');
+                history.replaceState(null, '', newUrl);
+            }
+            
             loadArticles();
             loadDrafts();
         });
@@ -541,7 +548,7 @@
 
         async function loadArticles() {
             try {
-                const response = await fetch('/api/articles');
+                const response = await fetch(window.location.origin + '/api/articles');
                 if (!response.ok) throw new Error('Failed to load articles');
                 const articles = await response.json();
                 const container = document.getElementById('published-list');
@@ -601,7 +608,7 @@
 
         async function loadDrafts() {
             try {
-                const response = await fetch('/api/articles?drafts=true');
+                const response = await fetch(window.location.origin + '/api/articles?drafts=true');
                 if (!response.ok) throw new Error('Failed to load drafts');
                 const drafts = await response.json();
                 const container = document.getElementById('drafts-list');
@@ -663,7 +670,7 @@
             if (!confirm('Are you sure you want to delete this article?')) return;
 
             try {
-                const response = await fetch('/api/articles/' + permalink, { method: 'DELETE' });
+                const response = await fetch(window.location.origin + '/api/articles/' + permalink, { method: 'DELETE' });
                 if (response.ok) {
                     showNotification('Article deleted successfully');
                     loadArticles();
@@ -678,12 +685,12 @@
 
         async function publishDraft(permalink) {
             try {
-                const response = await fetch('/api/articles/' + permalink);
+                const response = await fetch(window.location.origin + '/api/articles/' + permalink);
                 if (!response.ok) throw new Error('Draft not found');
                 const draft = await response.json();
                 draft.status = 'published';
 
-                const updateResponse = await fetch('/api/articles/' + permalink, {
+                const updateResponse = await fetch(window.location.origin + '/api/articles/' + permalink, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(draft)
@@ -703,7 +710,7 @@
 
         async function exportArticles() {
             try {
-                const response = await fetch('/api/export');
+                const response = await fetch(window.location.origin + '/api/export');
                 if (!response.ok) throw new Error('Export failed');
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -738,7 +745,7 @@
                 const articles = JSON.parse(text);
                 if (!Array.isArray(articles)) throw new Error('Invalid file format');
 
-                const response = await fetch('/api/import', {
+                const response = await fetch(window.location.origin + '/api/import', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: text
@@ -759,7 +766,7 @@
 
         async function showDebugInfo() {
             try {
-                const response = await fetch('/api/debug');
+                const response = await fetch(window.location.origin + '/api/debug');
                 const data = await response.json();
                 
                 let debugHTML = `
@@ -820,7 +827,7 @@
             if (!confirm('This will attempt to fix any missing article data. Continue?')) return;
             
             try {
-                const response = await fetch('/api/fix-missing-articles', { method: 'POST' });
+                const response = await fetch(window.location.origin + '/api/fix-missing-articles', { method: 'POST' });
                 const result = await response.json();
                 
                 if (response.ok) {

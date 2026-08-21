@@ -240,10 +240,11 @@
                 </a>
                 
                 <div class="d-flex align-items-center gap-2">
-                    <a href="/bookmarks" class="btn btn-outline-dark rounded-3 px-3 py-2 d-none d-md-flex align-items-center gap-2">
+                    <button onclick="toggleArticleBookmark()" class="btn btn-outline-dark rounded-3 px-2 py-2 d-flex align-items-center gap-1" id="article-bookmark-btn">
                         <i class="fas fa-bookmark"></i>
-                    </a>
-                    <a href="/" class="btn btn-outline-dark rounded-3 px-3 py-2 d-flex align-items-center gap-2">
+                        <span class="d-none d-sm-inline">Bookmark</span>
+                    </button>
+                    <a href="/" class="btn btn-outline-dark rounded-3 px-2 py-2 d-flex align-items-center gap-1">
                         <i class="fas fa-home"></i>
                         <span class="d-none d-sm-inline">Home</span>
                     </a>
@@ -294,15 +295,15 @@
                         <div class="d-flex align-items-center gap-2">
                             <span class="text-muted small me-2">Share this article</span>
                             <div class="d-flex gap-2">
-                                <a href="https://twitter.com/intent/tweet?text={{encodeURIComponent(title)}}&url={{encodeURIComponent(window.location.href)}}" target="_blank" class="btn-share" title="Share on Twitter">
+                                <button onclick="shareOnTwitter()" class="btn-share" title="Share on Twitter">
                                     <i class="fab fa-twitter"></i>
-                                </a>
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{encodeURIComponent(window.location.href)}}" target="_blank" class="btn-share" title="Share on Facebook">
+                                </button>
+                                <button onclick="shareOnFacebook()" class="btn-share" title="Share on Facebook">
                                     <i class="fab fa-facebook"></i>
-                                </a>
-                                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{encodeURIComponent(window.location.href)}}" target="_blank" class="btn-share" title="Share on LinkedIn">
+                                </button>
+                                <button onclick="shareOnLinkedIn()" class="btn-share" title="Share on LinkedIn">
                                     <i class="fab fa-linkedin"></i>
-                                </a>
+                                </button>
                                 <button onclick="copyShareLink()" class="btn-share border-0 bg-transparent" title="Copy link">
                                     <i class="fas fa-link"></i>
                                 </button>
@@ -329,6 +330,21 @@
 
         function getShareTitle() {
             return document.title.replace(` - {{siteName}}`, '');
+        }
+
+        function shareOnTwitter() {
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareTitle())}&url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`;
+            window.open(url, '_blank', 'width=600,height=400');
         }
 
         async function copyShareLink() {
@@ -379,6 +395,80 @@
                 }, 500);
             }, 3000);
         }
+
+        function getArticlePermalink() {
+            const path = window.location.pathname;
+            const parts = path.split('/');
+            return parts[parts.length - 1];
+        }
+
+        function getArticleBookmarks() {
+            try {
+                return JSON.parse(localStorage.getItem('blog_bookmarks') || '[]');
+            } catch {
+                return [];
+            }
+        }
+
+        function saveArticleBookmarks(bookmarks) {
+            try {
+                localStorage.setItem('blog_bookmarks', JSON.stringify(bookmarks));
+            } catch (error) {
+                console.error('Error saving bookmarks:', error);
+            }
+        }
+
+        function isArticleBookmarked(permalink) {
+            const bookmarks = getArticleBookmarks();
+            return bookmarks.some(bookmark => bookmark.permalink === permalink);
+        }
+
+        function toggleArticleBookmark() {
+            const permalink = getArticlePermalink();
+            const title = document.title.replace(' - {{siteName}}', '');
+            const bookmarks = getArticleBookmarks();
+            const existingIndex = bookmarks.findIndex(bookmark => bookmark.permalink === permalink);
+            const btn = document.getElementById('article-bookmark-btn');
+            
+            if (existingIndex > -1) {
+                bookmarks.splice(existingIndex, 1);
+                saveArticleBookmarks(bookmarks);
+                if (btn) {
+                    btn.classList.remove('text-primary');
+                    btn.classList.add('text-dark');
+                }
+                showNotification('Bookmark removed', 'warning');
+            } else {
+                bookmarks.push({
+                    permalink,
+                    title,
+                    img: '',
+                    label: '',
+                    bookmarkedAt: new Date().toISOString()
+                });
+                saveArticleBookmarks(bookmarks);
+                if (btn) {
+                    btn.classList.remove('text-dark');
+                    btn.classList.add('text-primary');
+                }
+                showNotification('Article bookmarked!', 'success');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Strip credentials from URL to prevent fetch issues
+            if (window.location.href.includes('@')) {
+                const newUrl = window.location.href.replace(/\/\/.*@/, '//');
+                history.replaceState(null, '', newUrl);
+            }
+            
+            const permalink = getArticlePermalink();
+            const btn = document.getElementById('article-bookmark-btn');
+            if (btn && isArticleBookmarked(permalink)) {
+                btn.classList.remove('text-dark');
+                btn.classList.add('text-primary');
+            }
+        });
 
         function renderMarkdown() {
             const contentElement = document.getElementById('article-content');
