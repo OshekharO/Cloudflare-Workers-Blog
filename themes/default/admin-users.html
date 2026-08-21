@@ -303,16 +303,20 @@
                     <div>
                         <h3 class="fw-bold text-dark mb-3">Admin Roles Guide</h3>
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="role-badge superadmin"><i class="fas fa-shield-halved me-1"></i>Super Admin</span>
-                                    <span class="text-muted small">Full system access, can manage users</span>
+                            <div class="col-12 col-md-6">
+                                <div class="p-3 rounded-3" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="role-badge superadmin"><i class="fas fa-shield-halved me-1"></i>Super Admin</span>
+                                    </div>
+                                    <p class="text-muted small mb-0 mt-2">Full system access, can manage users</p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="role-badge admin"><i class="fas fa-user me-1"></i>Admin</span>
-                                    <span class="text-muted small">Content management only</span>
+                            <div class="col-12 col-md-6">
+                                <div class="p-3 rounded-3" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="role-badge admin"><i class="fas fa-user me-1"></i>Admin</span>
+                                    </div>
+                                    <p class="text-muted small mb-0 mt-2">Content management only</p>
                                 </div>
                             </div>
                         </div>
@@ -493,18 +497,18 @@
 
             container.innerHTML = admins.map((admin, index) => `
                 <div class="user-row">
-                    <div class="d-flex flex-column sm:flex-row sm:justify-content-between sm:align-items-center gap-3">
+                    <div class="d-flex flex-column sm:flex-row sm:align-items-center gap-3">
                         <div class="d-flex align-items-center gap-3">
                             <div class="avatar bg-gradient-to-br ${colors[index % colors.length]}" 
                                  style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
                                 ${admin.username.charAt(0).toUpperCase()}
                             </div>
-                            <div class="min-w-0 flex-grow-1">
+                            <div class="min-w-0">
                                 <h3 class="fw-semibold text-dark mb-0">${admin.username}</h3>
                                 <p class="text-muted small mb-0 truncate">${admin.email}</p>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center flex-wrap gap-2 ms-0 sm:ms-4">
+                        <div class="d-flex align-items-center flex-wrap gap-2 ms-0 sm:ms-5">
                             <span class="role-badge ${admin.role === 'superadmin' ? 'superadmin' : 'admin'}">
                                 <i class="fas ${admin.role === 'superadmin' ? 'fa-shield-halved' : 'fa-user'} me-1"></i>${admin.role}
                             </span>
@@ -512,7 +516,7 @@
                                 <i class="fas ${admin.status === 'active' ? 'fa-check-circle' : 'fa-times-circle'} me-1"></i>${admin.status}
                             </span>
                         </div>
-                        <div class="d-flex gap-2 ms-0 sm:ms-4">
+                        <div class="d-flex gap-2 ms-0 sm:ms-5">
                             <button onclick="editAdmin('${admin.id}')" class="icon-btn edit" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -559,7 +563,7 @@
             };
 
             try {
-                const response = await fetch('/api/admins', {
+                const response = await fetch(window.location.origin + '/api/admins', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),
