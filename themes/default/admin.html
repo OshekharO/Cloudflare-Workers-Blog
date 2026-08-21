@@ -1,414 +1,239 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - {{siteName}}</title>
+    <title>Admin Dashboard - {{siteName}}</title>
     
-    <!-- Bootstrap 5.3.3 CSS -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 6.5.1 -->
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* CSS Variables for Light/Dark Themes */
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --accent-color: #06b6d4;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            
-            --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-            --border-radius: 16px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Light mode colors */
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --card-border: #e5e7eb;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-            --sidebar-bg: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
-            --navbar-bg: #1e293b;
-            --table-hover: #f8fafc;
-        }
-        
-        [data-bs-theme="dark"] {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --card-border: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --sidebar-bg: linear-gradient(180deg, #312e81 0%, #4c1d95 100%);
-            --navbar-bg: #0f172a;
-            --table-hover: #334155;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-        }
-        
         * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f0f9ff 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
         
-        /* Sidebar Styling */
-        .sidebar {
-            background: var(--sidebar-bg);
-            color: white;
-            min-height: calc(100vh - 60px);
-            box-shadow: var(--shadow-lg);
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
         
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.85);
-            padding: 0.875rem 1.25rem;
-            margin: 0.25rem 0.5rem;
-            border-radius: 12px;
-            transition: var(--transition);
-            font-weight: 500;
-            font-size: 0.9375rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            transform: translateX(6px);
-        }
-        
-        .sidebar .nav-link i {
-            font-size: 1.1rem;
-            width: 24px;
-            text-align: center;
-        }
-        
-        .sidebar-brand {
+        .action-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(99, 102, 241, 0.08);
+            border-radius: 20px;
             padding: 1.5rem;
-            font-weight: 700;
-            font-size: 1.25rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-            margin-bottom: 1rem;
-        }
-        
-        /* Card Styling */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-        }
-        
-        .card:hover {
-            box-shadow: var(--shadow-md);
-        }
-        
-        .card-header {
-            background: transparent;
-            border-bottom: 1px solid var(--card-border);
-            padding: 1.25rem 1.5rem;
-        }
-        
-        .card-body {
-            padding: 1.5rem;
-        }
-        
-        /* Navbar */
-        .navbar-admin {
-            background: var(--navbar-bg) !important;
-            padding: 0.75rem 0;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        /* Theme Toggle */
-        .theme-toggle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: transparent;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .theme-toggle:hover {
-            transform: rotate(180deg);
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Tabs */
-        .nav-tabs {
-            border-bottom: 2px solid var(--card-border);
-            gap: 0.5rem;
-        }
-        
-        .nav-tabs .nav-link {
-            border: none;
-            border-bottom: 3px solid transparent;
-            padding: 0.875rem 1.5rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            transition: var(--transition);
-            margin-bottom: -2px;
-            border-radius: 0;
-        }
-        
-        .nav-tabs .nav-link:hover {
-            color: var(--primary-color);
-            border-bottom-color: transparent;
-        }
-        
-        .nav-tabs .nav-link.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-            background: transparent;
-        }
-        
-        /* Table */
-        .table {
-            margin-bottom: 0;
-            color: var(--text-primary);
-        }
-        
-        .table th {
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.75px;
-            color: var(--text-muted);
-            padding: 1rem;
-            border-bottom: 2px solid var(--card-border);
-            background: transparent;
-        }
-        
-        .table td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-color: var(--card-border);
-        }
-        
-        .table tbody tr {
-            transition: var(--transition);
-        }
-        
-        .table tbody tr:hover {
-            background-color: var(--table-hover);
-        }
-        
-        [data-bs-theme="dark"] .table-light {
-            --bs-table-bg: var(--card-bg);
-            --bs-table-border-color: var(--card-border);
-        }
-        
-        /* Buttons */
-        .btn-primary {
-            background: var(--primary-gradient);
-            border: none;
-            padding: 0.625rem 1.25rem;
-            font-weight: 500;
-            border-radius: 10px;
-            transition: var(--transition);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-        }
-        
-        .btn-outline-primary,
-        .btn-outline-danger,
-        .btn-outline-success,
-        .btn-outline-secondary {
-            border-radius: 10px;
-            transition: var(--transition);
-        }
-        
-        .btn-group-sm .btn {
-            padding: 0.4rem 0.6rem;
-            border-radius: 8px;
-        }
-        
-        /* Badges */
-        .badge {
-            padding: 0.4rem 0.75rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-            border-radius: 8px;
-        }
-        
-        .draft-row {
-            background-color: rgba(245, 158, 11, 0.1);
-        }
-        
-        [data-bs-theme="dark"] .draft-row {
-            background-color: rgba(245, 158, 11, 0.15);
-        }
-        
-        .badge-draft {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-        
-        /* Tool Cards */
-        .tool-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius);
-            padding: 1.75rem;
-            text-align: center;
-            transition: var(--transition);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
             height: 100%;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
         
-        .tool-card:hover {
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-4px);
+        .action-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.1);
+            border-color: rgba(99, 102, 241, 0.2);
+            color: inherit;
         }
         
-        .tool-card .icon-wrapper {
-            width: 64px;
-            height: 64px;
+        .icon-wrapper {
+            width: 56px;
+            height: 56px;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.5rem;
+            transition: all 0.3s ease;
         }
         
-        .tool-card h6 {
+        .action-card:hover .icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
             font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
+            color: #64748b;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
         }
         
-        .tool-card p {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
+        .tab-btn.active {
+            color: #4f46e5;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
         }
         
-        /* SEO Links */
-        .seo-link {
-            display: flex;
-            align-items: center;
-            padding: 1.25rem;
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-            background: var(--card-bg);
+        .tab-btn:hover:not(.active) {
+            background: rgba(79, 70, 229, 0.05);
         }
         
-        .seo-link:hover {
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-sm);
+        .article-row {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .article-row:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            color: white;
+        }
+        
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+            color: white;
         }
         
-        /* Modal Styling */
-        .modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius);
+        .btn-secondary-custom {
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
         }
         
-        .modal-header, .modal-footer {
-            border-color: var(--card-border);
+        .btn-secondary-custom:hover {
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+            transform: translateY(-2px);
+            color: white;
         }
         
-        .form-control, .form-select {
-            background: var(--card-bg);
-            border-color: var(--card-border);
-            color: var(--text-primary);
+        .tool-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(99, 102, 241, 0.06);
         }
         
-        .form-control:focus, .form-select:focus {
-            background: var(--card-bg);
-            border-color: var(--primary-color);
-            color: var(--text-primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        .tool-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateX(5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
         }
         
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(99, 102, 241, 0.08);
         }
         
-        .fade-in {
-            animation: fadeIn 0.4s ease-out;
+        .stat-badge {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border-radius: 10px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4f46e5;
         }
         
-        /* Responsive */
-        @media (max-width: 992px) {
-            .sidebar {
-                min-height: auto;
-                padding: 1rem 0;
-            }
+        .category-tag {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            color: #4f46e5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
         
-        @media (max-width: 768px) {
-            .sidebar {
-                min-height: auto;
-            }
-            
-            .btn-group-sm .btn {
-                padding: 0.375rem 0.5rem;
-            }
-            
-            .card-header {
-                padding: 1rem 1.25rem;
-            }
-            
-            .card-body {
-                padding: 1.25rem;
-            }
-            
-            .nav-tabs .nav-link {
-                padding: 0.625rem 1rem;
-                font-size: 0.875rem;
-            }
+        .draft-tag {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #d97706;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
         
-        @media (max-width: 576px) {
-            .table-responsive {
-                font-size: 0.85rem;
-            }
-            
-            .card-body {
-                padding: 1rem;
-            }
-            
-            .table th, .table td {
-                padding: 0.75rem 0.5rem;
-            }
-            
-            .tool-card {
-                padding: 1.25rem;
-            }
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+        }
+        
+        .icon-btn:hover {
+            transform: scale(1.15);
+        }
+        
+        .icon-btn.edit {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #2563eb;
+        }
+        
+        .icon-btn.delete {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #dc2626;
+        }
+        
+        .icon-btn.publish {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #059669;
+        }
+        
+        .notification {
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(238, 242, 255, 0.3);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 10px;
         }
     </style>
     
@@ -416,252 +241,200 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-dark navbar-admin navbar-expand-lg">
-        <div class="container-fluid px-4">
-            <span class="navbar-brand d-flex align-items-center gap-2">
-                <i class="fa-solid fa-gauge-high"></i>
-                <span>Blog Admin</span>
-            </span>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto align-items-center gap-2">
-                    <a href="/" class="nav-link">
-                        <i class="fa-solid fa-eye me-1"></i> View Blog
-                    </a>
-                    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
-                        <i class="fa-solid fa-moon" id="theme-icon"></i>
-                    </button>
+    <nav class="navbar-custom sticky-top">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center me-3" 
+                         style="width: 44px; height: 44px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                        <i class="fas fa-gauge-high text-white fs-5"></i>
+                    </div>
+                    <div>
+                        <h1 class="fs-5 fw-bold text-dark mb-0">Admin Dashboard</h1>
+                        <p class="text-muted small mb-0 d-none d-sm-block">Manage your blog content</p>
+                    </div>
                 </div>
+                <a href="/" class="btn btn-outline-dark rounded-3 px-3 py-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-eye"></i>
+                    <span class="d-none d-sm-inline">View Blog</span>
+                </a>
             </div>
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-2 col-md-3 sidebar p-0">
-                <div class="sidebar-brand d-none d-md-block">
-                    <i class="fa-solid fa-shield-halved me-2"></i>Admin Panel
-                </div>
-                <div class="p-2 p-lg-3">
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#articles" data-bs-toggle="tab">
-                                <i class="fa-solid fa-newspaper"></i>
-                                <span>Articles</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/users">
-                                <i class="fa-solid fa-users"></i>
-                                <span>Users</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#tools" data-bs-toggle="tab">
-                                <i class="fa-solid fa-toolbox"></i>
-                                <span>Tools</span>
-                            </a>
-                        </li>
-                        <li class="nav-item mt-3">
-                            <a class="nav-link" href="/admin/edit">
-                                <i class="fa-solid fa-circle-plus"></i>
-                                <span>New Article</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+    <div class="container py-4">
+        <!-- Quick Actions -->
+        <div class="row g-3 g-md-4 mb-4">
+            <div class="col-6 col-md-3">
+                <a href="/admin/edit" class="action-card text-center">
+                    <div class="icon-wrapper bg-gradient-to-br from-info to-primary mx-auto mb-3" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                        <i class="fas fa-plus text-white fs-4"></i>
+                    </div>
+                    <h3 class="fw-semibold text-dark small mb-1">New Article</h3>
+                    <p class="text-muted d-none d-md-block small">Create new content</p>
+                </a>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <a href="/admin/users" class="action-card text-center">
+                    <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);">
+                        <i class="fas fa-user-gear text-white fs-4"></i>
+                    </div>
+                    <h3 class="fw-semibold text-dark small mb-1">Admin Users</h3>
+                    <p class="text-muted d-none d-md-block small">Manage access</p>
+                </a>
             </div>
             
-            <!-- Main Content -->
-            <div class="col-lg-10 col-md-9 py-4 px-4">
-                <div class="tab-content">
-                    <!-- Articles Tab -->
-                    <div class="tab-pane fade show active" id="articles">
-                        <div class="card fade-in">
-                            <div class="card-header">
-                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
-                                    <h4 class="mb-0 d-flex align-items-center gap-2">
-                                        <i class="fa-solid fa-file-lines" style="color: var(--primary-color);"></i>
-                                        Articles
-                                    </h4>
-                                    <a href="/admin/edit" class="btn btn-primary">
-                                        <i class="fa-solid fa-plus me-2"></i>New Article
-                                    </a>
-                                </div>
+            <div class="col-6 col-md-3">
+                <button onclick="exportArticles()" class="action-card text-center border-0 bg-transparent">
+                    <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <i class="fas fa-download text-white fs-4"></i>
+                    </div>
+                    <h3 class="fw-semibold text-dark small mb-1">Export</h3>
+                    <p class="text-muted d-none d-md-block small">Download backup</p>
+                </button>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <button onclick="openImportModal()" class="action-card text-center border-0 bg-transparent">
+                    <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);">
+                        <i class="fas fa-upload text-white fs-4"></i>
+                    </div>
+                    <h3 class="fw-semibold text-dark small mb-1">Import</h3>
+                    <p class="text-muted d-none d-md-block small">Restore data</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Articles Management -->
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; background: rgba(255,255,255,0.95);">
+            <div class="card-header border-0 bg-white px-4 py-3" style="border-radius: 20px 20px 0 0;">
+                <div class="d-flex flex-column sm:flex-row sm:justify-content-between sm:align-items-center gap-3">
+                    <div>
+                        <h2 class="fw-bold text-dark mb-1">Articles</h2>
+                        <p class="text-muted small mb-0">Manage your published and draft posts</p>
+                    </div>
+                    <a href="/admin/edit" class="btn btn-primary-custom text-white">
+                        <i class="fas fa-plus me-2"></i>New Article
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="d-flex gap-2 mb-4 overflow-x-auto pb-2">
+                    <button id="published-tab" class="tab-btn active">
+                        <i class="fas fa-newspaper me-2"></i>Published
+                    </button>
+                    <button id="drafts-tab" class="tab-btn">
+                        <i class="fas fa-file-lines me-2"></i>Drafts
+                    </button>
+                </div>
+
+                <div id="published-list">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="text-muted">Loading articles...</p>
+                    </div>
+                </div>
+
+                <div id="drafts-list" class="d-none">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="text-muted">Loading drafts...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="row g-4">
+            <!-- SEO Tools -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 20px; background: rgba(255,255,255,0.95);">
+                    <div class="card-header border-0 bg-white px-4 py-3" style="border-radius: 20px 20px 0 0;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px; background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);">
+                                <i class="fas fa-chart-line text-white"></i>
                             </div>
-                            <div class="card-body">
-                                <!-- Tabs -->
-                                <ul class="nav nav-tabs mb-4" id="articlesTab" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="published-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">
-                                            <i class="fa-solid fa-check-circle me-1"></i>Published
-                                        </button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="drafts-tab" data-bs-toggle="tab" data-bs-target="#drafts" type="button" role="tab">
-                                            <i class="fa-solid fa-file-pen me-1"></i>Drafts
-                                        </button>
-                                    </li>
-                                </ul>
-                                
-                                <!-- Tab Content -->
-                                <div class="tab-content" id="articlesTabContent">
-                                    <!-- Published Articles -->
-                                    <div class="tab-pane fade show active" id="published" role="tabpanel">
-                                        <div id="published-list">
-                                            <div class="text-center py-5">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Drafts -->
-                                    <div class="tab-pane fade" id="drafts" role="tabpanel">
-                                        <div id="drafts-list">
-                                            <div class="text-center py-5">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <h2 class="fw-bold text-dark mb-0">SEO Tools</h2>
                         </div>
                     </div>
-
-                    <!-- Tools Tab -->
-                    <div class="tab-pane fade" id="tools">
-                        <div class="row g-4 fade-in">
-                            <!-- Export/Import Cards -->
-                            <div class="col-xl-6 col-lg-12">
-                                <div class="card h-100">
-                                    <div class="card-header">
-                                        <h5 class="card-title mb-0 d-flex align-items-center gap-2">
-                                            <i class="fa-solid fa-database" style="color: var(--primary-color);"></i>
-                                            Data Management
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row g-4">
-                                            <div class="col-md-6">
-                                                <div class="tool-card">
-                                                    <div class="icon-wrapper" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));">
-                                                        <i class="fa-solid fa-download" style="color: #10b981;"></i>
-                                                    </div>
-                                                    <h6>Export Articles</h6>
-                                                    <p>Download all articles as JSON backup</p>
-                                                    <button onclick="exportArticles()" class="btn btn-success btn-sm w-100">
-                                                        <i class="fa-solid fa-cloud-arrow-down me-2"></i>Export
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="tool-card">
-                                                    <div class="icon-wrapper" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.2));">
-                                                        <i class="fa-solid fa-upload" style="color: #6366f1;"></i>
-                                                    </div>
-                                                    <h6>Import Articles</h6>
-                                                    <p>Upload JSON file to restore articles</p>
-                                                    <button onclick="openImportModal()" class="btn btn-primary btn-sm w-100">
-                                                        <i class="fa-solid fa-cloud-arrow-up me-2"></i>Import
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div class="card-body p-4">
+                        <a href="/rss.xml" target="_blank" class="tool-card d-flex align-items-center justify-content-between mb-3 text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 44px; height: 44px; background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);">
+                                    <i class="fas fa-rss text-orange-500"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-semibold text-dark mb-0">RSS Feed</h3>
+                                    <p class="text-muted small mb-0">Subscribe to content updates</p>
                                 </div>
                             </div>
-
-                            <!-- System Tools -->
-                            <div class="col-xl-6 col-lg-12">
-                                <div class="card h-100">
-                                    <div class="card-header">
-                                        <h5 class="card-title mb-0 d-flex align-items-center gap-2">
-                                            <i class="fa-solid fa-screwdriver-wrench" style="color: var(--warning-color);"></i>
-                                            System Tools
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row g-4">
-                                            <div class="col-md-6">
-                                                <div class="tool-card">
-                                                    <div class="icon-wrapper" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.2));">
-                                                        <i class="fa-solid fa-bug" style="color: #f59e0b;"></i>
-                                                    </div>
-                                                    <h6>Debug Info</h6>
-                                                    <p>View system information and diagnostics</p>
-                                                    <button onclick="showDebugInfo()" class="btn btn-warning btn-sm w-100">
-                                                        <i class="fa-solid fa-terminal me-2"></i>Debug
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="tool-card">
-                                                    <div class="icon-wrapper" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));">
-                                                        <i class="fa-solid fa-hammer" style="color: #ef4444;"></i>
-                                                    </div>
-                                                    <h6>Fix Articles</h6>
-                                                    <p>Repair missing or corrupted articles</p>
-                                                    <button onclick="fixMissingArticles()" class="btn btn-danger btn-sm w-100">
-                                                        <i class="fa-solid fa-wrench me-2"></i>Fix
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <i class="fas fa-external-link-alt text-muted"></i>
+                        </a>
+                        
+                        <a href="/sitemap.xml" target="_blank" class="tool-card d-flex align-items-center justify-content-between text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 44px; height: 44px; background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);">
+                                    <i class="fas fa-sitemap text-purple-500"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-semibold text-dark mb-0">Sitemap</h3>
+                                    <p class="text-muted small mb-0">Search engine indexing</p>
                                 </div>
                             </div>
+                            <i class="fas fa-external-link-alt text-muted"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-                            <!-- SEO Tools -->
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="card-title mb-0 d-flex align-items-center gap-2">
-                                            <i class="fa-solid fa-chart-line" style="color: var(--accent-color);"></i>
-                                            SEO & Feeds
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row g-4">
-                                            <div class="col-md-6">
-                                                <div class="seo-link">
-                                                    <div class="icon-wrapper me-3" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(6, 182, 212, 0.2)); width: 56px; height: 56px; flex-shrink: 0;">
-                                                        <i class="fa-solid fa-rss" style="color: #06b6d4;"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="mb-1">RSS Feed</h6>
-                                                        <p class="text-muted small mb-2">Subscribe to your content</p>
-                                                        <a href="/rss.xml" target="_blank" class="btn btn-outline-info btn-sm">
-                                                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>Open RSS
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="seo-link">
-                                                    <div class="icon-wrapper me-3" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2)); width: 56px; height: 56px; flex-shrink: 0;">
-                                                        <i class="fa-solid fa-sitemap" style="color: #10b981;"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="mb-1">Sitemap</h6>
-                                                        <p class="text-muted small mb-2">Search engine optimization</p>
-                                                        <a href="/sitemap.xml" target="_blank" class="btn btn-outline-success btn-sm">
-                                                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>Open Sitemap
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+            <!-- System Tools -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 20px; background: rgba(255,255,255,0.95);">
+                    <div class="card-header border-0 bg-white px-4 py-3" style="border-radius: 20px 20px 0 0;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                                <i class="fas fa-cog text-white"></i>
                             </div>
+                            <h2 class="fw-bold text-dark mb-0">System Tools</h2>
                         </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <button onclick="fixMissingArticles()" class="tool-card w-100 d-flex align-items-center justify-content-between text-start border-0 bg-transparent mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 44px; height: 44px; background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);">
+                                    <i class="fas fa-wrench text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-semibold text-dark mb-0">Fix Articles</h3>
+                                    <p class="text-muted small mb-0">Repair missing data</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-muted"></i>
+                        </button>
+                        
+                        <button onclick="showDebugInfo()" class="tool-card w-100 d-flex align-items-center justify-content-between text-start border-0 bg-transparent">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 44px; height: 44px; background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);">
+                                    <i class="fas fa-bug text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fw-semibold text-dark mb-0">System Info</h3>
+                                    <p class="text-muted small mb-0">Debug information</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-muted"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -669,29 +442,70 @@
     </div>
 
     <!-- Import Modal -->
-    <div class="modal fade" id="importModal" tabindex="-1">
+    <div id="import-modal" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title d-flex align-items-center gap-2">
-                        <i class="fa-solid fa-file-import" style="color: var(--primary-color);"></i>
-                        Import Articles
-                    </h5>
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center" 
+                             style="width: 40px; height: 40px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);">
+                            <i class="fas fa-upload text-white"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold">Import Articles</h5>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Select JSON File</label>
-                        <input type="file" id="importFile" accept=".json" class="form-control">
-                        <div class="form-text">Choose a JSON file previously exported from this blog</div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Select File</label>
+                        <input type="file" id="import-file" accept=".json" class="form-control rounded-3 border-2" style="border-color: #eef2ff;">
+                        <p class="text-muted small mt-2">
+                            <i class="fas fa-info-circle me-1"></i>Select exported JSON backup file
+                        </p>
+                    </div>
+                    
+                    <div class="d-flex gap-3">
+                        <button type="button" class="btn btn-light flex-fill py-2 rounded-3" data-bs-dismiss="modal">Cancel</button>
+                        <button onclick="importArticles()" class="btn btn-secondary-custom flex-fill py-2 rounded-3">
+                            <i class="fas fa-upload me-2"></i>Import
+                        </button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa-solid fa-xmark me-1"></i>Cancel
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="importArticles()">
-                        <i class="fa-solid fa-file-import me-1"></i>Import
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Modal -->
+    <div id="debug-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center" 
+                             style="width: 40px; height: 40px; background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);">
+                            <i class="fas fa-bug text-purple-600"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold">System Information</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="debug-content" class="bg-light rounded-3 p-4">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="text-muted">Loading system info...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light flex-fill py-2 rounded-3" data-bs-dismiss="modal">Close</button>
+                    <button onclick="fixMissingArticles()" class="btn btn-secondary-custom flex-fill py-2 rounded-3">
+                        <i class="fas fa-wrench me-2"></i>Fix Articles
                     </button>
                 </div>
             </div>
@@ -700,99 +514,88 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Theme Toggle Functionality
-        function getPreferredTheme() {
-            const stored = localStorage.getItem('theme');
-            if (stored) return stored;
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-bs-theme', theme);
-            localStorage.setItem('theme', theme);
-            updateThemeIcon(theme);
-        }
-        
-        function updateThemeIcon(theme) {
-            const icon = document.getElementById('theme-icon');
-            if (icon) {
-                icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        let importModal, debugModal;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            importModal = new bootstrap.Modal(document.getElementById('import-modal'));
+            debugModal = new bootstrap.Modal(document.getElementById('debug-modal'));
+            loadArticles();
+            loadDrafts();
+        });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).classList.add('active');
+            document.getElementById('published-list').classList.toggle('d-none', tab !== 'published');
+            document.getElementById('drafts-list').classList.toggle('d-none', tab !== 'drafts');
+
+            if (tab === 'published') {
+                loadArticles();
+            } else if (tab === 'drafts') {
+                loadDrafts();
             }
         }
-        
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-bs-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            setTheme(next);
-        }
-        
-        // Initialize theme on load
-        setTheme(getPreferredTheme());
 
-        // Article Management Functions
+        document.getElementById('published-tab').addEventListener('click', () => switchTab('published'));
+        document.getElementById('drafts-tab').addEventListener('click', () => switchTab('drafts'));
+
         async function loadArticles() {
             try {
                 const response = await fetch('/api/articles');
                 if (!response.ok) throw new Error('Failed to load articles');
                 const articles = await response.json();
                 const container = document.getElementById('published-list');
-                
+
                 if (articles.length === 0) {
                     container.innerHTML = `
-                        <div class="text-center py-5 fade-in">
-                            <i class="fa-solid fa-inbox fa-4x text-muted mb-4"></i>
-                            <h5 class="text-muted mb-3">No published articles yet</h5>
-                            <p class="text-muted mb-4">Create your first article to get started</p>
-                            <a href="/admin/edit" class="btn btn-primary">
-                                <i class="fa-solid fa-plus me-2"></i>Create Article
+                        <div class="text-center py-5">
+                            <i class="fas fa-newspaper text-muted mb-3" style="font-size: 2rem; opacity: 0.3;"></i>
+                            <h3 class="fw-bold text-dark mb-2">No Published Articles</h3>
+                            <p class="text-muted mb-4">Start creating amazing content!</p>
+                            <a href="/admin/edit" class="btn btn-primary-custom text-white">
+                                <i class="fas fa-plus me-2"></i>Create Article
                             </a>
                         </div>
                     `;
                     return;
                 }
 
-                container.innerHTML = `
-                    <div class="table-responsive fade-in">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th><i class="fa-solid fa-heading me-2"></i>Title</th>
-                                    <th><i class="fa-solid fa-tag me-2"></i>Label</th>
-                                    <th><i class="fa-regular fa-calendar me-2"></i>Date</th>
-                                    <th width="120"><i class="fa-solid fa-gear me-2"></i>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${articles.map(article => `
-                                    <tr>
-                                        <td>
-                                            <strong style="color: var(--text-primary);">${article.title}</strong>
-                                            <br><small class="text-muted"><i class="fa-solid fa-link me-1"></i>/${article.permalink}</small>
-                                        </td>
-                                        <td><span class="badge bg-primary">${article.label}</span></td>
-                                        <td style="color: var(--text-secondary);">${new Date(article.createDate).toLocaleDateString()}</td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="/admin/edit?permalink=${article.permalink}" class="btn btn-outline-primary" title="Edit">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </a>
-                                                <a href="/article/${article.permalink}" target="_blank" class="btn btn-outline-secondary" title="View">
-                                                    <i class="fa-solid fa-eye"></i>
-                                                </a>
-                                                <button onclick="deleteArticle('${article.permalink}')" class="btn btn-outline-danger" title="Delete">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                container.innerHTML = articles.map(article => `
+                    <div class="article-row">
+                        <div class="d-flex flex-column sm:flex-row sm:justify-content-between sm:align-items-center gap-3">
+                            <div class="flex-grow-1 min-w-0">
+                                <h3 class="fw-semibold text-dark mb-2">${article.title}</h3>
+                                <div class="d-flex align-items-center flex-wrap gap-2">
+                                    <span class="category-tag">${article.label}</span>
+                                    <span class="text-muted small d-flex align-items-center">
+                                        <i class="far fa-calendar me-1 text-primary"></i>
+                                        ${new Date(article.createDate).toLocaleDateString()}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 sm:ms-4">
+                                <a href="/admin/edit?permalink=${article.permalink}" class="icon-btn edit" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button onclick="deleteArticle('${article.permalink}')" class="icon-btn delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                `;
+                `).join('');
             } catch (error) {
                 console.error('Error loading articles:', error);
-                showAlert('Error loading articles', 'danger');
+                const container = document.getElementById('published-list');
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 2rem;"></i>
+                        <h3 class="fw-bold text-dark mb-2">Error Loading Articles</h3>
+                        <button onclick="loadArticles()" class="btn btn-primary-custom text-white mt-2">
+                            <i class="fas fa-redo me-2"></i>Try Again
+                        </button>
+                    </div>
+                `;
             }
         }
 
@@ -802,82 +605,74 @@
                 if (!response.ok) throw new Error('Failed to load drafts');
                 const drafts = await response.json();
                 const container = document.getElementById('drafts-list');
-                
+
                 if (drafts.length === 0) {
                     container.innerHTML = `
-                        <div class="text-center py-5 fade-in">
-                            <i class="fa-solid fa-file-pen fa-4x text-muted mb-4"></i>
-                            <h5 class="text-muted mb-3">No drafts yet</h5>
-                            <p class="text-muted">Save articles as drafts to see them here</p>
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-lines text-muted mb-3" style="font-size: 2rem; opacity: 0.3;"></i>
+                            <h3 class="fw-bold text-dark mb-2">No Drafts</h3>
+                            <p class="text-muted">Your draft articles will appear here</p>
                         </div>
                     `;
                     return;
                 }
 
-                container.innerHTML = `
-                    <div class="table-responsive fade-in">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th><i class="fa-solid fa-heading me-2"></i>Title</th>
-                                    <th><i class="fa-solid fa-tag me-2"></i>Label</th>
-                                    <th><i class="fa-regular fa-calendar me-2"></i>Last Modified</th>
-                                    <th width="160"><i class="fa-solid fa-gear me-2"></i>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${drafts.map(draft => `
-                                    <tr class="draft-row">
-                                        <td>
-                                            <div class="d-flex align-items-center gap-2 mb-1">
-                                                <span class="badge badge-draft text-white">
-                                                    <i class="fa-solid fa-file-pen me-1"></i>Draft
-                                                </span>
-                                            </div>
-                                            <strong style="color: var(--text-primary);">${draft.title}</strong>
-                                            <br><small class="text-muted"><i class="fa-solid fa-link me-1"></i>/${draft.permalink}</small>
-                                        </td>
-                                        <td><span class="badge bg-primary">${draft.label}</span></td>
-                                        <td style="color: var(--text-secondary);">${new Date(draft.createDate).toLocaleDateString()}</td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="/admin/edit?permalink=${draft.permalink}" class="btn btn-outline-primary" title="Edit">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </a>
-                                                <button onclick="publishDraft('${draft.permalink}')" class="btn btn-outline-success" title="Publish">
-                                                    <i class="fa-solid fa-paper-plane"></i>
-                                                </button>
-                                                <button onclick="deleteArticle('${draft.permalink}')" class="btn btn-outline-danger" title="Delete">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                container.innerHTML = drafts.map(draft => `
+                    <div class="article-row">
+                        <div class="d-flex flex-column sm:flex-row sm:justify-content-between sm:align-items-center gap-3">
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                    <span class="draft-tag">Draft</span>
+                                    <h3 class="fw-semibold text-dark mb-0">${draft.title}</h3>
+                                </div>
+                                <div class="d-flex align-items-center flex-wrap gap-2">
+                                    <span class="category-tag">${draft.label}</span>
+                                    <span class="text-muted small d-flex align-items-center">
+                                        <i class="far fa-calendar me-1 text-primary"></i>
+                                        ${new Date(draft.createDate).toLocaleDateString()}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 sm:ms-4">
+                                <a href="/admin/edit?permalink=${draft.permalink}" class="icon-btn edit" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button onclick="publishDraft('${draft.permalink}')" class="icon-btn publish" title="Publish">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                                <button onclick="deleteArticle('${draft.permalink}')" class="icon-btn delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                `;
+                `).join('');
             } catch (error) {
                 console.error('Error loading drafts:', error);
-                showAlert('Error loading drafts', 'danger');
+                const container = document.getElementById('drafts-list');
+                container.innerHTML = `
+                    <div class="text-center py-5 text-danger">
+                        <i class="fas fa-exclamation-triangle mb-3" style="font-size: 2rem;"></i>
+                        <h3 class="fw-bold mb-2">Error Loading Drafts</h3>
+                    </div>
+                `;
             }
         }
 
         async function deleteArticle(permalink) {
-            if (!confirm('Are you sure you want to delete this article? This action cannot be undone.')) return;
-            
+            if (!confirm('Are you sure you want to delete this article?')) return;
+
             try {
                 const response = await fetch('/api/articles/' + permalink, { method: 'DELETE' });
                 if (response.ok) {
-                    showAlert('Article deleted successfully', 'success');
+                    showNotification('Article deleted successfully');
                     loadArticles();
                     loadDrafts();
                 } else {
                     throw new Error('Delete failed');
                 }
             } catch (error) {
-                showAlert('Error deleting article', 'danger');
+                showNotification('Error deleting article', 'error');
             }
         }
 
@@ -885,34 +680,31 @@
             try {
                 const response = await fetch('/api/articles/' + permalink);
                 if (!response.ok) throw new Error('Draft not found');
-                
                 const draft = await response.json();
                 draft.status = 'published';
-                
+
                 const updateResponse = await fetch('/api/articles/' + permalink, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(draft)
                 });
-                
+
                 if (updateResponse.ok) {
-                    showAlert('Draft published successfully!', 'success');
+                    showNotification('Draft published successfully!');
                     loadDrafts();
                     loadArticles();
                 } else {
                     throw new Error('Publish failed');
                 }
             } catch (error) {
-                showAlert('Error publishing draft', 'danger');
+                showNotification('Error publishing draft', 'error');
             }
         }
 
-        // Tools Functions
         async function exportArticles() {
             try {
                 const response = await fetch('/api/export');
                 if (!response.ok) throw new Error('Export failed');
-                
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -922,35 +714,30 @@
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
-                
-                showAlert('Articles exported successfully!', 'success');
+                showNotification('Articles exported successfully');
             } catch (error) {
-                showAlert('Error exporting articles', 'danger');
+                showNotification('Export failed', 'error');
             }
         }
 
         function openImportModal() {
-            const modal = new bootstrap.Modal(document.getElementById('importModal'));
-            modal.show();
+            importModal.show();
+            document.getElementById('import-file').value = '';
         }
 
         async function importArticles() {
-            const fileInput = document.getElementById('importFile');
+            const fileInput = document.getElementById('import-file');
             const file = fileInput.files[0];
-            
             if (!file) {
-                showAlert('Please select a file', 'warning');
+                showNotification('Please select a file', 'warning');
                 return;
             }
             
             try {
                 const text = await file.text();
                 const articles = JSON.parse(text);
-                
-                if (!Array.isArray(articles)) {
-                    throw new Error('Invalid file format');
-                }
-                
+                if (!Array.isArray(articles)) throw new Error('Invalid file format');
+
                 const response = await fetch('/api/import', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -958,16 +745,15 @@
                 });
                 
                 const result = await response.json();
-                
                 if (response.ok) {
-                    showAlert(`Successfully imported ${result.imported} articles!`, 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+                    showNotification(`Successfully imported ${result.imported} articles`);
+                    importModal.hide();
                     loadArticles();
                 } else {
-                    throw new Error(result.error || 'Import failed');
+                    throw new Error(result.error);
                 }
             } catch (error) {
-                showAlert('Error importing articles: ' + error.message, 'danger');
+                showNotification('Import failed: ' + error.message, 'error');
             }
         }
 
@@ -976,20 +762,57 @@
                 const response = await fetch('/api/debug');
                 const data = await response.json();
                 
-                const debugInfo = `
-📊 Debug Information
-━━━━━━━━━━━━━━━━━━━━━━━━
-Total Articles: ${data.total}
-Published: ${data.allArticles.filter(a => a.exists && a.index.status !== 'draft').length}
-Drafts: ${data.allArticles.filter(a => a.exists && a.index.status === 'draft').length}
-Missing Data: ${data.allArticles.filter(a => !a.exists).length}
-System Index: ${data.systemIndexNum}
-━━━━━━━━━━━━━━━━━━━━━━━━
-                `.trim();
+                let debugHTML = `
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-3 p-4 border">
+                            <h4 class="fw-bold text-dark mb-3">System Summary</h4>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="p-3 rounded-3 text-center" style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);">
+                                        <span class="fw-bold text-primary fs-3">${data.total}</span>
+                                        <p class="text-muted small mb-0">Total Articles</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 rounded-3 text-center" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);">
+                                        <span class="fw-bold text-info fs-3">${data.systemIndexNum || 'N/A'}</span>
+                                        <p class="text-muted small mb-0">System Index</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `;
+
+                if (data.allArticles && data.allArticles.length > 0) {
+                    debugHTML += `
+                        <div class="bg-white rounded-3 p-4 border">
+                            <h4 class="fw-bold text-dark mb-3">Article Status</h4>
+                            <div class="d-flex flex-column gap-2" style="max-height: 300px; overflow-y: auto;">
+                    `;
+                    
+                    data.allArticles.forEach(item => {
+                        const statusIcon = item.exists ? 'fa-check-circle text-success' : 'fa-times-circle text-danger';
+                        const statusBg = item.exists ? 'bg-success' : 'bg-danger';
+                        debugHTML += `
+                            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 ${statusBg} bg-opacity-10">
+                                <span class="fw-medium text-dark flex-grow-1 me-3">${item.index.title}</span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas ${statusIcon}"></i>
+                                    <span class="stat-badge">${item.index.status || 'published'}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    debugHTML += `</div></div>`;
+                }
+
+                debugHTML += `</div>`;
                 
-                alert(debugInfo);
+                document.getElementById('debug-content').innerHTML = debugHTML;
+                debugModal.show();
             } catch (error) {
-                showAlert('Error loading debug information', 'danger');
+                showNotification('Error loading debug info', 'error');
             }
         }
 
@@ -1001,58 +824,51 @@ System Index: ${data.systemIndexNum}
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showAlert(`Fixed ${result.fixedCount} missing articles`, 'success');
+                    showNotification(`Fixed ${result.fixedCount} articles`, 'success');
+                    debugModal.hide();
                     loadArticles();
                     loadDrafts();
                 } else {
                     throw new Error(result.error);
                 }
             } catch (error) {
-                showAlert('Error fixing articles: ' + error.message, 'danger');
+                showNotification('Error fixing articles: ' + error.message, 'error');
             }
         }
 
-        // Utility Functions
-        function showAlert(message, type) {
-            const iconMap = {
-                success: 'fa-solid fa-circle-check',
-                warning: 'fa-solid fa-triangle-exclamation',
-                info: 'fa-solid fa-circle-info',
-                danger: 'fa-solid fa-circle-xmark'
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: 'bg-success',
+                warning: 'bg-warning',
+                error: 'bg-danger',
+                info: 'bg-primary'
             };
             
-            // Remove existing alerts
-            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+            const icons = {
+                success: 'fa-check-circle',
+                warning: 'fa-exclamation-triangle',
+                error: 'fa-times-circle',
+                info: 'fa-info-circle'
+            };
             
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3 shadow-lg`;
-            alert.style.zIndex = '1100';
-            alert.style.minWidth = '300px';
-            alert.innerHTML = `
-                <i class="${iconMap[type] || iconMap.info} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
+            const notification = document.createElement('div');
+            notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.success}`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.success}"></i>${message}`;
             
-            document.body.appendChild(alert);
+            document.body.appendChild(notification);
             
             setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.classList.remove('show');
-                    setTimeout(() => alert.remove(), 150);
-                }
-            }, 5000);
+                notification.style.transform = 'translateX(120%)';
+                notification.style.opacity = '0';
+                notification.style.transition = 'all 0.5s ease';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
         }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load articles when tab is shown
-            document.getElementById('published-tab').addEventListener('shown.bs.tab', loadArticles);
-            document.getElementById('drafts-tab').addEventListener('shown.bs.tab', loadDrafts);
-
-            // Load published articles by default
-            loadArticles();
-        });
     </script>
     
     {{codeBeforBody}}

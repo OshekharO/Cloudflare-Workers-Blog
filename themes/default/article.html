@@ -1,151 +1,71 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}} - {{siteName}}</title>
     
-    <!-- Bootstrap 5.3.3 CSS -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 6.5.1 -->
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Marked.js for Markdown parsing -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Marked.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
-    <!-- Highlight.js for syntax highlighting - using a theme that works for both light/dark modes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" id="hljs-theme">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     
     <style>
-        /* CSS Variables for Light/Dark Themes */
-        :root {
-            --primary-color: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary-color: #7c3aed;
-            --accent-color: #0ea5e9;
-            
-            /* Light mode colors */
-            --bg-primary: #f8fafc;
-            --card-bg: #ffffff;
-            --card-border: #e2e8f0;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
-            --navbar-bg: rgba(255, 255, 255, 0.9);
-            --footer-bg: #0f172a;
-            --code-bg: #f1f5f9;
-            --pre-bg: #1e293b;
-            --blockquote-bg: #f8fafc;
-        }
-        
-        [data-bs-theme="dark"] {
-            --bg-primary: #0f172a;
-            --card-bg: #1e293b;
-            --card-border: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-muted: #64748b;
-            --navbar-bg: rgba(15, 23, 42, 0.95);
-            --footer-bg: #020617;
-            --code-bg: #334155;
-            --pre-bg: #0f172a;
-            --blockquote-bg: #1e293b;
-        }
-        
         * {
-            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f0f9ff 100%);
+            background-attachment: fixed;
             min-height: 100vh;
-            color: var(--text-primary);
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
-        .glass-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        }
-        
-        .navbar-glass {
-            background: var(--navbar-bg) !important;
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--card-border);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
         
-        /* Theme Toggle */
-        .theme-toggle {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            border: 1px solid var(--card-border);
-            background: var(--card-bg);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .theme-toggle:hover {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        
-        /* Article Content */
         .article-content {
-            line-height: 1.85;
-            font-size: 1.05rem;
-            color: var(--text-secondary);
-        }
-        
-        .article-content img {
+            line-height: 1.8;
             max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            margin: 1.5rem 0;
+            overflow-wrap: break-word;
+            color: #334155;
+            font-size: 1.05rem;
         }
         
         .article-content h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 2rem 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary-color);
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin: 2.5rem 0 1.5rem;
+            line-height: 1.2;
+            color: #0f172a;
         }
         
         .article-content h2 {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 1.75rem 0 1rem;
-            padding-left: 1rem;
-            border-left: 3px solid var(--primary-color);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #eef2ff;
+            color: #1e293b;
         }
         
         .article-content h3 {
             font-size: 1.35rem;
             font-weight: 600;
-            color: var(--text-primary);
-            margin: 1.5rem 0 0.75rem;
-        }
-        
-        .article-content h4 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 1.25rem 0 0.6rem;
+            margin: 1.75rem 0 0.75rem;
+            color: #334155;
         }
         
         .article-content p {
@@ -153,347 +73,262 @@
         }
         
         .article-content blockquote {
-            border-left: 3px solid var(--primary-color);
-            padding: 1rem 1.5rem;
-            margin: 1.5rem 0;
+            border-left: 4px solid #4f46e5;
+            padding: 1.25rem 1.5rem;
+            margin: 1.75rem 0;
             font-style: italic;
-            background: var(--blockquote-bg);
-            border-radius: 0 10px 10px 0;
+            background: linear-gradient(135deg, #eef2ff 0%, #f0f9ff 100%);
+            border-radius: 0 16px 16px 0;
+            color: #475569;
         }
         
         .article-content code {
-            background: var(--code-bg);
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: linear-gradient(135deg, #eef2ff 0%, #f0f9ff 100%);
+            padding: 0.25rem 0.6rem;
+            border-radius: 8px;
             font-size: 0.9em;
-            color: #dc2626;
-        }
-        
-        [data-bs-theme="dark"] .article-content code {
-            color: #fb7185;
+            color: #4f46e5;
+            font-family: 'Fira Code', 'SF Mono', monospace;
         }
         
         .article-content pre {
-            background: var(--pre-bg);
-            color: #f9fafb;
-            padding: 1.25rem;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 16px;
             overflow-x: auto;
-            margin: 1.25rem 0;
+            margin: 1.75rem 0;
             font-size: 0.9rem;
-            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .article-content pre code {
             background: none;
             color: inherit;
             padding: 0;
-            font-size: 0.9rem;
         }
         
         .article-content ul, .article-content ol {
-            padding-left: 1.75rem;
-            margin: 1rem 0;
+            padding-left: 1.5rem;
+            margin: 1.25rem 0;
         }
         
         .article-content li {
-            margin: 0.4rem 0;
+            margin: 0.5rem 0;
+        }
+        
+        .article-content li::marker {
+            color: #4f46e5;
         }
         
         .article-content table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.5rem 0;
+            margin: 1.75rem 0;
             font-size: 0.95rem;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
         
         .article-content table th,
         .article-content table td {
-            padding: 0.75rem;
-            border: 1px solid var(--card-border);
+            padding: 0.875rem 1rem;
+            border: 1px solid #e2e8f0;
             text-align: left;
         }
         
         .article-content table th {
-            background: var(--code-bg);
+            background: linear-gradient(135deg, #eef2ff 0%, #f0f9ff 100%);
             font-weight: 600;
+            color: #4f46e5;
+        }
+        
+        .article-content table tr:nth-child(even) {
+            background: rgba(238, 242, 255, 0.3);
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            margin: 1.75rem 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
         }
         
         .article-content a {
-            color: var(--primary-color);
+            color: #4f46e5;
             text-decoration: none;
-            border-bottom: 1px solid transparent;
+            font-weight: 500;
             transition: all 0.2s ease;
         }
         
         .article-content a:hover {
-            border-bottom-color: var(--primary-color);
+            color: #7c3aed;
+            text-decoration: underline;
+            text-underline-offset: 3px;
         }
         
-        /* Tag Badge */
-        .tag-badge {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            font-size: 0.8rem;
-            padding: 0.4rem 1rem;
-            border-radius: 8px;
+        .category-badge {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            color: #4f46e5;
+            padding: 8px 20px;
+            border-radius: 50px;
             font-weight: 600;
-        }
-        
-        /* Gradient Text */
-        .gradient-text {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Footer */
-        .footer {
-            background: var(--footer-bg);
-            color: #94a3b8;
-            padding: 24px 0;
-            margin-top: 40px;
             font-size: 0.9rem;
         }
         
-        #raw-content {
-            display: none;
-        }
-        
-        /* Share Buttons */
-        .share-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .share-btn {
+        .btn-share {
             width: 44px;
             height: 44px;
-            border-radius: 10px;
-            display: flex;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            color: #64748b;
+            text-decoration: none;
+        }
+        
+        .btn-share:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            color: #4f46e5;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             border: none;
-            transition: all 0.2s ease;
-            font-size: 1rem;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
         }
         
-        .share-btn:hover {
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
         }
         
-        .btn-twitter { background: #1da1f2; color: white; }
-        .btn-facebook { background: #1877f2; color: white; }
-        .btn-linkedin { background: #0a66c2; color: white; }
-        .btn-copy { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; }
-        
-        /* Article Header */
-        .article-header {
-            text-align: center;
-            padding: 2rem 0;
-        }
-        
-        .article-title {
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            line-height: 1.3;
-        }
-        
-        .article-meta {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        
-        .featured-image {
-            width: 100%;
-            max-height: 450px;
-            object-fit: cover;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            margin: 1.5rem 0 2rem;
-        }
-        
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .fade-in-up {
-            animation: fadeInUp 0.5s ease-out;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .article-title { font-size: 1.75rem; }
-            .article-content { font-size: 1rem; }
-            .article-content h1 { font-size: 1.6rem; }
-            .article-content h2 { font-size: 1.35rem; }
-            .share-btn { width: 40px; height: 40px; }
+        .footer-custom {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(99, 102, 241, 0.08);
         }
     </style>
     
     {{codeBeforHead}}
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
+    <nav class="navbar-custom sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold gradient-text" href="/">
-                <i class="fa-solid fa-blog me-2"></i>{{siteName}}
-            </a>
-            <div class="navbar-nav ms-auto d-flex flex-row align-items-center gap-2">
-                <a href="/" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                    <i class="fa-solid fa-house me-1"></i>Home
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <a href="/" class="d-flex align-items-center text-decoration-none">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center me-3" 
+                         style="width: 44px; height: 44px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                        <i class="fas fa-feather-alt text-white fs-5"></i>
+                    </div>
+                    <span class="fs-5 fw-bold text-dark">{{siteName}}</span>
                 </a>
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark/light mode">
-                    <i class="fa-solid fa-moon" id="theme-icon"></i>
-                </button>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/bookmarks" class="btn btn-outline-dark rounded-3 px-3 py-2 d-none d-md-flex align-items-center gap-2">
+                        <i class="fas fa-bookmark"></i>
+                    </a>
+                    <a href="/" class="btn btn-outline-dark rounded-3 px-3 py-2 d-flex align-items-center gap-2">
+                        <i class="fas fa-home"></i>
+                        <span class="d-none d-sm-inline">Home</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- Article Content -->
-    <div class="container mt-5 pt-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-9">
-                <article class="glass-card p-4 p-md-5 mb-4 fade-in-up">
-                    <header class="article-header">
-                        <h1 class="article-title">{{title}}</h1>
-                        <div class="article-meta">
-                            <span><i class="fa-regular fa-calendar me-1"></i>{{createDate}}</span>
-                            <span class="tag-badge">
-                                <i class="fa-solid fa-tag me-1"></i>{{label}}
-                            </span>
+    <main class="flex-1 py-5">
+        <div class="container" style="max-width: 800px;">
+            <article class="bg-white bg-opacity-95 border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(99, 102, 241, 0.08);">
+                <div class="px-4 px-md-5 py-5 border-bottom bg-white" style="border-color: rgba(0,0,0,0.05);">
+                    <h1 class="fw-bold text-dark mb-4">{{title}}</h1>
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <div class="d-flex align-items-center text-muted small">
+                            <i class="far fa-calendar me-2 text-primary"></i>
+                            <span>{{createDate}}</span>
                         </div>
-                        {{#img}}<img src="{{img}}" class="featured-image" alt="{{title}}">{{/img}}
-                    </header>
-                    
-                    <!-- Hidden element to store raw markdown content -->
-                    <div id="raw-content">{{content}}</div>
-                    
-                    <div class="article-content" id="article-content">
-                        <!-- Content will be rendered here by JavaScript -->
+                        <span class="category-badge">{{label}}</span>
+                    </div>
+                    {{#img}}
+                    <div class="mt-4 mx-n4 mx-md-n5">
+                        <img src="{{img}}" alt="{{title}}" class="w-100" style="max-height: 450px; object-fit: cover;">
+                    </div>
+                    {{/img}}
+                </div>
+
+                <div class="px-4 px-md-5 py-5">
+                    <div id="raw-content" class="d-none">{{content}}</div>
+                    <div id="article-content" class="article-content">
                         <div class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading content...</span>
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
                             </div>
+                            <p class="text-muted">Loading content...</p>
                         </div>
                     </div>
-                    
-                    <!-- Social Sharing -->
-                    <div class="mt-5 pt-4 border-top" style="border-color: var(--card-border) !important;">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <a href="/" class="btn btn-outline-primary rounded-pill">
-                                    <i class="fa-solid fa-arrow-left me-2"></i>Back to Home
+                </div>
+
+                <div class="px-4 px-md-5 py-4 border-top bg-light" style="border-color: rgba(0,0,0,0.05);">
+                    <div class="d-flex flex-column sm:flex-row justify-content-between align-items-center gap-4">
+                        <a href="/" class="btn btn-primary-custom text-white">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Back to Home
+                        </a>
+                        
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small me-2">Share this article</span>
+                            <div class="d-flex gap-2">
+                                <a href="https://twitter.com/intent/tweet?text={{encodeURIComponent(title)}}&url={{encodeURIComponent(window.location.href)}}" target="_blank" class="btn-share" title="Share on Twitter">
+                                    <i class="fab fa-twitter"></i>
                                 </a>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex justify-content-md-end align-items-center gap-2">
-                                    <span class="text-muted me-2">Share:</span>
-                                    <div class="share-buttons">
-                                        <button onclick="shareOnTwitter()" class="share-btn btn-twitter" title="Share on X (Twitter)">
-                                            <i class="fa-brands fa-x-twitter"></i>
-                                        </button>
-                                        <button onclick="shareOnFacebook()" class="share-btn btn-facebook" title="Share on Facebook">
-                                            <i class="fa-brands fa-facebook-f"></i>
-                                        </button>
-                                        <button onclick="shareOnLinkedIn()" class="share-btn btn-linkedin" title="Share on LinkedIn">
-                                            <i class="fa-brands fa-linkedin-in"></i>
-                                        </button>
-                                        <button onclick="copyShareLink()" class="share-btn btn-copy" title="Copy link">
-                                            <i class="fa-solid fa-link"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{encodeURIComponent(window.location.href)}}" target="_blank" class="btn-share" title="Share on Facebook">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{encodeURIComponent(window.location.href)}}" target="_blank" class="btn-share" title="Share on LinkedIn">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                                <button onclick="copyShareLink()" class="btn-share border-0 bg-transparent" title="Copy link">
+                                    <i class="fas fa-link"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-                </article>
-            </div>
+                </div>
+            </article>
         </div>
-    </div>
+    </main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer-custom mt-auto py-4">
         <div class="container text-center">
-            <div>{{copyRight}}</div>
+            <p class="text-muted mb-0 small">{{copyRight}}</p>
         </div>
     </footer>
 
-    <!-- Bootstrap 5.3.3 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-        // Theme Toggle Functionality
-        function getPreferredTheme() {
-            const stored = localStorage.getItem('theme');
-            if (stored) return stored;
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-bs-theme', theme);
-            localStorage.setItem('theme', theme);
-            updateThemeIcon(theme);
-        }
-        
-        function updateThemeIcon(theme) {
-            const icon = document.getElementById('theme-icon');
-            if (icon) {
-                icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-            }
-        }
-        
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-bs-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            setTheme(next);
-        }
-        
-        // Initialize theme on load
-        setTheme(getPreferredTheme());
-
         function getShareUrl() {
             return window.location.href;
         }
 
         function getShareTitle() {
-            return document.title.replace(` - ${'{{siteName}}'}`, '');
-        }
-
-        function shareOnTwitter() {
-            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareTitle())}&url=${encodeURIComponent(getShareUrl())}`;
-            window.open(url, '_blank', 'width=600,height=400');
-        }
-
-        function shareOnFacebook() {
-            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
-            window.open(url, '_blank', 'width=600,height=400');
-        }
-
-        function shareOnLinkedIn() {
-            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getShareUrl())}`;
-            window.open(url, '_blank', 'width=600,height=400');
+            return document.title.replace(` - {{siteName}}`, '');
         }
 
         async function copyShareLink() {
@@ -511,55 +346,59 @@
             }
         }
 
-        function showNotification(message, type = 'info') {
-            const iconMap = {
-                success: 'fa-solid fa-circle-check',
-                warning: 'fa-solid fa-triangle-exclamation',
-                info: 'fa-solid fa-circle-info'
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: 'bg-success',
+                warning: 'bg-warning',
+                error: 'bg-danger',
+                info: 'bg-primary'
             };
             
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-bg-${type} border-0`;
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="${iconMap[type] || iconMap.info} me-2"></i>${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            `;
+            const icons = {
+                success: 'fa-check-circle',
+                warning: 'fa-bookmark',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
             
-            const container = document.createElement('div');
-            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-            container.style.zIndex = '1100';
-            container.appendChild(toast);
-            document.body.appendChild(container);
+            const notification = document.createElement('div');
+            notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.info}`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i>${message}`;
             
-            const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
-            bsToast.show();
+            document.body.appendChild(notification);
             
-            toast.addEventListener('hidden.bs.toast', () => {
-                document.body.removeChild(container);
-            });
+            setTimeout(() => {
+                notification.style.transform = 'translateX(120%)';
+                notification.style.opacity = '0';
+                notification.style.transition = 'all 0.5s ease';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
         }
 
-        // Parse and render markdown content
         function renderMarkdown() {
             const contentElement = document.getElementById('article-content');
             const rawContentElement = document.getElementById('raw-content');
             
-            // Get the raw content and unescape newlines
             let rawContent = rawContentElement.textContent;
             rawContent = rawContent.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
             
             if (!rawContent || rawContent.trim() === '') {
-                contentElement.innerHTML = '<div class="alert alert-warning"><i class="fa-solid fa-triangle-exclamation me-2"></i>No content available.</div>';
+                contentElement.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-file-alt text-muted mb-3" style="font-size: 2rem; opacity: 0.3;"></i>
+                        <p class="text-muted">No content available for this article.</p>
+                    </div>
+                `;
                 return;
             }
             
             if (window.marked && window.hljs) {
                 try {
-                    // Configure marked options
                     marked.setOptions({
                         highlight: function(code, lang) {
                             if (lang && hljs.getLanguage(lang)) {
@@ -578,36 +417,27 @@
                     const htmlContent = marked.parse(rawContent);
                     contentElement.innerHTML = htmlContent;
                     
-                    // Apply additional styling after rendering
-                    applyPostRenderStyles();
+                    const codeBlocks = document.querySelectorAll('pre code');
+                    codeBlocks.forEach(block => {
+                        if (!block.classList.contains('hljs')) {
+                            block.classList.add('hljs');
+                        }
+                    });
                 } catch (error) {
                     console.error('Error parsing markdown:', error);
-                    contentElement.innerHTML = `<div class="alert alert-warning">
-                        <h5><i class="fa-solid fa-triangle-exclamation me-2"></i>Error rendering content</h5>
-                        <pre style="white-space: pre-wrap;">${rawContent}</pre>
-                    </div>`;
+                    contentElement.innerHTML = `
+                        <div class="alert alert-warning">
+                            <p class="mb-0">Error rendering content. Showing raw text instead.</p>
+                        </div>
+                        <pre class="whitespace-pre-wrap bg-white p-4 rounded-3 text-sm overflow-x-auto border">${rawContent}</pre>
+                    `;
                 }
             } else {
-                contentElement.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${rawContent}</pre>`;
+                contentElement.innerHTML = `<pre class="whitespace-pre-wrap bg-white p-4 rounded-3 text-sm overflow-x-auto border">${rawContent}</pre>`;
             }
         }
         
-        function applyPostRenderStyles() {
-            const codeBlocks = document.querySelectorAll('pre code');
-            codeBlocks.forEach(block => {
-                if (!block.classList.contains('hljs')) {
-                    block.classList.add('hljs');
-                }
-            });
-            
-            const lists = document.querySelectorAll('ul, ol');
-            lists.forEach(list => {
-                if (!list.style.marginBottom) {
-                    list.style.marginBottom = '1.2rem';
-                }
-            });
-        }
-        
+        document.addEventListener('touchstart', function() {}, { passive: true });
         document.addEventListener('DOMContentLoaded', renderMarkdown);
     </script>
     

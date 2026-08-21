@@ -1,274 +1,319 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Users - {{siteName}}</title>
     
-    <!-- Bootstrap 5.3.3 CSS -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 6.5.1 -->
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-            --border-radius: 16px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --card-border: #e5e7eb;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --sidebar-bg: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
-            --navbar-bg: #1e293b;
-            --table-hover: #f8fafc;
-        }
-        
-        [data-bs-theme="dark"] {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --card-border: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --sidebar-bg: linear-gradient(180deg, #312e81 0%, #4c1d95 100%);
-            --navbar-bg: #0f172a;
-            --table-hover: #334155;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f0f9ff 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
         
-        .sidebar {
-            background: var(--sidebar-bg);
-            color: white;
-            min-height: calc(100vh - 60px);
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
         
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.85);
-            padding: 0.875rem 1.25rem;
-            margin: 0.25rem 0.5rem;
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(99, 102, 241, 0.08);
+            border-radius: 20px;
+            padding: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.1);
+        }
+        
+        .user-row {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .user-row:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border: none;
+            padding: 10px 24px;
             border-radius: 12px;
-            transition: var(--transition);
-            font-weight: 500;
-            display: flex;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            color: white;
+        }
+        
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+            color: white;
+        }
+        
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
             align-items: center;
-            gap: 0.75rem;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
         }
         
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            transform: translateX(6px);
+        .icon-btn:hover {
+            transform: scale(1.15);
         }
         
-        .sidebar-brand {
-            padding: 1.5rem;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        .icon-btn.edit {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #2563eb;
         }
         
-        .navbar-admin {
-            background: var(--navbar-bg) !important;
+        .icon-btn.delete {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #dc2626;
         }
         
-        .theme-toggle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: transparent;
-            color: white;
-            cursor: pointer;
-            transition: var(--transition);
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
         
-        .theme-toggle:hover {
-            transform: rotate(180deg);
+        .role-badge.superadmin {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #d97706;
         }
         
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
+        .role-badge.admin {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #2563eb;
         }
         
-        .card-header {
-            background: transparent;
-            border-bottom: 1px solid var(--card-border);
-            padding: 1.25rem 1.5rem;
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
         
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+        .status-badge.active {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #059669;
+        }
+        
+        .status-badge.inactive {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: #64748b;
+        }
+        
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(99, 102, 241, 0.08);
+        }
+        
+        .form-control-custom {
+            border: 2px solid #eef2ff;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-control-custom:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background: white;
+        }
+        
+        .form-select-custom {
+            border: 2px solid #eef2ff;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-select-custom:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
+            font-size: 16px;
             color: white;
         }
         
-        .superadmin-avatar { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .admin-avatar { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .badge-superadmin { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .badge-admin { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        
-        .stats-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
+        .notification {
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        .table { color: var(--text-primary); }
-        .table th { color: var(--text-secondary); border-color: var(--card-border); }
-        .table td { border-color: var(--card-border); }
-        .table tbody tr:hover { background-color: var(--table-hover); }
-        
-        .btn-primary {
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: 10px;
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-        
-        .modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius);
-        }
-        
-        .form-control, .form-select {
-            background: var(--card-bg);
-            border-color: var(--card-border);
-            color: var(--text-primary);
-        }
-        
-        .form-control:focus, .form-select:focus {
-            background: var(--card-bg);
-            border-color: var(--primary-color);
-            color: var(--text-primary);
-        }
-        
-        @media (max-width: 992px) { .sidebar { min-height: auto; } }
     </style>
     
     {{codeBeforHead}}
 </head>
 <body>
-    <nav class="navbar navbar-dark navbar-admin navbar-expand-lg">
-        <div class="container-fluid px-4">
-            <span class="navbar-brand d-flex align-items-center gap-2">
-                <i class="fa-solid fa-users"></i> Admin Users
-            </span>
-            <div class="d-flex align-items-center gap-2">
-                <a href="/admin/" class="nav-link"><i class="fa-solid fa-arrow-left me-1"></i> Back</a>
-                <a href="/" class="nav-link"><i class="fa-solid fa-eye me-1"></i> View Blog</a>
-                <button class="theme-toggle" onclick="toggleTheme()">
-                    <i class="fa-solid fa-moon" id="theme-icon"></i>
-                </button>
+    <!-- Navigation -->
+    <nav class="navbar-custom sticky-top">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center me-3" 
+                         style="width: 44px; height: 44px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                        <i class="fas fa-user-gear text-white fs-5"></i>
+                    </div>
+                    <div>
+                        <h1 class="fs-5 fw-bold text-dark mb-0">Admin Users</h1>
+                        <p class="text-muted small mb-0 d-none d-sm-block">Manage team access</p>
+                    </div>
+                </div>
+                <a href="/admin/" class="btn btn-outline-dark rounded-3 px-3 py-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-newspaper"></i>
+                    <span class="d-none d-sm-inline">Articles</span>
+                </a>
             </div>
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-2 col-md-3 sidebar p-0">
-                <div class="sidebar-brand d-none d-md-block">
-                    <i class="fa-solid fa-shield-halved me-2"></i>Admin Panel
-                </div>
-                <div class="p-3">
-                    <nav class="nav flex-column">
-                        <a class="nav-link" href="/admin/"><i class="fa-solid fa-newspaper"></i><span>Articles</span></a>
-                        <a class="nav-link active" href="/admin/users"><i class="fa-solid fa-users"></i><span>Users</span></a>
-                        <a class="nav-link" href="/admin/edit"><i class="fa-solid fa-circle-plus"></i><span>New Article</span></a>
-                    </nav>
+    <div class="container py-4">
+        <!-- Stats Cards -->
+        <div class="row g-3 g-md-4 mb-4">
+            <div class="col-sm-4">
+                <button onclick="openAddAdminModal()" class="stat-card text-center w-100 border-0 bg-transparent">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-3" 
+                         style="width: 56px; height: 56px; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                        <i class="fas fa-user-plus text-white fs-4"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Add Admin</h3>
+                    <p class="text-muted small mb-0">Create new user</p>
+                </button>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="stat-card text-center">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-3" 
+                         style="width: 56px; height: 56px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <i class="fas fa-users text-white fs-4"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-0" id="total-admins">-</h3>
+                    <p class="text-muted small mb-0">Total Admins</p>
                 </div>
             </div>
-            
-            <div class="col-lg-10 col-md-9 py-4 px-4">
-                <div class="row g-3 mb-4">
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card stats-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar admin-avatar"><i class="fa-solid fa-user-plus"></i></div>
-                                    <div class="ms-3">
-                                        <h6 class="mb-1">Add Admin</h6>
-                                        <button onclick="openAddAdminModal()" class="btn btn-primary btn-sm">
-                                            <i class="fa-solid fa-plus me-1"></i> Add User
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+            <div class="col-sm-4">
+                <div class="stat-card text-center">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-3" 
+                         style="width: 56px; height: 56px; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);">
+                        <i class="fas fa-shield-halved text-white fs-4"></i>
                     </div>
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card stats-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar admin-avatar"><i class="fa-solid fa-users"></i></div>
-                                    <div class="ms-3">
-                                        <h6 class="mb-0" id="total-admins">Loading...</h6>
-                                        <small class="text-muted">Total Admins</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <h3 class="fw-bold text-dark mb-0" id="superadmin-count">-</h3>
+                    <p class="text-muted small mb-0">Super Admins</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Management -->
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; background: rgba(255,255,255,0.95);">
+            <div class="card-header border-0 bg-white px-4 py-3" style="border-radius: 20px 20px 0 0;">
+                <div class="d-flex flex-column sm:flex-row sm:justify-content-between sm:align-items-center gap-3">
+                    <div>
+                        <h2 class="fw-bold text-dark mb-1">Admin Users</h2>
+                        <p class="text-muted small mb-0">Manage user access and permissions</p>
                     </div>
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card stats-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar superadmin-avatar"><i class="fa-solid fa-shield-halved"></i></div>
-                                    <div class="ms-3">
-                                        <h6 class="mb-0" id="superadmin-count">Loading...</h6>
-                                        <small class="text-muted">Super Admins</small>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="d-flex gap-2">
+                        <div class="position-relative">
+                            <input type="text" id="search-admins" placeholder="Search admins..." 
+                                   class="form-control form-control-custom ps-5" style="min-width: 200px;" />
+                            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                         </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card stats-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar admin-avatar"><i class="fa-solid fa-user-check"></i></div>
-                                    <div class="ms-3">
-                                        <h6 class="mb-0" id="active-admins">Loading...</h6>
-                                        <small class="text-muted">Active Users</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <button onclick="loadAdmins()" class="btn btn-outline-dark rounded-3 px-3">
+                            <i class="fas fa-redo"></i>
+                        </button>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0"><i class="fa-solid fa-users-gear me-2" style="color: var(--primary-color);"></i>Admin Users</h4>
-                            <button onclick="loadAdmins()" class="btn btn-outline-secondary btn-sm">
-                                <i class="fa-solid fa-rotate"></i>
-                            </button>
+            </div>
+            <div class="card-body p-4">
+                <div id="admins-list">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
+                        <p class="text-muted">Loading admins...</p>
                     </div>
-                    <div class="card-body">
-                        <div id="admins-list">
-                            <div class="text-center py-5">
-                                <div class="spinner-border text-primary"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Guide -->
+        <div class="card border-0 shadow-sm" style="border-radius: 20px; background: rgba(255,255,255,0.95);">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" 
+                         style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                        <i class="fas fa-info text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold text-dark mb-3">Admin Roles Guide</h3>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="role-badge superadmin"><i class="fas fa-shield-halved me-1"></i>Super Admin</span>
+                                    <span class="text-muted small">Full system access, can manage users</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="role-badge admin"><i class="fas fa-user me-1"></i>Admin</span>
+                                    <span class="text-muted small">Content management only</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -278,124 +323,135 @@
     </div>
 
     <!-- Add Admin Modal -->
-    <div class="modal fade" id="addAdminModal" tabindex="-1">
+    <div id="add-admin-modal" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa-solid fa-user-plus me-2"></i>Add New Admin</h5>
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center" 
+                             style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                            <i class="fas fa-user-plus text-white"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold">Add New Admin</h5>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="add-admin-form">
-                        <div class="mb-3">
-                            <label class="form-label">Username *</label>
-                            <input type="text" id="username" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password *</label>
-                            <input type="password" id="password" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email *</label>
-                            <input type="email" id="email" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Role *</label>
-                            <select id="role" class="form-select" required>
-                                <option value="admin">Admin</option>
-                                <option value="superadmin">Super Admin</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="addAdmin()">
-                        <i class="fa-solid fa-user-plus me-1"></i> Add Admin
-                    </button>
-                </div>
+
+                <form id="add-admin-form" class="p-4 pt-0">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Username *</label>
+                        <input type="text" id="username" required class="form-control form-control-custom" placeholder="Enter username" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Password *</label>
+                        <input type="password" id="password" required class="form-control form-control-custom" placeholder="Enter password" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email *</label>
+                        <input type="email" id="email" required class="form-control form-control-custom" placeholder="Enter email" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Role *</label>
+                        <select id="role" required class="form-select form-select-custom w-100">
+                            <option value="admin">Admin</option>
+                            <option value="superadmin">Super Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="button" class="btn btn-light flex-fill py-2 rounded-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" onclick="addAdmin()" class="btn btn-primary-custom flex-fill py-2 rounded-3">
+                            <i class="fas fa-user-plus me-2"></i>Add Admin
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <!-- Edit Admin Modal -->
-    <div class="modal fade" id="editAdminModal" tabindex="-1">
+    <div id="edit-admin-modal" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa-solid fa-user-pen me-2"></i>Edit Admin</h5>
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center" 
+                             style="width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                            <i class="fas fa-edit text-white"></i>
+                        </div>
+                        <h5 class="modal-title fw-bold">Edit Admin</h5>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="edit-admin-form">
-                        <input type="hidden" id="edit-admin-id">
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" id="edit-username" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email *</label>
-                            <input type="email" id="edit-email" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Role *</label>
-                            <select id="edit-role" class="form-select" required>
-                                <option value="admin">Admin</option>
-                                <option value="superadmin">Super Admin</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Status *</label>
-                            <select id="edit-status" class="form-select" required>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="updateAdmin()">
-                        <i class="fa-solid fa-check me-1"></i> Save Changes
-                    </button>
-                </div>
+
+                <form id="edit-admin-form" class="p-4 pt-0">
+                    <input type="hidden" id="edit-admin-id" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Username</label>
+                        <input type="text" id="edit-username" readonly class="form-control form-control-custom bg-light text-muted" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email *</label>
+                        <input type="email" id="edit-email" required class="form-control form-control-custom" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Role *</label>
+                        <select id="edit-role" required class="form-select form-select-custom w-100">
+                            <option value="admin">Admin</option>
+                            <option value="superadmin">Super Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Status *</label>
+                        <select id="edit-status" required class="form-select form-select-custom w-100">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="button" class="btn btn-light flex-fill py-2 rounded-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" onclick="updateAdmin()" class="btn btn-primary-custom flex-fill py-2 rounded-3">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Theme Toggle
-        function getPreferredTheme() {
-            const stored = localStorage.getItem('theme');
-            if (stored) return stored;
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-bs-theme', theme);
-            localStorage.setItem('theme', theme);
-            const icon = document.getElementById('theme-icon');
-            if (icon) icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        }
-        
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-bs-theme');
-            setTheme(current === 'dark' ? 'light' : 'dark');
-        }
-        
-        setTheme(getPreferredTheme());
-
         let currentAdmins = [];
+        let addAdminModal, editAdminModal;
 
-        document.addEventListener('DOMContentLoaded', loadAdmins);
+        document.addEventListener('DOMContentLoaded', function () {
+            addAdminModal = new bootstrap.Modal(document.getElementById('add-admin-modal'));
+            editAdminModal = new bootstrap.Modal(document.getElementById('edit-admin-modal'));
+            loadAdmins();
+
+            document.getElementById('search-admins').addEventListener('input', function (e) {
+                filterAdmins(e.target.value);
+            });
+        });
 
         async function loadAdmins() {
             try {
                 const response = await fetch('/api/admins');
                 if (!response.ok) {
-                    if (response.status === 401 || response.status === 403) {
-                        showAlert('Access denied', 'danger');
+                    if (response.status === 401) {
+                        showNotification('Authentication required. Please log in again.', 'error');
+                        return;
+                    }
+                    if (response.status === 403) {
+                        showNotification('Access denied. Only superadmins can manage users.', 'error');
                         return;
                     }
                     throw new Error('Failed to load admins');
@@ -404,77 +460,87 @@
                 displayAdmins(currentAdmins);
                 updateStats();
             } catch (error) {
-                showAlert('Error loading admins', 'danger');
+                console.error('Error loading admins:', error);
+                showNotification('Error loading admins: ' + error.message, 'error');
             }
         }
 
         function displayAdmins(admins) {
             const container = document.getElementById('admins-list');
+
             if (admins.length === 0) {
-                container.innerHTML = '<div class="text-center py-5"><i class="fa-solid fa-users fa-3x text-muted mb-3"></i><h5 class="text-muted">No Admin Users</h5></div>';
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-user-search text-muted mb-3" style="font-size: 2rem; opacity: 0.3;"></i>
+                        <h3 class="fw-bold text-dark mb-2">No Admin Users</h3>
+                        <p class="text-muted mb-4">Get started by adding your first admin user</p>
+                        <button onclick="openAddAdminModal()" class="btn btn-primary-custom text-white">
+                            <i class="fas fa-user-plus me-2"></i>Add Admin
+                        </button>
+                    </div>
+                `;
                 return;
             }
 
-            container.innerHTML = `
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Joined</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${admins.map(admin => `
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="user-avatar ${admin.role === 'superadmin' ? 'superadmin-avatar' : 'admin-avatar'} me-3">
-                                                ${admin.username.charAt(0).toUpperCase()}
-                                            </div>
-                                            <div>
-                                                <strong>${admin.username}</strong>
-                                                <br><small class="text-muted">${admin.email}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge ${admin.role === 'superadmin' ? 'badge-superadmin' : 'badge-admin'} text-white">
-                                            <i class="fa-solid fa-${admin.role === 'superadmin' ? 'shield-halved' : 'user-check'} me-1"></i>${admin.role}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="badge ${admin.status === 'active' ? 'bg-success' : 'bg-secondary'}">
-                                            <i class="fa-solid fa-${admin.status === 'active' ? 'circle-check' : 'circle-xmark'} me-1"></i>${admin.status}
-                                        </span>
-                                    </td>
-                                    <td><small>${new Date(admin.createdAt).toLocaleDateString()}</small></td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button onclick="editAdmin('${admin.id}')" class="btn btn-outline-primary"><i class="fa-solid fa-pen"></i></button>
-                                            <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" class="btn btn-outline-danger" ${admin.role === 'superadmin' ? 'disabled' : ''}><i class="fa-solid fa-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+            const colors = ['from-primary to-secondary', 'from-secondary to-tertiary', 'from-tertiary to-primary'];
+
+            container.innerHTML = admins.map((admin, index) => `
+                <div class="user-row">
+                    <div class="d-flex flex-column sm:flex-row sm:justify-content-between sm:align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar bg-gradient-to-br ${colors[index % colors.length]}" 
+                                 style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                                ${admin.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="min-w-0 flex-grow-1">
+                                <h3 class="fw-semibold text-dark mb-0">${admin.username}</h3>
+                                <p class="text-muted small mb-0 truncate">${admin.email}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center flex-wrap gap-2 ms-0 sm:ms-4">
+                            <span class="role-badge ${admin.role === 'superadmin' ? 'superadmin' : 'admin'}">
+                                <i class="fas ${admin.role === 'superadmin' ? 'fa-shield-halved' : 'fa-user'} me-1"></i>${admin.role}
+                            </span>
+                            <span class="status-badge ${admin.status === 'active' ? 'active' : 'inactive'}">
+                                <i class="fas ${admin.status === 'active' ? 'fa-check-circle' : 'fa-times-circle'} me-1"></i>${admin.status}
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2 ms-0 sm:ms-4">
+                            <button onclick="editAdmin('${admin.id}')" class="icon-btn edit" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
+                                    class="icon-btn delete" 
+                                    title="Delete"
+                                    ${admin.role === 'superadmin' ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            `;
+            `).join('');
+        }
+
+        function filterAdmins(searchTerm) {
+            const filteredAdmins = currentAdmins.filter(
+                (admin) => admin.username.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           admin.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           admin.role.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            displayAdmins(filteredAdmins);
         }
 
         function updateStats() {
-            document.getElementById('total-admins').textContent = currentAdmins.length;
-            document.getElementById('superadmin-count').textContent = currentAdmins.filter(a => a.role === 'superadmin').length;
-            document.getElementById('active-admins').textContent = currentAdmins.filter(a => a.status === 'active').length;
+            const totalAdmins = currentAdmins.length;
+            const superadminCount = currentAdmins.filter((admin) => admin.role === 'superadmin').length;
+
+            document.getElementById('total-admins').textContent = totalAdmins;
+            document.getElementById('superadmin-count').textContent = superadminCount;
         }
 
         function openAddAdminModal() {
+            addAdminModal.show();
             document.getElementById('add-admin-form').reset();
-            new bootstrap.Modal(document.getElementById('addAdminModal')).show();
         }
 
         async function addAdmin() {
@@ -493,19 +559,25 @@
                 });
 
                 if (response.ok) {
-                    showAlert('Admin created successfully', 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('addAdminModal')).hide();
+                    showNotification('Admin created successfully');
+                    addAdminModal.hide();
                     loadAdmins();
                 } else {
-                    throw new Error(await response.text());
+                    if (response.status === 403) {
+                        showNotification('Access denied. Only superadmins can manage users.', 'error');
+                        return;
+                    }
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to create admin');
                 }
             } catch (error) {
-                showAlert('Error creating admin: ' + error.message, 'danger');
+                console.error('Error creating admin:', error);
+                showNotification('Error creating admin: ' + error.message, 'error');
             }
         }
 
-        function editAdmin(adminId) {
-            const admin = currentAdmins.find(a => a.id === adminId);
+        async function editAdmin(adminId) {
+            const admin = currentAdmins.find((a) => a.id === adminId);
             if (!admin) return;
 
             document.getElementById('edit-admin-id').value = admin.id;
@@ -514,7 +586,7 @@
             document.getElementById('edit-role').value = admin.role;
             document.getElementById('edit-status').value = admin.status;
 
-            new bootstrap.Modal(document.getElementById('editAdminModal')).show();
+            editAdminModal.show();
         }
 
         async function updateAdmin() {
@@ -533,43 +605,78 @@
                 });
 
                 if (response.ok) {
-                    showAlert('Admin updated successfully', 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide();
+                    showNotification('Admin updated successfully');
+                    editAdminModal.hide();
                     loadAdmins();
                 } else {
-                    throw new Error(await response.text());
+                    if (response.status === 403) {
+                        showNotification('Access denied. Only superadmins can manage users.', 'error');
+                        return;
+                    }
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to update admin');
                 }
             } catch (error) {
-                showAlert('Error updating admin: ' + error.message, 'danger');
+                console.error('Error updating admin:', error);
+                showNotification('Error updating admin: ' + error.message, 'error');
             }
         }
 
         async function deleteAdmin(adminId, username) {
-            if (!confirm(`Delete admin "${username}"?`)) return;
+            if (!confirm(`Are you sure you want to delete admin "${username}"? This action cannot be undone.`)) return;
 
             try {
                 const response = await fetch('/api/admins/' + adminId, { method: 'DELETE' });
+
                 if (response.ok) {
-                    showAlert('Admin deleted', 'success');
+                    showNotification('Admin deleted successfully');
                     loadAdmins();
                 } else {
-                    throw new Error(await response.text());
+                    if (response.status === 403) {
+                        showNotification('Access denied. Only superadmins can manage users.', 'error');
+                        return;
+                    }
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to delete admin');
                 }
             } catch (error) {
-                showAlert('Error deleting admin: ' + error.message, 'danger');
+                console.error('Error deleting admin:', error);
+                showNotification('Error deleting admin: ' + error.message, 'error');
             }
         }
 
-        function showAlert(message, type) {
-            document.querySelectorAll('.alert').forEach(a => a.remove());
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: 'bg-success',
+                warning: 'bg-warning',
+                error: 'bg-danger',
+                info: 'bg-primary'
+            };
             
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3 shadow`;
-            alert.style.zIndex = '1100';
-            alert.innerHTML = `<i class="fa-solid fa-${type === 'success' ? 'circle-check' : 'triangle-exclamation'} me-2"></i>${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+            const icons = {
+                success: 'fa-check-circle',
+                warning: 'fa-exclamation-triangle',
+                error: 'fa-times-circle',
+                info: 'fa-info-circle'
+            };
             
-            document.body.appendChild(alert);
-            setTimeout(() => alert.remove(), 5000);
+            const notification = document.createElement('div');
+            notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.info}`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i>${message}`;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(120%)';
+                notification.style.opacity = '0';
+                notification.style.transition = 'all 0.5s ease';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
         }
     </script>
     

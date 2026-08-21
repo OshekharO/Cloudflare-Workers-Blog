@@ -1,174 +1,307 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found - {{siteName}}</title>
+    <title>Page Not Found - {{siteName}}</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --bg-gradient-start: #667eea;
-            --bg-gradient-end: #764ba2;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text-primary: #1e293b;
-        }
-        
-        [data-bs-theme="dark"] {
-            --bg-gradient-start: #1a1a2e;
-            --bg-gradient-end: #16213e;
-            --card-bg: rgba(30, 41, 59, 0.95);
-            --text-primary: #f1f5f9;
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f0f9ff 100%);
+            background-attachment: fixed;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
-        .error-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(99, 102, 241, 0.08);
             border-radius: 24px;
-            padding: 3rem;
-            text-align: center;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: fadeInUp 0.6s ease-out;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
         
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
+        .floating {
+            animation: floating 4s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+        
+        .pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { 
                 opacity: 1;
-                transform: translateY(0);
+                box-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
+            }
+            50% { 
+                opacity: 0.8;
+                box-shadow: 0 0 40px rgba(124, 58, 237, 0.5);
             }
         }
         
-        .error-icon {
-            font-size: 5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1.5rem;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .error-title {
-            font-size: 6rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 14px 32px;
             border-radius: 12px;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-        }
-        
-        .btn-outline-primary {
-            border-radius: 12px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-        }
-        
-        .theme-toggle {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
             color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
         
-        .theme-toggle:hover {
-            transform: rotate(180deg);
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4);
+            color: white;
+        }
+        
+        .btn-secondary-custom {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #eef2ff;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #475569;
+        }
+        
+        .btn-secondary-custom:hover {
+            background: white;
+            border-color: #4f46e5;
+            transform: translateY(-3px);
+            color: #4f46e5;
+        }
+        
+        .quick-link {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(99, 102, 241, 0.08);
+            border-radius: 20px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .quick-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.1);
+            color: inherit;
+        }
+        
+        .footer-custom {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(99, 102, 241, 0.08);
+        }
+        
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+        
+        .shape-1 {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            top: 10%;
+            left: 5%;
+            animation: floating 6s ease-in-out infinite;
+        }
+        
+        .shape-2 {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            bottom: 20%;
+            right: 10%;
+            animation: floating 8s ease-in-out infinite reverse;
+        }
+        
+        .shape-3 {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            top: 50%;
+            right: 5%;
+            animation: floating 5s ease-in-out infinite;
         }
     </style>
+    
     {{codeBeforHead}}
 </head>
-<body>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-        <i class="fa-solid fa-moon" id="theme-icon"></i>
-    </button>
-    
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="error-card">
-                    <i class="fa-solid fa-ghost error-icon"></i>
-                    <h1 class="error-title">404</h1>
-                    <h2 class="h4 mb-3" style="color: var(--text-primary);">Page Not Found</h2>
-                    <p class="text-muted mb-4">Oops! The page you're looking for has vanished into thin air.</p>
-                    <div class="d-flex gap-3 justify-content-center flex-wrap">
-                        <a href="/" class="btn btn-primary">
-                            <i class="fa-solid fa-house me-2"></i>Go Home
-                        </a>
-                        <a href="/admin/" class="btn btn-outline-primary">
-                            <i class="fa-solid fa-gauge-high me-2"></i>Admin
-                        </a>
+<body class="min-h-screen d-flex flex-column">
+    <!-- Floating Shapes -->
+    <div class="floating-shape shape-1 d-none d-md-block"></div>
+    <div class="floating-shape shape-2 d-none d-md-block"></div>
+    <div class="floating-shape shape-3 d-none d-md-block"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar-custom sticky-top">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <a href="/" class="d-flex align-items-center text-decoration-none">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center me-3" 
+                         style="width: 44px; height: 44px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                        <i class="fas fa-feather-alt text-white fs-5"></i>
                     </div>
+                    <span class="fs-5 fw-bold text-dark">{{siteName}}</span>
+                </a>
+                <div class="d-flex gap-2">
+                    <a href="/bookmarks" class="btn btn-outline-dark rounded-3 px-3 py-2 d-none d-md-flex align-items-center gap-2">
+                        <i class="fas fa-bookmark"></i>
+                    </a>
+                    <a href="/admin/" class="btn btn-primary-custom text-white px-3 py-2 d-flex align-items-center gap-2">
+                        <i class="fas fa-gauge-high"></i>
+                        <span class="d-none d-sm-inline">Dashboard</span>
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
-    
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 d-flex align-items-center justify-content-center py-5 position-relative">
+        <div class="container position-relative z-10">
+            <div class="text-center mx-auto" style="max-width: 600px;">
+                <!-- 404 Illustration -->
+                <div class="position-relative mb-4 d-inline-block">
+                    <div class="floating">
+                        <span class="fw-bold text-transparent bg-clip-text" 
+                              style="font-size: 8rem; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%); -webkit-background-clip: text;">
+                            404
+                        </span>
+                    </div>
+                    <div class="position-absolute top-50 start-50 translate-middle">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center pulse-glow" 
+                             style="width: 80px; height: 80px; background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);">
+                            <i class="fas fa-search text-primary" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 p-md-5 mb-4 shadow-lg">
+                    <h1 class="fw-bold text-dark mb-3">Oops! Page Not Found</h1>
+                    <p class="text-muted mb-4 mx-auto" style="max-width: 400px;">
+                        The page you're looking for seems to have wandered off into the digital void. 
+                        It might have been moved, deleted, or perhaps it never existed.
+                    </p>
+                    
+                    <div class="p-4 mb-4 rounded-3" style="background: linear-gradient(135deg, #eef2ff 0%, #f0f9ff 100%);">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" 
+                                 style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                                <i class="fas fa-lightbulb text-white"></i>
+                            </div>
+                            <div class="text-start">
+                                <h3 class="fw-semibold text-dark mb-1">Looking for something specific?</h3>
+                                <p class="text-muted small mb-0">Try browsing our articles or use the navigation to find what you need.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column sm:flex-row gap-3 justify-content-center">
+                        <a href="/" class="btn btn-primary-custom text-white">
+                            <i class="fas fa-home me-2"></i>
+                            Back to Homepage
+                        </a>
+                        <button onclick="window.history.back()" class="btn btn-secondary-custom">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Go Back
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="row g-3 mx-auto mb-4" style="max-width: 400px;">
+                    <div class="col-4">
+                        <a href="/admin/edit" class="quick-link text-center p-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-2" 
+                                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                                <i class="fas fa-edit text-white"></i>
+                            </div>
+                            <h3 class="fw-semibold text-dark small mb-1">Write Article</h3>
+                            <p class="text-muted d-none">Create content</p>
+                        </a>
+                    </div>
+                    
+                    <div class="col-4">
+                        <a href="/admin/" class="quick-link text-center p-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-2" 
+                                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-newspaper text-white"></i>
+                            </div>
+                            <h3 class="fw-semibold text-dark small mb-1">Manage</h3>
+                            <p class="text-muted d-none">View all posts</p>
+                        </a>
+                    </div>
+                    
+                    <div class="col-4">
+                        <a href="/bookmarks" class="quick-link text-center p-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center mx-auto mb-2" 
+                                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <i class="fas fa-bookmark text-white"></i>
+                            </div>
+                            <h3 class="fw-semibold text-dark small mb-1">Bookmarks</h3>
+                            <p class="text-muted d-none">Saved articles</p>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="d-inline-flex align-items-center bg-white bg-opacity-80 rounded-pill px-4 py-2 shadow-sm">
+                    <i class="fas fa-smile text-primary me-2"></i>
+                    <span class="text-muted small">Don't worry, even the best websites get lost sometimes!</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-custom mt-auto py-4">
+        <div class="container text-center">
+            <p class="text-muted mb-0 small">{{copyRight}}</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function getPreferredTheme() {
-            const stored = localStorage.getItem('theme');
-            if (stored) return stored;
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-bs-theme', theme);
-            localStorage.setItem('theme', theme);
-            const icon = document.getElementById('theme-icon');
-            if (icon) {
-                icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.history.back();
             }
-        }
-        
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-bs-theme');
-            setTheme(current === 'dark' ? 'light' : 'dark');
-        }
-        
-        setTheme(getPreferredTheme());
+            if ((e.key === 'h' || e.key === 'H') && !e.ctrlKey && !e.metaKey) {
+                window.location.href = '/';
+            }
+        });
     </script>
+    
     {{codeBeforBody}}
 </body>
 </html>
