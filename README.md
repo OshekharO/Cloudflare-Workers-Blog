@@ -48,11 +48,10 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 | **Runtime** | Cloudflare Workers (edge computing, global CDN) |
 | **Storage** | Cloudflare KV — persistent key-value store |
 | **Editor** | EasyMDE — full Markdown editing experience |
-| **Themes** | 5 built-in themes; remote theme loading from GitHub |
+| **Themes** | Remote theme loading from GitHub; customizable HTML templates |
 | **Admin** | Role-based multi-admin system (superadmin / admin) |
 | **Content** | Published articles and drafts, category labels, featured images |
 | **SEO** | RSS 2.0 feed, XML sitemap with image support, configurable robots.txt |
-| **UI** | Dark/light mode toggle with system-preference detection |
 | **Sharing** | Twitter/X, Facebook, LinkedIn, copy-link buttons |
 | **Bookmarks** | Client-side bookmarking via `localStorage` |
 | **Backup** | JSON export and import for full content portability |
@@ -72,16 +71,13 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 
 | Theme | Description |
 |-------|-------------|
-| `default` | Bootstrap-based theme with glass-morphism cards and gradient accents |
-| `minimal` | Lightweight Tailwind theme with clean typography and subtle animations |
-| `modern` | Professional Bootstrap theme using Playfair Display, inspired by magazine layouts |
-| `journal` | Newspaper-style serif theme, based on [Bootswatch Journal](https://bootswatch.com/journal/) |
-| `lux` | Elegant premium theme with uppercase headings, based on [Bootswatch Lux](https://bootswatch.com/lux/) |
+| `default` | Bootstrap-based theme with glass-morphism cards, gradient accents, and responsive layout |
 
-Switch the active theme by appending `?theme=<theme-name>` to any URL, for example:
+The active theme is configured via `OPT.themeURL` in `worker.js`. You can host your own themes by forking this repository or creating a new one, then updating the `themeURL` to point to your theme directory.
 
+Example:
 ```
-https://your-blog.workers.dev/?theme=minimal
+https://raw.githubusercontent.com/<user>/<repo>/main/themes/default/
 ```
 
 ---
@@ -179,18 +175,14 @@ const OPT = {
 ```
 Cloudflare-Workers-Blog/
 ├── themes/
-│   ├── default/
-│   │   ├── index.html        # Homepage template
-│   │   ├── article.html      # Article page template
-│   │   ├── admin.html        # Admin dashboard template
-│   │   ├── edit.html         # Article editor template
-│   │   ├── admin-users.html  # Admin user management template
-│   │   ├── bookmarks.html    # Bookmarks page template
-│   │   └── 404.html          # 404 error page template
-│   ├── minimal/
-│   ├── modern/
-│   ├── journal/
-│   └── lux/
+│   └── default/
+│       ├── index.html        # Homepage template
+│       ├── article.html      # Article page template
+│       ├── admin.html        # Admin dashboard template
+│       ├── edit.html         # Article editor template
+│       ├── admin-users.html  # Admin user management template
+│       ├── bookmarks.html    # Bookmarks page template
+│       └── 404.html          # 404 error page template
 ├── Screenshot/               # Repository screenshots
 ├── worker.js                 # Single-file Cloudflare Worker (all backend logic)
 ├── wrangler.toml             # Wrangler deployment configuration
