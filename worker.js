@@ -19,7 +19,17 @@ const OPT = {
     "widgetOther": ``,
     "copyRight": `Powered by OshekharO`,
     "robots": `User-agent: *\nDisallow: /admin`,
-    "draftPrefix": "DRAFT_"
+    "draftPrefix": "DRAFT_",
+    "favicon": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#4f46e5"/>
+          <stop offset="100%" stop-color="#7c3aed"/>
+        </linearGradient>
+      </defs>
+      <rect width="32" height="32" rx="8" fill="url(#g)"/>
+      <path d="M10 22V14l6 4 6-4v8l-6-4-6 4z" fill="#fff" opacity="0.95"/>
+    </svg>`
 };
 
 /**
@@ -731,6 +741,11 @@ export default {
             case '/robots.txt':
                 return new Response(OPT.robots, {
                     headers: { 'Content-Type': 'text/plain' }
+                });
+
+            case '/favicon.svg':
+                return new Response(OPT.favicon, {
+                    headers: { 'Content-Type': 'image/svg+xml' }
                 });
 
             default:
