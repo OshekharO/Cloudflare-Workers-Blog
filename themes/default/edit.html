@@ -201,6 +201,10 @@
                         <i class="fas fa-eye"></i>
                         <span class="d-none d-sm-inline">View</span>
                     </a>
+                    <button onclick="logout()" class="btn btn-outline-danger rounded-3 px-3 py-2 d-flex align-items-center gap-2">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="d-none d-sm-inline">Logout</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -486,6 +490,15 @@
                 }
             }
         });
+
+        async function logout() {
+            try {
+                await fetch(window.location.origin + '/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                showNotification('Logout failed', 'error');
+            }
+        }
 
         function showNotification(message, type = 'success') {
             const colors = {

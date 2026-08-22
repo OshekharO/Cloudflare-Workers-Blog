@@ -683,6 +683,104 @@ async function isSuperAdmin(request) {
     return admin && admin.role === 'superadmin';
 }
 
+// Session management
+function generateSessionToken() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+}
+
+async function createSession(admin) {
+    const token = generateSessionToken();
+    const session = {
+        token: token,
+        username: admin.username,
+        role: admin.role,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days
+    };
+    
+    await blog.put('SESSION_' + token, session);
+    return token;
+}
+
+async function getSession(request) {
+    const cookies = request.headers.get('Cookie');
+    if (!cookies) return null;
+    
+    const match = cookies.match(/session=([^;]+)/);
+    if (!match) return null;
+    
+    const token = match[1];
+    const session = await blog.get('SESSION_' + token, true);
+    
+    if (!session) return null;
+    
+    // Check if session expired
+    if (new Date(session.expiresAt) < new Date()) {
+        await blog.delete('SESSION_' + token);
+        return null;
+    }
+    
+    return session;
+}
+
+async function deleteSession(request) {
+    const cookies = request.headers.get('Cookie');
+    if (!cookies) return;
+    
+    const match = cookies.match(/session=([^;]+)/);
+    if (!match) return;
+    
+    const token = match[1];
+    await blog.delete('SESSION_' + token);
+}
+
+// Check if user is authenticated via session or basic auth
+async function isAuthenticated(request) {
+    // Check session first
+    const session = await getSession(request);
+    if (session) return true;
+    
+    // Fall back to basic auth
+    const credentials = authenticate(request);
+    if (!credentials) return false;
+    
+    const [username, password] = credentials;
+    const admin = await blog.verifyAdmin(username, password);
+    return !!admin;
+}
+
+// Check if user is superadmin via session or basic auth
+async function isSuperAdmin(request) {
+    // Check session first
+    const session = await getSession(request);
+    if (session && session.role === 'superadmin') return true;
+    
+    // Fall back to basic auth
+    const credentials = authenticate(request);
+    if (!credentials) return false;
+    
+    const [username, password] = credentials;
+    const admin = await blog.verifyAdmin(username, password);
+    return admin && admin.role === 'superadmin';
+}
+
+// Get current admin from session or basic auth
+async function getCurrentAdmin(request) {
+    // Check session first
+    const session = await getSession(request);
+    if (session) {
+        const admin = await blog.getAdminByUsername(session.username);
+        if (admin) return admin;
+    }
+    
+    // Fall back to basic auth
+    const credentials = authenticate(request);
+    if (!credentials) return null;
+    
+    const [username, password] = credentials;
+    return await blog.verifyAdmin(username, password);
+}
+
 export default {
     async fetch(request, env, ctx) {
         blog.setKV(env.BLOG_STORE);
@@ -698,17 +796,19 @@ export default {
             OPT.themeURL = `https://raw.githubusercontent.com/OshekharO/Cloudflare-Workers-Blog/main/themes/${themeParam}/`;
         }
 
-        // Check authentication for admin routes
-        if (path.startsWith('/admin') || path.startsWith('/api/admins')) {
+        // Check authentication for admin HTML pages
+        if (path.startsWith('/admin') && !path.startsWith('/api/')) {
             const authenticated = await isAuthenticated(request);
             if (!authenticated) {
-                return new Response('Authentication required', {
-                    status: 401,
-                    headers: {
-                        'WWW-Authenticate': 'Basic realm="Blog Admin", charset="UTF-8"',
-                        'Content-Type': 'text/plain'
-                    }
-                });
+                return Response.redirect(new URL('/login', request.url), 302);
+            }
+        }
+
+        // Check authentication for admin API endpoints
+        if (path.startsWith('/api/admins')) {
+            const authenticated = await isAuthenticated(request);
+            if (!authenticated) {
+                return jsonResponse({ error: 'Authentication required' }, 401);
             }
         }
 
@@ -719,6 +819,9 @@ export default {
         switch (path) {
             case '/':
                 return renderIndex();
+            
+            case '/login':
+                return renderLogin();
             
             case '/admin/':
                 return renderAdmin();
@@ -858,13 +961,9 @@ export default {
                     }
                     
                     // Get current admin to prevent self-deletion
-                    const credentials = authenticate(request);
-                    if (credentials) {
-                        const [username, password] = credentials;
-                        const currentAdmin = await blog.verifyAdmin(username, password);
-                        if (currentAdmin && currentAdmin.id === adminId) {
-                            return jsonResponse({ error: 'Cannot delete your own account' }, 400);
-                        }
+                    const currentAdmin = await getCurrentAdmin(request);
+                    if (currentAdmin && currentAdmin.id === adminId) {
+                        return jsonResponse({ error: 'Cannot delete your own account' }, 400);
                     }
                     
                     await blog.deleteAdmin(adminId);
@@ -872,13 +971,10 @@ export default {
                 }
 
                 if (path === '/api/admins/change-password' && method === 'POST') {
-                    const credentials = authenticate(request);
-                    if (!credentials) {
+                    const currentAdmin = await getCurrentAdmin(request);
+                    if (!currentAdmin) {
                         return jsonResponse({ error: 'Authentication required' }, 401);
                     }
-
-                    const [username, password] = credentials;
-                    const currentAdmin = await blog.verifyAdmin(username, password);
                     if (!currentAdmin) {
                         return jsonResponse({ error: 'Invalid credentials' }, 401);
                     }
@@ -901,6 +997,45 @@ export default {
                     await blog.saveAdmin(currentAdmin);
 
                     return jsonResponse({ success: true });
+                }
+
+                if (path === '/api/login' && method === 'POST') {
+                    const { username, password } = await request.json();
+
+                    if (!username || !password) {
+                        return jsonResponse({ error: 'Username and password are required' }, 400);
+                    }
+
+                    const admin = await blog.verifyAdmin(username, password);
+                    if (!admin) {
+                        return jsonResponse({ error: 'Invalid username or password' }, 401);
+                    }
+
+                    if (admin.status !== 'active') {
+                        return jsonResponse({ error: 'Account is inactive' }, 403);
+                    }
+
+                    const token = await createSession(admin);
+
+                    return new Response(JSON.stringify({ success: true, token }), {
+                        status: 200,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Set-Cookie': `session=${token}; HttpOnly; Secure; SameSite=Strict; Max-Age=604800; Path=/`
+                        }
+                    });
+                }
+
+                if (path === '/api/logout' && method === 'POST') {
+                    await deleteSession(request);
+
+                    return new Response(JSON.stringify({ success: true }), {
+                        status: 200,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Set-Cookie': 'session=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/'
+                        }
+                    });
                 }
 
                 // Articles API (existing endpoints)
@@ -1214,6 +1349,25 @@ export default {
                 });
             } catch (error) {
                 return new Response('Error loading template: ' + error.message, { status: 500 });
+            }
+        }
+
+        async function renderLogin() {
+            try {
+                const template = await blog.fetchThemeTemplate('login');
+                const data = {
+                    siteName: OPT.siteName,
+                    copyRight: OPT.copyRight,
+                    codeBeforHead: OPT.codeBeforHead || '',
+                    codeBeforBody: OPT.codeBeforBody || ''
+                };
+                
+                const html = blog.renderTemplate(template, data);
+                return new Response(html, {
+                    headers: { 'Content-Type': 'text/html' }
+                });
+            } catch (error) {
+                return new Response('Error loading login page', { status: 500 });
             }
         }
 
