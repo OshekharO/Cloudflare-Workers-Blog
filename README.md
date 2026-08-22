@@ -47,14 +47,17 @@ CF Workers Blog runs entirely at the edge. Every request is handled by a Cloudfl
 |---|---|
 | **Runtime** | Cloudflare Workers (edge computing, global CDN) |
 | **Storage** | Cloudflare KV — persistent key-value store |
+| **Auth** | Custom login page with session-based authentication |
 | **Editor** | EasyMDE — full Markdown editing experience |
 | **Themes** | Remote theme loading from GitHub; customizable HTML templates |
 | **Admin** | Role-based multi-admin system (superadmin / admin) |
+| **Password** | Admins can change their own password from the admin panel |
 | **Content** | Published articles and drafts, category labels, featured images |
 | **SEO** | RSS 2.0 feed, XML sitemap with image support, configurable robots.txt |
 | **Sharing** | Twitter/X, Facebook, LinkedIn, copy-link buttons |
 | **Bookmarks** | Client-side bookmarking via `localStorage` |
 | **Backup** | JSON export and import for full content portability |
+| **Deploy** | GitHub Actions workflow for automatic deployment |
 | **Styling** | Bootstrap 5.3.3, Font Awesome 6.5.1, Inter typography |
 
 ---
@@ -115,15 +118,26 @@ Both commands print a namespace ID. Copy them — you will need them in the next
 Create a `wrangler.toml` file in the project root:
 
 ```toml
-name            = "cf-blog"
+name            = "blog"
 main            = "worker.js"
-compatibility_date = "2024-04-01"
+compatibility_date = "2026-08-22"
 
 [[kv_namespaces]]
 binding    = "BLOG_STORE"
 id         = "your-production-namespace-id"
 preview_id = "your-preview-namespace-id"
 ```
+
+### GitHub Actions Deployment
+
+The repository includes a GitHub Actions workflow that automatically deploys to Cloudflare Workers on every push to `main`.
+
+1. Go to your GitHub repo → **Settings → Secrets and variables → Actions**
+2. Add these secrets:
+   - `CLOUDFLARE_API_TOKEN` — [Create token](https://dash.cloudflare.com/profile/api-tokens) with **Workers: Edit** permission
+   - `CLOUDFLARE_ACCOUNT_ID` — Found in [Cloudflare Dashboard](https://dash.cloudflare.com) under **Workers & Pages → Settings**
+
+The workflow file is at `.github/workflows/deploy.yml` and will auto-deploy on pushes to `main`.
 
 ---
 
@@ -195,7 +209,7 @@ The entire backend is contained in `worker.js`. Themes are HTML templates loaded
 
 ## API Reference
 
-All API endpoints require HTTP Basic Authentication unless otherwise noted.
+All API endpoints require authentication unless otherwise noted.
 
 ### Pages (public)
 
@@ -207,6 +221,7 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 | `GET` | `/rss.xml` | RSS 2.0 feed |
 | `GET` | `/sitemap.xml` | XML sitemap |
 | `GET` | `/robots.txt` | Robots file |
+| `GET` | `/login` | Login page |
 
 ### Admin Pages (auth required)
 
@@ -222,9 +237,19 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 |--------|------|-------------|
 | `GET` | `/api/articles` | List all published articles |
 | `GET` | `/api/articles?drafts=true` | List draft articles |
+| `GET` | `/api/articles?paginate=true&page=1&pageSize=10` | Paginated articles |
 | `POST` | `/api/articles` | Create a new article |
+| `GET` | `/api/articles/{permalink}` | Get article by permalink |
 | `PUT` | `/api/articles/{permalink}` | Update an existing article |
 | `DELETE` | `/api/articles/{permalink}` | Delete an article |
+| `POST` | `/api/generate-slug` | Generate URL slug from title |
+
+### Authentication API
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/login` | Login with username/password, returns session cookie |
+| `POST` | `/api/logout` | Clear session cookie |
 
 ### Admin Management API *(superadmin only)*
 
@@ -234,16 +259,17 @@ All API endpoints require HTTP Basic Authentication unless otherwise noted.
 | `POST` | `/api/admins` | Create a new admin account |
 | `PUT` | `/api/admins/{id}` | Update an admin account |
 | `DELETE` | `/api/admins/{id}` | Delete an admin account |
+| `POST` | `/api/admins/change-password` | Change own password (any authenticated admin) |
 
 ### Utilities
 
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/api/categories` | Article counts per category |
-| `GET` | `/api/export` | Export all articles as JSON *(auth required)* |
-| `POST` | `/api/import` | Import articles from JSON *(auth required)* |
-| `GET` | `/api/debug` | Runtime debug information *(auth required)* |
-| `POST` | `/api/fix-missing-articles` | Repair corrupted article index *(auth required)* |
+| `GET` | `/api/export` | Export all articles as JSON |
+| `POST` | `/api/import` | Import articles from JSON |
+| `GET` | `/api/debug` | Runtime debug information |
+| `POST` | `/api/fix-missing-articles` | Repair corrupted article index |
 
 ---
 
@@ -313,17 +339,27 @@ To add more admins:
 ### Managing Articles
 
 **Create a new article:**
-1. Go to `/admin/` and authenticate
-2. Click **New Article**
-3. Write content using the Markdown editor
-4. Fill in the permalink, title, category label, and publish date
-5. Set the status to **Published** or **Draft**
-6. Click **Save**
+1. Go to `/login` and sign in with your admin credentials
+2. Visit `/admin/` dashboard
+3. Click **New Article**
+4. Write content using the Markdown editor
+5. Fill in the permalink, title, category label, and publish date
+6. Set the status to **Published** or **Draft**
+7. Click **Save**
 
 **Drafts:**
 - Drafts are only visible inside the admin dashboard
 - Drafts do not appear in the public site, RSS feed, or sitemap
 - Click **Publish** on a draft to make it public
+
+### Changing Password
+
+Any authenticated admin can change their own password:
+1. Go to `/admin/users`
+2. Click the **Password** stat card
+3. Enter your current password
+4. Enter and confirm the new password (minimum 6 characters)
+5. Click **Change Password**
 
 ---
 
@@ -359,11 +395,13 @@ curl -X POST \
 
 ## Security
 
-- Admin routes are protected with HTTP Basic Authentication
+- Admin pages are protected by session-based authentication via `/login`
+- API endpoints accept both session cookies and HTTP Basic Auth
 - Superadmin-only routes enforce role checks on every request
 - An admin account cannot delete its own account
 - Draft articles are never exposed to unauthenticated requests
 - All user input is sanitized before storage
+- Session tokens are stored in KV with 7-day expiry
 
 ---
 
