@@ -1,0 +1,7 @@
+name = "blog"
+main = "worker.js"
+compatibility_date = "2026-08-20"
+
+[[kv_namespaces]]
+binding = "BLOG_STORE"
+id = "59297c8756c549afa3ab2d1bd08e088d"
