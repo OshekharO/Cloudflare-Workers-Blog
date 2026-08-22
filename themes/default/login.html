@@ -220,10 +220,7 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    showNotification('Login successful! Redirecting...', 'success');
-                    setTimeout(() => {
-                        window.location.href = '/admin/';
-                    }, 800);
+                    window.location.href = '/admin/';
                 } else {
                     showNotification(data.error || 'Invalid credentials', 'error');
                     loginBtn.disabled = false;
