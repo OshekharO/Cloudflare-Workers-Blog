@@ -663,26 +663,6 @@ function authenticate(request) {
     }
 }
 
-// Check if user is authenticated
-async function isAuthenticated(request) {
-    const credentials = authenticate(request);
-    if (!credentials) return false;
-    
-    const [username, password] = credentials;
-    const admin = await blog.verifyAdmin(username, password);
-    return !!admin;
-}
-
-// Check if user is superadmin
-async function isSuperAdmin(request) {
-    const credentials = authenticate(request);
-    if (!credentials) return false;
-    
-    const [username, password] = credentials;
-    const admin = await blog.verifyAdmin(username, password);
-    return admin && admin.role === 'superadmin';
-}
-
 // Session management
 function generateSessionToken() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
