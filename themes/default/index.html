@@ -126,35 +126,29 @@
         }
         
         .bookmark-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            display: flex;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            color: #334155;
-            font-size: 1.1rem;
-            z-index: 10;
-            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            color: #475569;
         }
         
         .bookmark-btn:hover {
-            transform: scale(1.15) rotate(10deg);
+            transform: scale(1.1);
             color: #4f46e5;
-            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
-            border-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
         }
         
         .bookmark-btn.bookmarked {
             color: #4f46e5;
-            background: rgba(255, 255, 255, 0.98);
-            border-color: #4f46e5;
-            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.25);
+            background: rgba(79, 70, 229, 0.08);
+            border-color: rgba(79, 70, 229, 0.2);
         }
         
         .share-btn {
@@ -440,19 +434,14 @@
                     return `
                     <div class="col-md-6 col-lg-4">
                         <article class="article-card">
-                            <div class="card-image">
-                                <a href="/article/${safePermalink}" class="text-decoration-none">
-                                    ${imgHtml}
-                                </a>
-                                <button class="bookmark-btn position-absolute top-3 end-3 ${isBookmarked ? 'bookmarked' : ''}" 
-                                        onclick="event.stopPropagation(); toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')"
-                                        title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                    <i class="fas fa-bookmark"></i>
-                                </button>
-                                <div class="position-absolute bottom-3 start-3">
-                                    <span class="category-badge">${safeLabel}</span>
-                                </div>
-                            </div>
+                             <div class="card-image">
+                                 <a href="/article/${safePermalink}" class="text-decoration-none">
+                                     ${imgHtml}
+                                 </a>
+                                 <div class="position-absolute bottom-3 start-3">
+                                     <span class="category-badge">${safeLabel}</span>
+                                 </div>
+                             </div>
                             <div class="p-4 d-flex flex-column h-100">
                                 <div class="d-flex align-items-center text-muted small mb-2">
                                     <i class="far fa-calendar me-2 text-primary"></i>
@@ -466,11 +455,18 @@
                                     <a href="/article/${safePermalink}" class="text-primary text-decoration-none fw-semibold small">
                                         Read More <i class="fas fa-arrow-right ms-1"></i>
                                     </a>
-                                    <button onclick="event.stopPropagation(); shareArticle('${safePermalink}', '${safeTitle}')" 
-                                            class="share-btn"
-                                            title="Share article">
-                                        <i class="fas fa-share-alt"></i>
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        <button onclick="event.stopPropagation(); toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')" 
+                                                class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}"
+                                                title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
+                                            <i class="fas fa-bookmark"></i>
+                                        </button>
+                                        <button onclick="event.stopPropagation(); shareArticle('${safePermalink}', '${safeTitle}')" 
+                                                class="share-btn"
+                                                title="Share article">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </article>
