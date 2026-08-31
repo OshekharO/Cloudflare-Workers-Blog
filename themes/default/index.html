@@ -126,28 +126,31 @@
         }
         
         .bookmark-btn {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            color: #94a3b8;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            color: #475569;
+            font-size: 1.1rem;
         }
         
         .bookmark-btn:hover {
             transform: scale(1.15) rotate(10deg);
             color: #4f46e5;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.2);
         }
         
         .bookmark-btn.bookmarked {
             color: #4f46e5;
             background: rgba(79, 70, 229, 0.1);
+            border-color: rgba(79, 70, 229, 0.2);
         }
         
         .share-btn {
