@@ -130,6 +130,20 @@
             color: #4f46e5;
         }
         
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
         .footer-custom {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
@@ -266,7 +280,7 @@
                         </div>
                         <div class="p-4 d-flex flex-column">
                             <h3 class="fw-bold text-dark mb-2 line-clamp-2">${bookmark.title}</h3>
-                            <p class="text-muted small mb-0 line-clamp-3">${bookmark.excerpt || ''}</p>
+                            ${bookmark.excerpt ? `<p class="text-muted small mb-0 line-clamp-3">${bookmark.excerpt}</p>` : ''}
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
                                 <a href="/article/${bookmark.permalink}" class="text-primary text-decoration-none fw-semibold small">
                                     Read More <i class="fas fa-arrow-right ms-1"></i>
@@ -304,24 +318,15 @@
             currentSharePermalink = permalink;
             currentShareTitle = title;
             const url = `${window.location.origin}/article/${permalink}`;
+            
             const shareUrls = {
                 twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
                 facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
                 linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
             };
             
-            // Simple share dialog using window.open for each platform
-            const platform = prompt('Share on:\n1. Twitter/X\n2. Facebook\n3. LinkedIn\n4. Copy Link\n\nEnter 1-4:');
-            if (platform === '1') window.open(shareUrls.twitter, '_blank', 'width=600,height=400');
-            else if (platform === '2') window.open(shareUrls.facebook, '_blank', 'width=600,height=400');
-            else if (platform === '3') window.open(shareUrls.linkedin, '_blank', 'width=600,height=400');
-            else if (platform === '4') {
-                navigator.clipboard.writeText(url).then(() => {
-                    showNotification('Link copied to clipboard!', 'success');
-                }).catch(() => {
-                    showNotification('Failed to copy link', 'error');
-                });
-            }
+            // Default to Twitter share
+            window.open(shareUrls.twitter, '_blank', 'width=600,height=400');
         }
 
         function showNotification(message, type = 'warning') {
@@ -340,8 +345,8 @@
             };
             
             const notification = document.createElement('div');
-            notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.warning}`;
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+            notification.className = `notification text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.warning}`;
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px; padding: 0.75rem 1rem; border-radius: 0.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15);';
             notification.innerHTML = `<i class="fas ${icons[type] || icons.warning}"></i>${message}`;
             
             document.body.appendChild(notification);
