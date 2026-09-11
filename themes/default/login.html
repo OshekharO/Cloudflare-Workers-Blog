@@ -101,6 +101,29 @@
             from { transform: translateX(120%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        /* Focus-visible ring for accessibility */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid #4f46e5 !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .btn-primary-custom:hover {
+                transform: none !important;
+            }
+        }
     </style>
     
     {{codeBeforHead}}
@@ -124,7 +147,7 @@
                             <label for="username" class="form-label fw-semibold">Username</label>
                             <div class="position-relative">
                                 <input type="text" id="username" required class="form-control form-control-custom ps-5" placeholder="Enter your username" autocomplete="username" />
-                                <i class="fas fa-user position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <i class="fas fa-user position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" aria-hidden="true"></i>
                             </div>
                         </div>
 
@@ -132,7 +155,7 @@
                             <label for="password" class="form-label fw-semibold">Password</label>
                             <div class="position-relative">
                                 <input type="password" id="password" required class="form-control form-control-custom ps-5" placeholder="Enter your password" autocomplete="current-password" />
-                                <i class="fas fa-key position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <i class="fas fa-key position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" aria-hidden="true"></i>
                             </div>
                         </div>
 
@@ -174,9 +197,11 @@
             };
             
             const notification = document.createElement('div');
+            notification.setAttribute('role', 'status');
+            notification.setAttribute('aria-live', 'polite');
             notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.error}`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-            notification.innerHTML = `<i class="fas ${icons[type] || icons.error}"></i>${message}`;
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.error}" aria-hidden="true"></i><span>${message}</span>`;
             
             document.body.appendChild(notification);
             
@@ -207,6 +232,7 @@
             }
             
             loginBtn.disabled = true;
+            loginBtn.setAttribute('aria-disabled', 'true');
             loginText.classList.add('d-none');
             loginSpinner.classList.remove('d-none');
             
@@ -224,12 +250,14 @@
                 } else {
                     showNotification(data.error || 'Invalid credentials', 'error');
                     loginBtn.disabled = false;
+                    loginBtn.removeAttribute('aria-disabled');
                     loginText.classList.remove('d-none');
                     loginSpinner.classList.add('d-none');
                 }
             } catch (error) {
                 showNotification('Network error. Please try again.', 'error');
                 loginBtn.disabled = false;
+                loginBtn.removeAttribute('aria-disabled');
                 loginText.classList.remove('d-none');
                 loginSpinner.classList.add('d-none');
             }

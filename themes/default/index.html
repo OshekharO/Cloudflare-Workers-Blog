@@ -240,6 +240,35 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+
+        /* Focus-visible ring for accessibility */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid #4f46e5 !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .article-card:hover {
+                transform: none !important;
+            }
+            .article-card:hover .card-image img {
+                transform: none !important;
+            }
+            .bookmark-btn:hover, .share-btn:hover, .pagination-btn:hover {
+                transform: none !important;
+            }
+        }
     </style>
     
     {{codeBeforHead}}
@@ -303,7 +332,7 @@
                 <p class="text-muted mx-auto" style="max-width: 500px;">Explore our collection of articles, insights, and ideas that inspire</p>
             </div>
             
-            <div id="articles-container" class="row g-4">
+            <div id="articles-container" class="row g-4" aria-live="polite">
                 <!-- Loading State -->
                 <div class="col-12">
                     <div class="text-center py-5">
@@ -326,29 +355,29 @@
             <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold">Share Article</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
                 </div>
                 <div class="modal-body">
                     <p id="share-article-title" class="text-muted mb-4 p-3 bg-light rounded-3"></p>
                     <div class="row g-3">
                         <div class="col-3">
-                            <button onclick="shareOnPlatform('twitter')" class="share-btn w-100">
-                                <i class="fab fa-twitter text-info"></i>
+                            <button onclick="shareOnPlatform('twitter')" class="share-btn w-100" aria-label="Share on Twitter (X)">
+                                <i class="fab fa-twitter text-info" aria-hidden="true"></i>
                             </button>
                         </div>
                         <div class="col-3">
-                            <button onclick="shareOnPlatform('facebook')" class="share-btn w-100">
-                                <i class="fab fa-facebook text-primary"></i>
+                            <button onclick="shareOnPlatform('facebook')" class="share-btn w-100" aria-label="Share on Facebook">
+                                <i class="fab fa-facebook text-primary" aria-hidden="true"></i>
                             </button>
                         </div>
                         <div class="col-3">
-                            <button onclick="shareOnPlatform('linkedin')" class="share-btn w-100">
-                                <i class="fab fa-linkedin text-primary"></i>
+                            <button onclick="shareOnPlatform('linkedin')" class="share-btn w-100" aria-label="Share on LinkedIn">
+                                <i class="fab fa-linkedin text-primary" aria-hidden="true"></i>
                             </button>
                         </div>
                         <div class="col-3">
-                            <button onclick="copyArticleLink()" class="share-btn w-100">
-                                <i class="fas fa-link text-primary"></i>
+                            <button onclick="copyArticleLink()" class="share-btn w-100" aria-label="Copy link to article">
+                                <i class="fas fa-link text-primary" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
@@ -458,13 +487,15 @@
                                     <div class="d-flex gap-2">
                                         <button onclick="event.stopPropagation(); toggleBookmark('${safePermalink}', '${safeTitle}', '${safeImg}', '${safeLabel}')" 
                                                 class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}"
-                                                title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}">
-                                            <i class="fas fa-bookmark"></i>
+                                                title="${isBookmarked ? 'Remove bookmark' : 'Bookmark article'}"
+                                                aria-label="${isBookmarked ? 'Remove bookmark for ' + safeTitle : 'Bookmark article ' + safeTitle}">
+                                            <i class="fas fa-bookmark" aria-hidden="true"></i>
                                         </button>
                                         <button onclick="event.stopPropagation(); shareArticle('${safePermalink}', '${safeTitle}')" 
                                                 class="share-btn"
-                                                title="Share article">
-                                            <i class="fas fa-share-alt"></i>
+                                                title="Share article"
+                                                aria-label="Share article ${safeTitle}">
+                                            <i class="fas fa-share-alt" aria-hidden="true"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -506,8 +537,9 @@
             
             html += `<button onclick="loadArticles(${pagination.page - 1})" 
                 class="pagination-btn"
+                aria-label="Previous page"
                 ${!pagination.hasPrevPage ? 'disabled' : ''}>
-                <i class="fas fa-chevron-left"></i>
+                <i class="fas fa-chevron-left" aria-hidden="true"></i>
             </button>`;
 
             const startPage = Math.max(1, pagination.page - 2);
@@ -515,15 +547,18 @@
 
             for (let i = startPage; i <= endPage; i++) {
                 html += `<button onclick="loadArticles(${i})" 
-                    class="pagination-btn ${i === pagination.page ? 'active' : ''}">
+                    class="pagination-btn ${i === pagination.page ? 'active' : ''}"
+                    aria-label="Page ${i}"
+                    ${i === pagination.page ? 'aria-current="page"' : ''}>
                     ${i}
                 </button>`;
             }
 
             html += `<button onclick="loadArticles(${pagination.page + 1})" 
                 class="pagination-btn"
+                aria-label="Next page"
                 ${!pagination.hasNextPage ? 'disabled' : ''}>
-                <i class="fas fa-chevron-right"></i>
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
             </button>`;
 
             html += '</div>';
@@ -633,9 +668,11 @@
             };
             
             const notification = document.createElement('div');
+            notification.setAttribute('role', 'status');
+            notification.setAttribute('aria-live', 'polite');
             notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.info}`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-            notification.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i>${message}`;
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.info}" aria-hidden="true"></i><span>${message}</span>`;
             
             document.body.appendChild(notification);
             

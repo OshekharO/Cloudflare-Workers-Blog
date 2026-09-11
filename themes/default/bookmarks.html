@@ -159,6 +159,35 @@
             from { transform: translateX(120%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        /* Focus-visible ring for accessibility */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid #4f46e5 !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .bookmark-card:hover {
+                transform: none !important;
+            }
+            .bookmark-card:hover .card-image img {
+                transform: none !important;
+            }
+            .btn-delete:hover, .share-btn:hover {
+                transform: none !important;
+            }
+        }
     </style>
     
     {{codeBeforHead}}
@@ -205,7 +234,7 @@
             </div>
 
             <!-- Bookmarks Grid -->
-            <div id="bookmarks-container" class="row g-4">
+            <div id="bookmarks-container" class="row g-4" aria-live="polite">
                 <!-- Loading State -->
                 <div class="col-12">
                     <div class="text-center py-5">
@@ -288,11 +317,15 @@
                                 <div class="d-flex gap-2">
                                     <button onclick="shareArticle('${bookmark.permalink}', '${bookmark.title}')" 
                                             class="share-btn"
-                                            title="Share article">
-                                        <i class="fas fa-share-alt"></i>
+                                            title="Share article"
+                                            aria-label="Share article ${bookmark.title}">
+                                        <i class="fas fa-share-alt" aria-hidden="true"></i>
                                     </button>
-                                    <button onclick="removeBookmark('${bookmark.permalink}')" class="btn btn-delete" title="Remove bookmark">
-                                        <i class="fas fa-trash"></i>
+                                    <button onclick="removeBookmark('${bookmark.permalink}')"
+                                            class="btn btn-delete"
+                                            title="Remove bookmark"
+                                            aria-label="Remove bookmark for ${bookmark.title}">
+                                        <i class="fas fa-trash" aria-hidden="true"></i>
                                     </button>
                                 </div>
                             </div>
@@ -345,9 +378,11 @@
             };
             
             const notification = document.createElement('div');
+            notification.setAttribute('role', 'status');
+            notification.setAttribute('aria-live', 'polite');
             notification.className = `notification text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.warning}`;
             notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 250px; padding: 0.75rem 1rem; border-radius: 0.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15);';
-            notification.innerHTML = `<i class="fas ${icons[type] || icons.warning}"></i>${message}`;
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.warning}" aria-hidden="true"></i><span>${message}</span>`;
             
             document.body.appendChild(notification);
             

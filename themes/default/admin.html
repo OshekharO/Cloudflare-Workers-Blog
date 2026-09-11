@@ -236,6 +236,29 @@
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             border-radius: 10px;
         }
+
+        /* Focus-visible ring for accessibility */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid #4f46e5 !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .action-card:hover, .tool-card:hover, .btn-primary-custom:hover {
+                transform: none !important;
+            }
+        }
     </style>
     
     {{codeBeforHead}}
@@ -293,9 +316,9 @@
             </div>
             
             <div class="col-6 col-md-3">
-                <button onclick="exportArticles()" class="action-card text-center border-0 bg-transparent w-100">
+                <button onclick="exportArticles()" class="action-card text-center border-0 bg-transparent w-100" aria-label="Export articles JSON backup">
                     <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                        <i class="fas fa-download text-white fs-4"></i>
+                        <i class="fas fa-download text-white fs-4" aria-hidden="true"></i>
                     </div>
                     <h3 class="fw-semibold text-dark mb-1">Export</h3>
                     <p class="text-muted d-none d-md-block small mb-0">Download backup</p>
@@ -303,9 +326,9 @@
             </div>
 
             <div class="col-6 col-md-3">
-                <button onclick="openImportModal()" class="action-card text-center border-0 bg-transparent w-100">
+                <button onclick="openImportModal()" class="action-card text-center border-0 bg-transparent w-100" aria-label="Import articles from JSON backup">
                     <div class="icon-wrapper mx-auto mb-3" style="background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);">
-                        <i class="fas fa-upload text-white fs-4"></i>
+                        <i class="fas fa-upload text-white fs-4" aria-hidden="true"></i>
                     </div>
                     <h3 class="fw-semibold text-dark mb-1">Import</h3>
                     <p class="text-muted d-none d-md-block small mb-0">Restore data</p>
@@ -336,7 +359,7 @@
                     </button>
                 </div>
 
-                <div id="published-list">
+                <div id="published-list" aria-live="polite">
                     <div class="text-center py-5">
                         <div class="spinner-border text-primary mb-3" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -345,7 +368,7 @@
                     </div>
                 </div>
 
-                <div id="drafts-list" class="d-none">
+                <div id="drafts-list" class="d-none" aria-live="polite">
                     <div class="text-center py-5">
                         <div class="spinner-border text-primary mb-3" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -456,11 +479,11 @@
                     <div class="d-flex align-items-center gap-3">
                         <div class="rounded-3 d-flex align-items-center justify-content-center" 
                              style="width: 40px; height: 40px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);">
-                            <i class="fas fa-upload text-white"></i>
+                            <i class="fas fa-upload text-white" aria-hidden="true"></i>
                         </div>
                         <h5 class="modal-title fw-bold">Import Articles</h5>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
                 </div>
                 
                 <div class="modal-body">
@@ -491,11 +514,11 @@
                     <div class="d-flex align-items-center gap-3">
                         <div class="rounded-3 d-flex align-items-center justify-content-center" 
                              style="width: 40px; height: 40px; background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);">
-                            <i class="fas fa-bug text-purple-600"></i>
+                            <i class="fas fa-bug text-purple-600" aria-hidden="true"></i>
                         </div>
                         <h5 class="modal-title fw-bold">System Information</h5>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
                 </div>
                 
                 <div class="modal-body">
@@ -588,11 +611,11 @@
                                 </div>
                             </div>
                             <div class="d-flex gap-2 sm:ms-4">
-                                <a href="/admin/edit?permalink=${article.permalink}" class="icon-btn edit" title="Edit">
-                                    <i class="fas fa-edit"></i>
+                                <a href="/admin/edit?permalink=${article.permalink}" class="icon-btn edit" title="Edit" aria-label="Edit article ${article.title}">
+                                    <i class="fas fa-edit" aria-hidden="true"></i>
                                 </a>
-                                <button onclick="deleteArticle('${article.permalink}')" class="icon-btn delete" title="Delete">
-                                    <i class="fas fa-trash"></i>
+                                <button onclick="deleteArticle('${article.permalink}')" class="icon-btn delete" title="Delete" aria-label="Delete article ${article.title}">
+                                    <i class="fas fa-trash" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
@@ -648,14 +671,14 @@
                                 </div>
                             </div>
                             <div class="d-flex gap-2 sm:ms-4">
-                                <a href="/admin/edit?permalink=${draft.permalink}" class="icon-btn edit" title="Edit">
-                                    <i class="fas fa-edit"></i>
+                                <a href="/admin/edit?permalink=${draft.permalink}" class="icon-btn edit" title="Edit" aria-label="Edit draft ${draft.title}">
+                                    <i class="fas fa-edit" aria-hidden="true"></i>
                                 </a>
-                                <button onclick="publishDraft('${draft.permalink}')" class="icon-btn publish" title="Publish">
-                                    <i class="fas fa-paper-plane"></i>
+                                <button onclick="publishDraft('${draft.permalink}')" class="icon-btn publish" title="Publish" aria-label="Publish draft ${draft.title}">
+                                    <i class="fas fa-paper-plane" aria-hidden="true"></i>
                                 </button>
-                                <button onclick="deleteArticle('${draft.permalink}')" class="icon-btn delete" title="Delete">
-                                    <i class="fas fa-trash"></i>
+                                <button onclick="deleteArticle('${draft.permalink}')" class="icon-btn delete" title="Delete" aria-label="Delete draft ${draft.title}">
+                                    <i class="fas fa-trash" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
@@ -875,9 +898,11 @@
             };
             
             const notification = document.createElement('div');
+            notification.setAttribute('role', 'status');
+            notification.setAttribute('aria-live', 'polite');
             notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.success}`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-            notification.innerHTML = `<i class="fas ${icons[type] || icons.success}"></i>${message}`;
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.success}" aria-hidden="true"></i><span>${message}</span>`;
             
             document.body.appendChild(notification);
             
