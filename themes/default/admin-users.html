@@ -197,6 +197,29 @@
             from { transform: translateX(120%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        /* Focus-visible ring for accessibility */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid #4f46e5 !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .stat-card:hover, .user-row:hover, .btn-primary-custom:hover {
+                transform: none !important;
+            }
+        }
     </style>
     
     {{codeBeforHead}}
@@ -289,17 +312,17 @@
                     <div class="d-flex gap-2">
                         <div class="position-relative">
                             <input type="text" id="search-admins" placeholder="Search admins..." 
-                                   class="form-control form-control-custom ps-5" style="min-width: 200px;" />
-                            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                   class="form-control form-control-custom ps-5" style="min-width: 200px;" aria-label="Search admins" />
+                            <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" aria-hidden="true"></i>
                         </div>
-                        <button onclick="loadAdmins()" class="btn btn-outline-dark rounded-3 px-3">
-                            <i class="fas fa-redo"></i>
+                        <button onclick="loadAdmins()" class="btn btn-outline-dark rounded-3 px-3" aria-label="Reload admins list">
+                            <i class="fas fa-redo" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
             </div>
             <div class="card-body p-4">
-                <div id="admins-list">
+                <div id="admins-list" aria-live="polite">
                     <div class="text-center py-5">
                         <div class="spinner-border text-primary mb-3" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -352,11 +375,11 @@
                     <div class="d-flex align-items-center gap-3">
                         <div class="rounded-3 d-flex align-items-center justify-content-center" 
                              style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
-                            <i class="fas fa-user-plus text-white"></i>
+                            <i class="fas fa-user-plus text-white" aria-hidden="true"></i>
                         </div>
                         <h5 class="modal-title fw-bold">Add New Admin</h5>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
                 </div>
 
                 <form id="add-admin-form" class="p-4 pt-0">
@@ -402,11 +425,11 @@
                     <div class="d-flex align-items-center gap-3">
                         <div class="rounded-3 d-flex align-items-center justify-content-center" 
                              style="width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
-                            <i class="fas fa-edit text-white"></i>
+                            <i class="fas fa-edit text-white" aria-hidden="true"></i>
                         </div>
                         <h5 class="modal-title fw-bold">Edit Admin</h5>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
                 </div>
 
                 <form id="edit-admin-form" class="p-4 pt-0">
@@ -457,11 +480,11 @@
                     <div class="d-flex align-items-center gap-3">
                         <div class="rounded-3 d-flex align-items-center justify-content-center" 
                              style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                            <i class="fas fa-key text-white"></i>
+                            <i class="fas fa-key text-white" aria-hidden="true"></i>
                         </div>
                         <h5 class="modal-title fw-bold">Change Password</h5>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
                 </div>
 
                 <form id="change-password-form" class="p-4 pt-0">
@@ -580,14 +603,15 @@
                             </span>
                         </div>
                         <div class="d-flex gap-2 ms-0 sm:ms-5">
-                            <button onclick="editAdmin('${admin.id}')" class="icon-btn edit" title="Edit">
-                                <i class="fas fa-edit"></i>
+                            <button onclick="editAdmin('${admin.id}')" class="icon-btn edit" title="Edit" aria-label="Edit admin ${admin.username}">
+                                <i class="fas fa-edit" aria-hidden="true"></i>
                             </button>
                             <button onclick="deleteAdmin('${admin.id}', '${admin.username}')" 
                                     class="icon-btn delete" 
                                     title="Delete"
+                                    aria-label="Delete admin ${admin.username}"
                                     ${admin.role === 'superadmin' ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
-                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
@@ -815,9 +839,11 @@
             };
             
             const notification = document.createElement('div');
+            notification.setAttribute('role', 'status');
+            notification.setAttribute('aria-live', 'polite');
             notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.info}`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-            notification.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i>${message}`;
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.info}" aria-hidden="true"></i><span>${message}</span>`;
             
             document.body.appendChild(notification);
             

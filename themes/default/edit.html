@@ -173,6 +173,29 @@
             from { transform: translateX(120%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        /* Focus-visible ring for accessibility */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid #4f46e5 !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .btn-primary-custom:hover, .btn-secondary-custom:hover, .btn-magic:hover {
+                transform: none !important;
+            }
+        }
     </style>
     
     {{codeBeforHead}}
@@ -235,9 +258,9 @@
                         <div class="input-group">
                             <input type="text" id="permalink" required pattern="[a-z0-9-]+" 
                                    class="form-control form-control-custom rounded-end-0" placeholder="article-url-slug">
-                            <button type="button" id="generate-slug-btn" title="Generate from title"
+                            <button type="button" id="generate-slug-btn" title="Generate slug from title" aria-label="Generate slug from title"
                                     class="btn btn-magic">
-                                <i class="fas fa-magic"></i>
+                                <i class="fas fa-magic" aria-hidden="true"></i>
                             </button>
                         </div>
                         <p class="text-muted small mt-2">
@@ -516,9 +539,11 @@
             };
             
             const notification = document.createElement('div');
+            notification.setAttribute('role', 'status');
+            notification.setAttribute('aria-live', 'polite');
             notification.className = `notification fixed-top-0 end-0 m-3 p-3 rounded-3 shadow-lg text-white fw-medium d-flex align-items-center gap-2 ${colors[type] || colors.info}`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
-            notification.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i>${message}`;
+            notification.innerHTML = `<i class="fas ${icons[type] || icons.info}" aria-hidden="true"></i><span>${message}</span>`;
             
             document.body.appendChild(notification);
             
